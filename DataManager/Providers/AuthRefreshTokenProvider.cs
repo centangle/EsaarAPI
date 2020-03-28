@@ -1,9 +1,10 @@
 ﻿using BusinessLogic;
-using Helpers;
 using Microsoft.Owin.Security.Infrastructure;
 using Models;
 using System;
 using System.Threading.Tasks;
+using Helpers;
+
 
 namespace DataManager.Providers
 {
