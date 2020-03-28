@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataProvider
+namespace Models
 {
-    public class Class1
+    public class UserModel
     {
+        public string Email { get; set; }
     }
 }

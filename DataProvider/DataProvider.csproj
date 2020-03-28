@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -34,14 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.0.30\lib\net461\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -53,117 +50,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Address.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Charity.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Charity.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Charity.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Charity.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Charity.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Country.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="District.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ExceptionLog.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Item.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Log.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Organization.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="OrganizationItem.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="OrganizationPeople.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Person.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
+    <Compile Include="DataAccess.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="RefreshTokenDA.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Request.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RequestItem.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RequestOrganization.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RequestStatu.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RequestVolunteer.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="State.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sysdiagram.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Tehsil.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="UnionCouncil.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="UOM.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
-    <EntityDeploy Include="Charity.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Charity.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="Charity.edmx.diagram">
-      <DependentUpon>Charity.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Charity.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Charity.edmx</DependentUpon>
-      <LastGenOutput>Charity.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Charity.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Charity.edmx</DependentUpon>
-      <LastGenOutput>Charity.cs</LastGenOutput>
-    </Content>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{beb58624-7608-486f-8942-99d06a0a869c}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.props'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.targets'))" />
-  </Target>
-  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" />
 </Project>
