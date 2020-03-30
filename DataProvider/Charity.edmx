@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="CharityModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="CharityModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="__MigrationHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
@@ -135,6 +135,7 @@
           <Property Name="NativeName" Type="varchar" MaxLength="500" />
           <Property Name="DefaultUOM" Type="int" Nullable="false" />
           <Property Name="Description" Type="varchar(max)" />
+          <Property Name="Type" Type="int" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
           <Property Name="IsCartItem" Type="bit" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
@@ -161,6 +162,7 @@
           <Property Name="NativeName" Type="varchar" MaxLength="500" />
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="LogoUrl" Type="varchar" MaxLength="500" />
+          <Property Name="Type" Type="int" />
           <Property Name="OwnedBy" Type="int" Nullable="false" />
           <Property Name="IsVerfied" Type="bit" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
@@ -199,8 +201,6 @@
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="RefreshToken">
           <Key>
             <PropertyRef Name="Id" />
@@ -296,16 +296,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Latitude" Type="varchar" MaxLength="500" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="principal_id" Type="int" Nullable="false" />
-          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="version" Type="int" />
-          <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="Tehsil">
           <Key>
@@ -419,6 +409,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ChildItem_ParentItem">
+          <End Role="Item" Type="Self.Item" Multiplicity="0..1" />
+          <End Role="Item1" Type="Self.Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Item1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -498,6 +500,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="Item">
               <PropertyRef Name="DefaultUOM" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Organization_Organization">
+          <End Role="Organization" Type="Self.Organization" Multiplicity="0..1" />
+          <End Role="Organization1" Type="Self.Organization" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Organization1">
+              <PropertyRef Name="ParentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -781,6 +795,9 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="spGetItemWithChildren" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Id" Type="int" Mode="In" />
+        </Function>
         <EntityContainer Name="CharityModelStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Address" EntityType="Self.Address" Schema="dbo" store:Type="Tables" />
@@ -798,25 +815,16 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="OrganizationItem" EntityType="Self.OrganizationItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganizationPeople" EntityType="Self.OrganizationPeople" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="People" EntityType="Self.People" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RefreshToken" EntityType="Self.RefreshToken" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Request" EntityType="Self.Request" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestItem" EntityType="Self.RequestItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestOrganization" EntityType="Self.RequestOrganization" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestStatus" EntityType="Self.RequestStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestVolunteer" EntityType="Self.RequestVolunteer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="State" EntityType="Self.State" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tehsil" EntityType="Self.Tehsil" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnionCouncil" EntityType="Self.UnionCouncil" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UOM" EntityType="Self.UOM" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RefreshToken" EntityType="Self.RefreshToken" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [RefreshToken].[Id] AS [Id], 
-    [RefreshToken].[UserId] AS [UserId], 
-    [RefreshToken].[IssuedTime] AS [IssuedTime], 
-    [RefreshToken].[ExpiredTime] AS [ExpiredTime], 
-    [RefreshToken].[ProtectedTicket] AS [ProtectedTicket]
-    FROM [dbo].[RefreshToken] AS [RefreshToken]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK_Address_Address" Association="Self.FK_Address_Address">
             <End Role="Address" EntitySet="Address" />
             <End Role="Address1" EntitySet="Address" />
@@ -840,6 +848,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_Address_UnionCouncil" Association="Self.FK_Address_UnionCouncil">
             <End Role="UnionCouncil" EntitySet="UnionCouncil" />
             <End Role="Address" EntitySet="Address" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChildItem_ParentItem" Association="Self.FK_ChildItem_ParentItem">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="Item1" EntitySet="Item" />
           </AssociationSet>
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -865,6 +877,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="UOM" EntitySet="UOM" />
             <End Role="Item" EntitySet="Item" />
           </AssociationSet>
+          <AssociationSet Name="FK_Organization_Organization" Association="Self.FK_Organization_Organization">
+            <End Role="Organization" EntitySet="Organization" />
+            <End Role="Organization1" EntitySet="Organization" />
+          </AssociationSet>
           <AssociationSet Name="FK_OrganizationItem_Item" Association="Self.FK_OrganizationItem_Item">
             <End Role="Item" EntitySet="Item" />
             <End Role="OrganizationItem" EntitySet="OrganizationItem" />
@@ -958,20 +974,206 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="UnionCouncil" EntitySet="UnionCouncil" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="CharityModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="CharityEntities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="spGetItemWithChildren" ReturnType="Collection(CharityModel.spGetItemWithChildren_Result)">
+          <Parameter Name="Id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="C__MigrationHistory" EntityType="CharityModel.C__MigrationHistory" />
+          <EntitySet Name="Addresses" EntityType="CharityModel.Address" />
+          <EntitySet Name="AspNetRoles" EntityType="CharityModel.AspNetRole" />
+          <EntitySet Name="AspNetUserClaims" EntityType="CharityModel.AspNetUserClaim" />
+          <EntitySet Name="AspNetUserLogins" EntityType="CharityModel.AspNetUserLogin" />
+          <EntitySet Name="AspNetUsers" EntityType="CharityModel.AspNetUser" />
+          <EntitySet Name="Countries" EntityType="CharityModel.Country" />
+          <EntitySet Name="Districts" EntityType="CharityModel.District" />
+          <EntitySet Name="ExceptionLogs" EntityType="CharityModel.ExceptionLog" />
+          <EntitySet Name="Items" EntityType="CharityModel.Item" />
+          <EntitySet Name="Logs" EntityType="CharityModel.Log" />
+          <EntitySet Name="Organizations" EntityType="CharityModel.Organization" />
+          <EntitySet Name="OrganizationItems" EntityType="CharityModel.OrganizationItem" />
+          <EntitySet Name="OrganizationPeoples" EntityType="CharityModel.OrganizationPeople" />
+          <EntitySet Name="People" EntityType="CharityModel.Person" />
+          <EntitySet Name="RefreshTokens" EntityType="CharityModel.RefreshToken" />
+          <EntitySet Name="Requests" EntityType="CharityModel.Request" />
+          <EntitySet Name="RequestItems" EntityType="CharityModel.RequestItem" />
+          <EntitySet Name="RequestOrganizations" EntityType="CharityModel.RequestOrganization" />
+          <EntitySet Name="RequestStatus" EntityType="CharityModel.RequestStatu" />
+          <EntitySet Name="RequestVolunteers" EntityType="CharityModel.RequestVolunteer" />
+          <EntitySet Name="States" EntityType="CharityModel.State" />
+          <EntitySet Name="Tehsils" EntityType="CharityModel.Tehsil" />
+          <EntitySet Name="UnionCouncils" EntityType="CharityModel.UnionCouncil" />
+          <EntitySet Name="UOMs" EntityType="CharityModel.UOM" />
+          <AssociationSet Name="FK_Address_Address" Association="CharityModel.FK_Address_Address">
+            <End Role="Address" EntitySet="Addresses" />
+            <End Role="Address1" EntitySet="Addresses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Address_Country" Association="CharityModel.FK_Address_Country">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="Address" EntitySet="Addresses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Address_District" Association="CharityModel.FK_Address_District">
+            <End Role="District" EntitySet="Districts" />
+            <End Role="Address" EntitySet="Addresses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Address_State" Association="CharityModel.FK_Address_State">
+            <End Role="State" EntitySet="States" />
+            <End Role="Address" EntitySet="Addresses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Address_Tehsil" Association="CharityModel.FK_Address_Tehsil">
+            <End Role="Tehsil" EntitySet="Tehsils" />
+            <End Role="Address" EntitySet="Addresses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Address_UnionCouncil" Association="CharityModel.FK_Address_UnionCouncil">
+            <End Role="UnionCouncil" EntitySet="UnionCouncils" />
+            <End Role="Address" EntitySet="Addresses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="CharityModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaim" EntitySet="AspNetUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="CharityModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogin" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_People_AspNetUsers" Association="CharityModel.FK_People_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Person" EntitySet="People" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Request_Country" Association="CharityModel.FK_Request_Country">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="Request" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_State_Country" Association="CharityModel.FK_State_Country">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="State" EntitySet="States" />
+          </AssociationSet>
+          <AssociationSet Name="FK_District_State" Association="CharityModel.FK_District_State">
+            <End Role="State" EntitySet="States" />
+            <End Role="District" EntitySet="Districts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Request_District" Association="CharityModel.FK_Request_District">
+            <End Role="District" EntitySet="Districts" />
+            <End Role="Request" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Tehsil_District" Association="CharityModel.FK_Tehsil_District">
+            <End Role="District" EntitySet="Districts" />
+            <End Role="Tehsil" EntitySet="Tehsils" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ChildItem_ParentItem" Association="CharityModel.FK_ChildItem_ParentItem">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="Item1" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Item_UOM" Association="CharityModel.FK_Item_UOM">
+            <End Role="UOM" EntitySet="UOMs" />
+            <End Role="Item" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrganizationItem_Item" Association="CharityModel.FK_OrganizationItem_Item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="OrganizationItem" EntitySet="OrganizationItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestItem_Item" Association="CharityModel.FK_RequestItem_Item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="RequestItem" EntitySet="RequestItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Organization_Organization" Association="CharityModel.FK_Organization_Organization">
+            <End Role="Organization" EntitySet="Organizations" />
+            <End Role="Organization1" EntitySet="Organizations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrganizationItem_Organization" Association="CharityModel.FK_OrganizationItem_Organization">
+            <End Role="Organization" EntitySet="Organizations" />
+            <End Role="OrganizationItem" EntitySet="OrganizationItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrganizationPeople_Organization" Association="CharityModel.FK_OrganizationPeople_Organization">
+            <End Role="Organization" EntitySet="Organizations" />
+            <End Role="OrganizationPeople" EntitySet="OrganizationPeoples" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestOrganization_Organization" Association="CharityModel.FK_RequestOrganization_Organization">
+            <End Role="Organization" EntitySet="Organizations" />
+            <End Role="RequestOrganization" EntitySet="RequestOrganizations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrganizationPeople_People" Association="CharityModel.FK_OrganizationPeople_People">
+            <End Role="Person" EntitySet="People" />
+            <End Role="OrganizationPeople" EntitySet="OrganizationPeoples" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Request_Beneficiary" Association="CharityModel.FK_Request_Beneficiary">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Request" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestVolunteer_People" Association="CharityModel.FK_RequestVolunteer_People">
+            <End Role="Person" EntitySet="People" />
+            <End Role="RequestVolunteer" EntitySet="RequestVolunteers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Request_State" Association="CharityModel.FK_Request_State">
+            <End Role="State" EntitySet="States" />
+            <End Role="Request" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Request_Tehsil" Association="CharityModel.FK_Request_Tehsil">
+            <End Role="Tehsil" EntitySet="Tehsils" />
+            <End Role="Request" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Request_UnionCouncil" Association="CharityModel.FK_Request_UnionCouncil">
+            <End Role="UnionCouncil" EntitySet="UnionCouncils" />
+            <End Role="Request" EntitySet="Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestItem_Request" Association="CharityModel.FK_RequestItem_Request">
+            <End Role="Request" EntitySet="Requests" />
+            <End Role="RequestItem" EntitySet="RequestItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestOrganization_Request" Association="CharityModel.FK_RequestOrganization_Request">
+            <End Role="Request" EntitySet="Requests" />
+            <End Role="RequestOrganization" EntitySet="RequestOrganizations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestStatus_Request" Association="CharityModel.FK_RequestStatus_Request">
+            <End Role="Request" EntitySet="Requests" />
+            <End Role="RequestStatu" EntitySet="RequestStatus" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestVolunteer_RequestVolunteer" Association="CharityModel.FK_RequestVolunteer_RequestVolunteer">
+            <End Role="Request" EntitySet="Requests" />
+            <End Role="RequestVolunteer" EntitySet="RequestVolunteers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestItem_UOM" Association="CharityModel.FK_RequestItem_UOM">
+            <End Role="UOM" EntitySet="UOMs" />
+            <End Role="RequestItem" EntitySet="RequestItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestItem_UOM1" Association="CharityModel.FK_RequestItem_UOM1">
+            <End Role="UOM" EntitySet="UOMs" />
+            <End Role="RequestItem" EntitySet="RequestItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UnionCouncil_Tehsil" Association="CharityModel.FK_UnionCouncil_Tehsil">
+            <End Role="Tehsil" EntitySet="Tehsils" />
+            <End Role="UnionCouncil" EntitySet="UnionCouncils" />
+          </AssociationSet>
+          <AssociationSet Name="AspNetUserRoles" Association="CharityModel.AspNetUserRoles">
+            <End Role="AspNetRole" EntitySet="AspNetRoles" />
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+          </AssociationSet>
+          </EntityContainer>
+        <ComplexType Name="spGetItemWithChildren_Result">
+          <Property Type="Int32" Name="Id" Nullable="true" />
+          <Property Type="Int32" Name="ParentId" Nullable="true" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="NativeName" Nullable="true" MaxLength="500" />
+          <Property Type="Int32" Name="DefaultUOM" Nullable="true" />
+          <Property Type="String" Name="Description" Nullable="true" />
+          <Property Type="Int32" Name="Type" Nullable="true" />
+          <Property Type="String" Name="ImageUrl" Nullable="true" MaxLength="200" />
+          <Property Type="Boolean" Name="IsCartItem" Nullable="true" />
+          <Property Type="Boolean" Name="IsActive" Nullable="true" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="true" />
+        </ComplexType>
         <EntityType Name="C__MigrationHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
             <PropertyRef Name="ContextKey" />
           </Key>
-          <Property Name="MigrationId" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ContextKey" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Model" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
-          <Property Name="ProductVersion" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MigrationId" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContextKey" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="Model" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <Property Name="ProductVersion" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Address">
           <Key>
@@ -995,31 +1197,31 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="IsPermanentAddress" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Address1" Relationship="Self.FK_Address_Address" FromRole="Address" ToRole="Address1" />
-          <NavigationProperty Name="Address2" Relationship="Self.FK_Address_Address" FromRole="Address1" ToRole="Address" />
-          <NavigationProperty Name="Country" Relationship="Self.FK_Address_Country" FromRole="Address" ToRole="Country" />
-          <NavigationProperty Name="District" Relationship="Self.FK_Address_District" FromRole="Address" ToRole="District" />
-          <NavigationProperty Name="State" Relationship="Self.FK_Address_State" FromRole="Address" ToRole="State" />
-          <NavigationProperty Name="Tehsil" Relationship="Self.FK_Address_Tehsil" FromRole="Address" ToRole="Tehsil" />
-          <NavigationProperty Name="UnionCouncil" Relationship="Self.FK_Address_UnionCouncil" FromRole="Address" ToRole="UnionCouncil" />
+          <NavigationProperty Name="Address1" Relationship="CharityModel.FK_Address_Address" FromRole="Address" ToRole="Address1" />
+          <NavigationProperty Name="Address2" Relationship="CharityModel.FK_Address_Address" FromRole="Address1" ToRole="Address" />
+          <NavigationProperty Name="Country" Relationship="CharityModel.FK_Address_Country" FromRole="Address" ToRole="Country" />
+          <NavigationProperty Name="District" Relationship="CharityModel.FK_Address_District" FromRole="Address" ToRole="District" />
+          <NavigationProperty Name="State" Relationship="CharityModel.FK_Address_State" FromRole="Address" ToRole="State" />
+          <NavigationProperty Name="Tehsil" Relationship="CharityModel.FK_Address_Tehsil" FromRole="Address" ToRole="Tehsil" />
+          <NavigationProperty Name="UnionCouncil" Relationship="CharityModel.FK_Address_UnionCouncil" FromRole="Address" ToRole="UnionCouncil" />
         </EntityType>
         <EntityType Name="AspNetRole">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUsers" Relationship="Self.AspNetUserRoles" FromRole="AspNetRoles" ToRole="AspNetUsers" />
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="CharityModel.AspNetUserRoles" FromRole="AspNetRole" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="AspNetUserClaim">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
+          <NavigationProperty Name="AspNetUser" Relationship="CharityModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaim" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="AspNetUserLogin">
           <Key>
@@ -1027,16 +1229,16 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <PropertyRef Name="ProviderKey" />
             <PropertyRef Name="UserId" />
           </Key>
-          <Property Name="LoginProvider" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ProviderKey" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogins" ToRole="AspNetUsers" />
+          <Property Name="LoginProvider" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderKey" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="CharityModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogin" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="AspNetUser">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
           <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -1047,43 +1249,43 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
           <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
           <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
-          <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
-          <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
-          <NavigationProperty Name="People" Relationship="Self.FK_People_AspNetUsers" FromRole="AspNetUsers" ToRole="People" />
-          <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUserClaims" Relationship="CharityModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserClaim" />
+          <NavigationProperty Name="AspNetUserLogins" Relationship="CharityModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserLogin" />
+          <NavigationProperty Name="People" Relationship="CharityModel.FK_People_AspNetUsers" FromRole="AspNetUser" ToRole="Person" />
+          <NavigationProperty Name="AspNetRoles" Relationship="CharityModel.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
         </EntityType>
         <EntityType Name="Country">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Addresses" Relationship="Self.FK_Address_Country" FromRole="Country" ToRole="Address" />
-          <NavigationProperty Name="Requests" Relationship="Self.FK_Request_Country" FromRole="Country" ToRole="Request" />
-          <NavigationProperty Name="States" Relationship="Self.FK_State_Country" FromRole="Country" ToRole="State" />
+          <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_Country" FromRole="Country" ToRole="Address" />
+          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_Country" FromRole="Country" ToRole="Request" />
+          <NavigationProperty Name="States" Relationship="CharityModel.FK_State_Country" FromRole="Country" ToRole="State" />
         </EntityType>
         <EntityType Name="District">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="StateId" Type="Int32" Nullable="false" />
           <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Addresses" Relationship="Self.FK_Address_District" FromRole="District" ToRole="Address" />
-          <NavigationProperty Name="State" Relationship="Self.FK_District_State" FromRole="District" ToRole="State" />
-          <NavigationProperty Name="Requests" Relationship="Self.FK_Request_District" FromRole="District" ToRole="Request" />
-          <NavigationProperty Name="Tehsils" Relationship="Self.FK_Tehsil_District" FromRole="District" ToRole="Tehsil" />
+          <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_District" FromRole="District" ToRole="Address" />
+          <NavigationProperty Name="State" Relationship="CharityModel.FK_District_State" FromRole="District" ToRole="State" />
+          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_District" FromRole="District" ToRole="Request" />
+          <NavigationProperty Name="Tehsils" Relationship="CharityModel.FK_Tehsil_District" FromRole="District" ToRole="Tehsil" />
         </EntityType>
         <EntityType Name="ExceptionLog">
           <Key>
@@ -1102,17 +1304,20 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ParentId" Type="Int32" />
-          <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="DefaultUOM" Type="Int32" Nullable="false" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="Int32" />
           <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="IsCartItem" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="UOM" Relationship="Self.FK_Item_UOM" FromRole="Item" ToRole="UOM" />
-          <NavigationProperty Name="OrganizationItems" Relationship="Self.FK_OrganizationItem_Item" FromRole="Item" ToRole="OrganizationItem" />
-          <NavigationProperty Name="RequestItems" Relationship="Self.FK_RequestItem_Item" FromRole="Item" ToRole="RequestItem" />
+          <NavigationProperty Name="Item1" Relationship="CharityModel.FK_ChildItem_ParentItem" FromRole="Item" ToRole="Item1" />
+          <NavigationProperty Name="Item2" Relationship="CharityModel.FK_ChildItem_ParentItem" FromRole="Item1" ToRole="Item" />
+          <NavigationProperty Name="UOM" Relationship="CharityModel.FK_Item_UOM" FromRole="Item" ToRole="UOM" />
+          <NavigationProperty Name="OrganizationItems" Relationship="CharityModel.FK_OrganizationItem_Item" FromRole="Item" ToRole="OrganizationItem" />
+          <NavigationProperty Name="RequestItems" Relationship="CharityModel.FK_RequestItem_Item" FromRole="Item" ToRole="RequestItem" />
         </EntityType>
         <EntityType Name="Log">
           <Key>
@@ -1130,18 +1335,21 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="ParentId" Type="Int32" />
           <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="LogoUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="Int32" />
           <Property Name="OwnedBy" Type="Int32" Nullable="false" />
           <Property Name="IsVerfied" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="OrganizationItems" Relationship="Self.FK_OrganizationItem_Organization" FromRole="Organization" ToRole="OrganizationItem" />
-          <NavigationProperty Name="OrganizationPeoples" Relationship="Self.FK_OrganizationPeople_Organization" FromRole="Organization" ToRole="OrganizationPeople" />
-          <NavigationProperty Name="RequestOrganizations" Relationship="Self.FK_RequestOrganization_Organization" FromRole="Organization" ToRole="RequestOrganization" />
+          <NavigationProperty Name="Organization1" Relationship="CharityModel.FK_Organization_Organization" FromRole="Organization" ToRole="Organization1" />
+          <NavigationProperty Name="Organization2" Relationship="CharityModel.FK_Organization_Organization" FromRole="Organization1" ToRole="Organization" />
+          <NavigationProperty Name="OrganizationItems" Relationship="CharityModel.FK_OrganizationItem_Organization" FromRole="Organization" ToRole="OrganizationItem" />
+          <NavigationProperty Name="OrganizationPeoples" Relationship="CharityModel.FK_OrganizationPeople_Organization" FromRole="Organization" ToRole="OrganizationPeople" />
+          <NavigationProperty Name="RequestOrganizations" Relationship="CharityModel.FK_RequestOrganization_Organization" FromRole="Organization" ToRole="RequestOrganization" />
         </EntityType>
         <EntityType Name="OrganizationItem">
           <Key>
@@ -1152,8 +1360,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="ItemId" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Item" Relationship="Self.FK_OrganizationItem_Item" FromRole="OrganizationItem" ToRole="Item" />
-          <NavigationProperty Name="Organization" Relationship="Self.FK_OrganizationItem_Organization" FromRole="OrganizationItem" ToRole="Organization" />
+          <NavigationProperty Name="Item" Relationship="CharityModel.FK_OrganizationItem_Item" FromRole="OrganizationItem" ToRole="Item" />
+          <NavigationProperty Name="Organization" Relationship="CharityModel.FK_OrganizationItem_Organization" FromRole="OrganizationItem" ToRole="Organization" />
         </EntityType>
         <EntityType Name="OrganizationPeople">
           <Key>
@@ -1164,8 +1372,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="OrganizationId" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Organization" Relationship="Self.FK_OrganizationPeople_Organization" FromRole="OrganizationPeople" ToRole="Organization" />
-          <NavigationProperty Name="Person" Relationship="Self.FK_OrganizationPeople_People" FromRole="OrganizationPeople" ToRole="People" />
+          <NavigationProperty Name="Organization" Relationship="CharityModel.FK_OrganizationPeople_Organization" FromRole="OrganizationPeople" ToRole="Organization" />
+          <NavigationProperty Name="Person" Relationship="CharityModel.FK_OrganizationPeople_People" FromRole="OrganizationPeople" ToRole="Person" />
         </EntityType>
         <EntityType Name="Person">
           <Key>
@@ -1173,16 +1381,26 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="IdentificationNo" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
           <Property Name="Type" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_People_AspNetUsers" FromRole="People" ToRole="AspNetUsers" />
-          <NavigationProperty Name="OrganizationPeoples" Relationship="Self.FK_OrganizationPeople_People" FromRole="People" ToRole="OrganizationPeople" />
-          <NavigationProperty Name="Requests" Relationship="Self.FK_Request_Beneficiary" FromRole="People" ToRole="Request" />
-          <NavigationProperty Name="RequestVolunteers" Relationship="Self.FK_RequestVolunteer_People" FromRole="People" ToRole="RequestVolunteer" />
+          <NavigationProperty Name="AspNetUser" Relationship="CharityModel.FK_People_AspNetUsers" FromRole="Person" ToRole="AspNetUser" />
+          <NavigationProperty Name="OrganizationPeoples" Relationship="CharityModel.FK_OrganizationPeople_People" FromRole="Person" ToRole="OrganizationPeople" />
+          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_Beneficiary" FromRole="Person" ToRole="Request" />
+          <NavigationProperty Name="RequestVolunteers" Relationship="CharityModel.FK_RequestVolunteer_People" FromRole="Person" ToRole="RequestVolunteer" />
+        </EntityType>
+        <EntityType Name="RefreshToken">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="IssuedTime" Type="DateTime" Precision="3" />
+          <Property Name="ExpiredTime" Type="DateTime" Precision="3" />
+          <Property Name="ProtectedTicket" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Request">
           <Key>
@@ -1208,16 +1426,16 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UnionCouncilId" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Country" Relationship="Self.FK_Request_Country" FromRole="Request" ToRole="Country" />
-          <NavigationProperty Name="District" Relationship="Self.FK_Request_District" FromRole="Request" ToRole="District" />
-          <NavigationProperty Name="Person" Relationship="Self.FK_Request_Beneficiary" FromRole="Request" ToRole="People" />
-          <NavigationProperty Name="State" Relationship="Self.FK_Request_State" FromRole="Request" ToRole="State" />
-          <NavigationProperty Name="Tehsil" Relationship="Self.FK_Request_Tehsil" FromRole="Request" ToRole="Tehsil" />
-          <NavigationProperty Name="UnionCouncil" Relationship="Self.FK_Request_UnionCouncil" FromRole="Request" ToRole="UnionCouncil" />
-          <NavigationProperty Name="RequestItems" Relationship="Self.FK_RequestItem_Request" FromRole="Request" ToRole="RequestItem" />
-          <NavigationProperty Name="RequestOrganizations" Relationship="Self.FK_RequestOrganization_Request" FromRole="Request" ToRole="RequestOrganization" />
-          <NavigationProperty Name="RequestStatus" Relationship="Self.FK_RequestStatus_Request" FromRole="Request" ToRole="RequestStatus" />
-          <NavigationProperty Name="RequestVolunteers" Relationship="Self.FK_RequestVolunteer_RequestVolunteer" FromRole="Request" ToRole="RequestVolunteer" />
+          <NavigationProperty Name="Country" Relationship="CharityModel.FK_Request_Country" FromRole="Request" ToRole="Country" />
+          <NavigationProperty Name="District" Relationship="CharityModel.FK_Request_District" FromRole="Request" ToRole="District" />
+          <NavigationProperty Name="Person" Relationship="CharityModel.FK_Request_Beneficiary" FromRole="Request" ToRole="Person" />
+          <NavigationProperty Name="State" Relationship="CharityModel.FK_Request_State" FromRole="Request" ToRole="State" />
+          <NavigationProperty Name="Tehsil" Relationship="CharityModel.FK_Request_Tehsil" FromRole="Request" ToRole="Tehsil" />
+          <NavigationProperty Name="UnionCouncil" Relationship="CharityModel.FK_Request_UnionCouncil" FromRole="Request" ToRole="UnionCouncil" />
+          <NavigationProperty Name="RequestItems" Relationship="CharityModel.FK_RequestItem_Request" FromRole="Request" ToRole="RequestItem" />
+          <NavigationProperty Name="RequestOrganizations" Relationship="CharityModel.FK_RequestOrganization_Request" FromRole="Request" ToRole="RequestOrganization" />
+          <NavigationProperty Name="RequestStatus" Relationship="CharityModel.FK_RequestStatus_Request" FromRole="Request" ToRole="RequestStatu" />
+          <NavigationProperty Name="RequestVolunteers" Relationship="CharityModel.FK_RequestVolunteer_RequestVolunteer" FromRole="Request" ToRole="RequestVolunteer" />
         </EntityType>
         <EntityType Name="RequestItem">
           <Key>
@@ -1232,10 +1450,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="ApprovedUnit" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Item" Relationship="Self.FK_RequestItem_Item" FromRole="RequestItem" ToRole="Item" />
-          <NavigationProperty Name="Request" Relationship="Self.FK_RequestItem_Request" FromRole="RequestItem" ToRole="Request" />
-          <NavigationProperty Name="UOM" Relationship="Self.FK_RequestItem_UOM" FromRole="RequestItem" ToRole="UOM" />
-          <NavigationProperty Name="UOM1" Relationship="Self.FK_RequestItem_UOM1" FromRole="RequestItem" ToRole="UOM" />
+          <NavigationProperty Name="Item" Relationship="CharityModel.FK_RequestItem_Item" FromRole="RequestItem" ToRole="Item" />
+          <NavigationProperty Name="Request" Relationship="CharityModel.FK_RequestItem_Request" FromRole="RequestItem" ToRole="Request" />
+          <NavigationProperty Name="UOM" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="RequestItem" ToRole="UOM" />
+          <NavigationProperty Name="UOM1" Relationship="CharityModel.FK_RequestItem_UOM1" FromRole="RequestItem" ToRole="UOM" />
         </EntityType>
         <EntityType Name="RequestOrganization">
           <Key>
@@ -1246,8 +1464,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="OrganizationId" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Organization" Relationship="Self.FK_RequestOrganization_Organization" FromRole="RequestOrganization" ToRole="Organization" />
-          <NavigationProperty Name="Request" Relationship="Self.FK_RequestOrganization_Request" FromRole="RequestOrganization" ToRole="Request" />
+          <NavigationProperty Name="Organization" Relationship="CharityModel.FK_RequestOrganization_Organization" FromRole="RequestOrganization" ToRole="Organization" />
+          <NavigationProperty Name="Request" Relationship="CharityModel.FK_RequestOrganization_Request" FromRole="RequestOrganization" ToRole="Request" />
         </EntityType>
         <EntityType Name="RequestStatu">
           <Key>
@@ -1262,7 +1480,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Type" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Request" Relationship="Self.FK_RequestStatus_Request" FromRole="RequestStatus" ToRole="Request" />
+          <NavigationProperty Name="Request" Relationship="CharityModel.FK_RequestStatus_Request" FromRole="RequestStatu" ToRole="Request" />
         </EntityType>
         <EntityType Name="RequestVolunteer">
           <Key>
@@ -1273,8 +1491,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="VolunteerId" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Person" Relationship="Self.FK_RequestVolunteer_People" FromRole="RequestVolunteer" ToRole="People" />
-          <NavigationProperty Name="Request" Relationship="Self.FK_RequestVolunteer_RequestVolunteer" FromRole="RequestVolunteer" ToRole="Request" />
+          <NavigationProperty Name="Person" Relationship="CharityModel.FK_RequestVolunteer_People" FromRole="RequestVolunteer" ToRole="Person" />
+          <NavigationProperty Name="Request" Relationship="CharityModel.FK_RequestVolunteer_RequestVolunteer" FromRole="RequestVolunteer" ToRole="Request" />
         </EntityType>
         <EntityType Name="State">
           <Key>
@@ -1288,20 +1506,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Addresses" Relationship="Self.FK_Address_State" FromRole="State" ToRole="Address" />
-          <NavigationProperty Name="Country" Relationship="Self.FK_State_Country" FromRole="State" ToRole="Country" />
-          <NavigationProperty Name="Districts" Relationship="Self.FK_District_State" FromRole="State" ToRole="District" />
-          <NavigationProperty Name="Requests" Relationship="Self.FK_Request_State" FromRole="State" ToRole="Request" />
-        </EntityType>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_State" FromRole="State" ToRole="Address" />
+          <NavigationProperty Name="Country" Relationship="CharityModel.FK_State_Country" FromRole="State" ToRole="Country" />
+          <NavigationProperty Name="Districts" Relationship="CharityModel.FK_District_State" FromRole="State" ToRole="District" />
+          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_State" FromRole="State" ToRole="Request" />
         </EntityType>
         <EntityType Name="Tehsil">
           <Key>
@@ -1315,10 +1523,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Addresses" Relationship="Self.FK_Address_Tehsil" FromRole="Tehsil" ToRole="Address" />
-          <NavigationProperty Name="District" Relationship="Self.FK_Tehsil_District" FromRole="Tehsil" ToRole="District" />
-          <NavigationProperty Name="Requests" Relationship="Self.FK_Request_Tehsil" FromRole="Tehsil" ToRole="Request" />
-          <NavigationProperty Name="UnionCouncils" Relationship="Self.FK_UnionCouncil_Tehsil" FromRole="Tehsil" ToRole="UnionCouncil" />
+          <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_Tehsil" FromRole="Tehsil" ToRole="Address" />
+          <NavigationProperty Name="District" Relationship="CharityModel.FK_Tehsil_District" FromRole="Tehsil" ToRole="District" />
+          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_Tehsil" FromRole="Tehsil" ToRole="Request" />
+          <NavigationProperty Name="UnionCouncils" Relationship="CharityModel.FK_UnionCouncil_Tehsil" FromRole="Tehsil" ToRole="UnionCouncil" />
         </EntityType>
         <EntityType Name="UnionCouncil">
           <Key>
@@ -1332,16 +1540,16 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Addresses" Relationship="Self.FK_Address_UnionCouncil" FromRole="UnionCouncil" ToRole="Address" />
-          <NavigationProperty Name="Requests" Relationship="Self.FK_Request_UnionCouncil" FromRole="UnionCouncil" ToRole="Request" />
-          <NavigationProperty Name="Tehsil" Relationship="Self.FK_UnionCouncil_Tehsil" FromRole="UnionCouncil" ToRole="Tehsil" />
+          <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_UnionCouncil" FromRole="UnionCouncil" ToRole="Address" />
+          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_UnionCouncil" FromRole="UnionCouncil" ToRole="Request" />
+          <NavigationProperty Name="Tehsil" Relationship="CharityModel.FK_UnionCouncil_Tehsil" FromRole="UnionCouncil" ToRole="Tehsil" />
         </EntityType>
         <EntityType Name="UOM">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="NativeName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="Abbreviation" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="NoOfBaseUnit" Type="Double" Nullable="false" />
@@ -1349,23 +1557,13 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Type" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Items" Relationship="Self.FK_Item_UOM" FromRole="UOM" ToRole="Item" />
-          <NavigationProperty Name="RequestItems" Relationship="Self.FK_RequestItem_UOM" FromRole="UOM" ToRole="RequestItem" />
-          <NavigationProperty Name="RequestItems1" Relationship="Self.FK_RequestItem_UOM1" FromRole="UOM" ToRole="RequestItem" />
-        </EntityType>
-        <EntityType Name="RefreshToken">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="IssuedTime" Type="DateTime" Precision="3" />
-          <Property Name="ExpiredTime" Type="DateTime" Precision="3" />
-          <Property Name="ProtectedTicket" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Items" Relationship="CharityModel.FK_Item_UOM" FromRole="UOM" ToRole="Item" />
+          <NavigationProperty Name="RequestItems" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="UOM" ToRole="RequestItem" />
+          <NavigationProperty Name="RequestItems1" Relationship="CharityModel.FK_RequestItem_UOM1" FromRole="UOM" ToRole="RequestItem" />
         </EntityType>
         <Association Name="FK_Address_Address">
-          <End Role="Address" Type="Self.Address" Multiplicity="1" />
-          <End Role="Address1" Type="Self.Address" Multiplicity="0..1" />
+          <End Type="CharityModel.Address" Role="Address" Multiplicity="1" />
+          <End Type="CharityModel.Address" Role="Address1" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Address">
               <PropertyRef Name="Id" />
@@ -1376,8 +1574,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Address_Country">
-          <End Role="Country" Type="Self.Country" Multiplicity="0..1" />
-          <End Role="Address" Type="Self.Address" Multiplicity="*" />
+          <End Type="CharityModel.Country" Role="Country" Multiplicity="0..1" />
+          <End Type="CharityModel.Address" Role="Address" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Country">
               <PropertyRef Name="Id" />
@@ -1388,8 +1586,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Address_District">
-          <End Role="District" Type="Self.District" Multiplicity="0..1" />
-          <End Role="Address" Type="Self.Address" Multiplicity="*" />
+          <End Type="CharityModel.District" Role="District" Multiplicity="0..1" />
+          <End Type="CharityModel.Address" Role="Address" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="District">
               <PropertyRef Name="Id" />
@@ -1400,8 +1598,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Address_State">
-          <End Role="State" Type="Self.State" Multiplicity="0..1" />
-          <End Role="Address" Type="Self.Address" Multiplicity="*" />
+          <End Type="CharityModel.State" Role="State" Multiplicity="0..1" />
+          <End Type="CharityModel.Address" Role="Address" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="State">
               <PropertyRef Name="Id" />
@@ -1412,8 +1610,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Address_Tehsil">
-          <End Role="Tehsil" Type="Self.Tehsil" Multiplicity="0..1" />
-          <End Role="Address" Type="Self.Address" Multiplicity="*" />
+          <End Type="CharityModel.Tehsil" Role="Tehsil" Multiplicity="0..1" />
+          <End Type="CharityModel.Address" Role="Address" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Tehsil">
               <PropertyRef Name="Id" />
@@ -1424,8 +1622,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Address_UnionCouncil">
-          <End Role="UnionCouncil" Type="Self.UnionCouncil" Multiplicity="0..1" />
-          <End Role="Address" Type="Self.Address" Multiplicity="*" />
+          <End Type="CharityModel.UnionCouncil" Role="UnionCouncil" Multiplicity="0..1" />
+          <End Type="CharityModel.Address" Role="Address" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UnionCouncil">
               <PropertyRef Name="Id" />
@@ -1436,48 +1634,48 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
+          <End Type="CharityModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaim" Multiplicity="*" />
+          <End Type="CharityModel.AspNetUserClaim" Role="AspNetUserClaim" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="AspNetUserClaims">
+            <Dependent Role="AspNetUserClaim">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
+          <End Type="CharityModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogin" Multiplicity="*" />
+          <End Type="CharityModel.AspNetUserLogin" Role="AspNetUserLogin" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="AspNetUserLogins">
+            <Dependent Role="AspNetUserLogin">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_People_AspNetUsers">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="0..1" />
-          <End Role="People" Type="Self.Person" Multiplicity="*" />
+          <End Type="CharityModel.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="CharityModel.Person" Role="Person" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="People">
+            <Dependent Role="Person">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_Country">
-          <End Role="Country" Type="Self.Country" Multiplicity="0..1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Type="CharityModel.Country" Role="Country" Multiplicity="0..1" />
+          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Country">
               <PropertyRef Name="Id" />
@@ -1488,10 +1686,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_State_Country">
-          <End Role="Country" Type="Self.Country" Multiplicity="1">
+          <End Type="CharityModel.Country" Role="Country" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="State" Type="Self.State" Multiplicity="*" />
+          <End Type="CharityModel.State" Role="State" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Country">
               <PropertyRef Name="Id" />
@@ -1502,10 +1700,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_District_State">
-          <End Role="State" Type="Self.State" Multiplicity="1">
+          <End Type="CharityModel.State" Role="State" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="District" Type="Self.District" Multiplicity="*" />
+          <End Type="CharityModel.District" Role="District" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="State">
               <PropertyRef Name="Id" />
@@ -1516,8 +1714,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_District">
-          <End Role="District" Type="Self.District" Multiplicity="0..1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Type="CharityModel.District" Role="District" Multiplicity="0..1" />
+          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="District">
               <PropertyRef Name="Id" />
@@ -1528,8 +1726,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Tehsil_District">
-          <End Role="District" Type="Self.District" Multiplicity="1" />
-          <End Role="Tehsil" Type="Self.Tehsil" Multiplicity="*" />
+          <End Type="CharityModel.District" Role="District" Multiplicity="1" />
+          <End Type="CharityModel.Tehsil" Role="Tehsil" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="District">
               <PropertyRef Name="Id" />
@@ -1539,9 +1737,21 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ChildItem_ParentItem">
+          <End Type="CharityModel.Item" Role="Item" Multiplicity="0..1" />
+          <End Type="CharityModel.Item" Role="Item1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Item1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Item_UOM">
-          <End Role="UOM" Type="Self.UOM" Multiplicity="1" />
-          <End Role="Item" Type="Self.Item" Multiplicity="*" />
+          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="1" />
+          <End Type="CharityModel.Item" Role="Item" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UOM">
               <PropertyRef Name="Id" />
@@ -1552,8 +1762,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_OrganizationItem_Item">
-          <End Role="Item" Type="Self.Item" Multiplicity="1" />
-          <End Role="OrganizationItem" Type="Self.OrganizationItem" Multiplicity="*" />
+          <End Type="CharityModel.Item" Role="Item" Multiplicity="1" />
+          <End Type="CharityModel.OrganizationItem" Role="OrganizationItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Item">
               <PropertyRef Name="Id" />
@@ -1564,8 +1774,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestItem_Item">
-          <End Role="Item" Type="Self.Item" Multiplicity="1" />
-          <End Role="RequestItem" Type="Self.RequestItem" Multiplicity="*" />
+          <End Type="CharityModel.Item" Role="Item" Multiplicity="1" />
+          <End Type="CharityModel.RequestItem" Role="RequestItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Item">
               <PropertyRef Name="Id" />
@@ -1575,9 +1785,21 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Organization_Organization">
+          <End Type="CharityModel.Organization" Role="Organization" Multiplicity="0..1" />
+          <End Type="CharityModel.Organization" Role="Organization1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Organization1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_OrganizationItem_Organization">
-          <End Role="Organization" Type="Self.Organization" Multiplicity="1" />
-          <End Role="OrganizationItem" Type="Self.OrganizationItem" Multiplicity="*" />
+          <End Type="CharityModel.Organization" Role="Organization" Multiplicity="1" />
+          <End Type="CharityModel.OrganizationItem" Role="OrganizationItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Organization">
               <PropertyRef Name="Id" />
@@ -1588,8 +1810,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_OrganizationPeople_Organization">
-          <End Role="Organization" Type="Self.Organization" Multiplicity="1" />
-          <End Role="OrganizationPeople" Type="Self.OrganizationPeople" Multiplicity="*" />
+          <End Type="CharityModel.Organization" Role="Organization" Multiplicity="1" />
+          <End Type="CharityModel.OrganizationPeople" Role="OrganizationPeople" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Organization">
               <PropertyRef Name="Id" />
@@ -1600,8 +1822,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestOrganization_Organization">
-          <End Role="Organization" Type="Self.Organization" Multiplicity="1" />
-          <End Role="RequestOrganization" Type="Self.RequestOrganization" Multiplicity="*" />
+          <End Type="CharityModel.Organization" Role="Organization" Multiplicity="1" />
+          <End Type="CharityModel.RequestOrganization" Role="RequestOrganization" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Organization">
               <PropertyRef Name="Id" />
@@ -1612,10 +1834,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_OrganizationPeople_People">
-          <End Role="People" Type="Self.Person" Multiplicity="1" />
-          <End Role="OrganizationPeople" Type="Self.OrganizationPeople" Multiplicity="*" />
+          <End Type="CharityModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="CharityModel.OrganizationPeople" Role="OrganizationPeople" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="People">
+            <Principal Role="Person">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="OrganizationPeople">
@@ -1624,10 +1846,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_Beneficiary">
-          <End Role="People" Type="Self.Person" Multiplicity="1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Type="CharityModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="People">
+            <Principal Role="Person">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Request">
@@ -1636,10 +1858,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestVolunteer_People">
-          <End Role="People" Type="Self.Person" Multiplicity="1" />
-          <End Role="RequestVolunteer" Type="Self.RequestVolunteer" Multiplicity="*" />
+          <End Type="CharityModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="CharityModel.RequestVolunteer" Role="RequestVolunteer" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="People">
+            <Principal Role="Person">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="RequestVolunteer">
@@ -1648,8 +1870,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_State">
-          <End Role="State" Type="Self.State" Multiplicity="0..1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Type="CharityModel.State" Role="State" Multiplicity="0..1" />
+          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="State">
               <PropertyRef Name="Id" />
@@ -1660,8 +1882,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_Tehsil">
-          <End Role="Tehsil" Type="Self.Tehsil" Multiplicity="0..1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Type="CharityModel.Tehsil" Role="Tehsil" Multiplicity="0..1" />
+          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Tehsil">
               <PropertyRef Name="Id" />
@@ -1672,8 +1894,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_UnionCouncil">
-          <End Role="UnionCouncil" Type="Self.UnionCouncil" Multiplicity="0..1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Type="CharityModel.UnionCouncil" Role="UnionCouncil" Multiplicity="0..1" />
+          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UnionCouncil">
               <PropertyRef Name="Id" />
@@ -1684,8 +1906,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestItem_Request">
-          <End Role="Request" Type="Self.Request" Multiplicity="1" />
-          <End Role="RequestItem" Type="Self.RequestItem" Multiplicity="*" />
+          <End Type="CharityModel.Request" Role="Request" Multiplicity="1" />
+          <End Type="CharityModel.RequestItem" Role="RequestItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Request">
               <PropertyRef Name="Id" />
@@ -1696,8 +1918,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestOrganization_Request">
-          <End Role="Request" Type="Self.Request" Multiplicity="1" />
-          <End Role="RequestOrganization" Type="Self.RequestOrganization" Multiplicity="*" />
+          <End Type="CharityModel.Request" Role="Request" Multiplicity="1" />
+          <End Type="CharityModel.RequestOrganization" Role="RequestOrganization" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Request">
               <PropertyRef Name="Id" />
@@ -1708,20 +1930,20 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestStatus_Request">
-          <End Role="Request" Type="Self.Request" Multiplicity="1" />
-          <End Role="RequestStatus" Type="Self.RequestStatu" Multiplicity="*" />
+          <End Type="CharityModel.Request" Role="Request" Multiplicity="1" />
+          <End Type="CharityModel.RequestStatu" Role="RequestStatu" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Request">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="RequestStatus">
+            <Dependent Role="RequestStatu">
               <PropertyRef Name="RequestId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestVolunteer_RequestVolunteer">
-          <End Role="Request" Type="Self.Request" Multiplicity="1" />
-          <End Role="RequestVolunteer" Type="Self.RequestVolunteer" Multiplicity="*" />
+          <End Type="CharityModel.Request" Role="Request" Multiplicity="1" />
+          <End Type="CharityModel.RequestVolunteer" Role="RequestVolunteer" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Request">
               <PropertyRef Name="Id" />
@@ -1732,8 +1954,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestItem_UOM">
-          <End Role="UOM" Type="Self.UOM" Multiplicity="1" />
-          <End Role="RequestItem" Type="Self.RequestItem" Multiplicity="*" />
+          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="1" />
+          <End Type="CharityModel.RequestItem" Role="RequestItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UOM">
               <PropertyRef Name="Id" />
@@ -1744,8 +1966,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestItem_UOM1">
-          <End Role="UOM" Type="Self.UOM" Multiplicity="0..1" />
-          <End Role="RequestItem" Type="Self.RequestItem" Multiplicity="*" />
+          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="0..1" />
+          <End Type="CharityModel.RequestItem" Role="RequestItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UOM">
               <PropertyRef Name="Id" />
@@ -1756,10 +1978,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_UnionCouncil_Tehsil">
-          <End Role="Tehsil" Type="Self.Tehsil" Multiplicity="1">
+          <End Type="CharityModel.Tehsil" Role="Tehsil" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="UnionCouncil" Type="Self.UnionCouncil" Multiplicity="*" />
+          <End Type="CharityModel.UnionCouncil" Role="UnionCouncil" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Tehsil">
               <PropertyRef Name="Id" />
@@ -1770,543 +1992,387 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </ReferentialConstraint>
         </Association>
         <Association Name="AspNetUserRoles">
-          <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="*" />
+          <End Type="CharityModel.AspNetRole" Role="AspNetRole" Multiplicity="*" />
+          <End Type="CharityModel.AspNetUser" Role="AspNetUser" Multiplicity="*" />
         </Association>
-        <EntityContainer Name="CharityEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
-          <EntitySet Name="Addresses" EntityType="Self.Address" />
-          <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRole" />
-          <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaim" />
-          <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogin" />
-          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUser" />
-          <EntitySet Name="Countries" EntityType="Self.Country" />
-          <EntitySet Name="Districts" EntityType="Self.District" />
-          <EntitySet Name="ExceptionLogs" EntityType="Self.ExceptionLog" />
-          <EntitySet Name="Items" EntityType="Self.Item" />
-          <EntitySet Name="Logs" EntityType="Self.Log" />
-          <EntitySet Name="Organizations" EntityType="Self.Organization" />
-          <EntitySet Name="OrganizationItems" EntityType="Self.OrganizationItem" />
-          <EntitySet Name="OrganizationPeoples" EntityType="Self.OrganizationPeople" />
-          <EntitySet Name="People" EntityType="Self.Person" />
-          <EntitySet Name="Requests" EntityType="Self.Request" />
-          <EntitySet Name="RequestItems" EntityType="Self.RequestItem" />
-          <EntitySet Name="RequestOrganizations" EntityType="Self.RequestOrganization" />
-          <EntitySet Name="RequestStatus" EntityType="Self.RequestStatu" />
-          <EntitySet Name="RequestVolunteers" EntityType="Self.RequestVolunteer" />
-          <EntitySet Name="States" EntityType="Self.State" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
-          <EntitySet Name="Tehsils" EntityType="Self.Tehsil" />
-          <EntitySet Name="UnionCouncils" EntityType="Self.UnionCouncil" />
-          <EntitySet Name="UOMs" EntityType="Self.UOM" />
-          <EntitySet Name="RefreshTokens" EntityType="Self.RefreshToken" />
-          <AssociationSet Name="FK_Address_Address" Association="Self.FK_Address_Address">
-            <End Role="Address" EntitySet="Addresses" />
-            <End Role="Address1" EntitySet="Addresses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Address_Country" Association="Self.FK_Address_Country">
-            <End Role="Country" EntitySet="Countries" />
-            <End Role="Address" EntitySet="Addresses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Address_District" Association="Self.FK_Address_District">
-            <End Role="District" EntitySet="Districts" />
-            <End Role="Address" EntitySet="Addresses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Address_State" Association="Self.FK_Address_State">
-            <End Role="State" EntitySet="States" />
-            <End Role="Address" EntitySet="Addresses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Address_Tehsil" Association="Self.FK_Address_Tehsil">
-            <End Role="Tehsil" EntitySet="Tehsils" />
-            <End Role="Address" EntitySet="Addresses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Address_UnionCouncil" Association="Self.FK_Address_UnionCouncil">
-            <End Role="UnionCouncil" EntitySet="UnionCouncils" />
-            <End Role="Address" EntitySet="Addresses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
-          </AssociationSet>
-          <AssociationSet Name="FK_People_AspNetUsers" Association="Self.FK_People_AspNetUsers">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="People" EntitySet="People" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Request_Country" Association="Self.FK_Request_Country">
-            <End Role="Country" EntitySet="Countries" />
-            <End Role="Request" EntitySet="Requests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_State_Country" Association="Self.FK_State_Country">
-            <End Role="Country" EntitySet="Countries" />
-            <End Role="State" EntitySet="States" />
-          </AssociationSet>
-          <AssociationSet Name="FK_District_State" Association="Self.FK_District_State">
-            <End Role="State" EntitySet="States" />
-            <End Role="District" EntitySet="Districts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Request_District" Association="Self.FK_Request_District">
-            <End Role="District" EntitySet="Districts" />
-            <End Role="Request" EntitySet="Requests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Tehsil_District" Association="Self.FK_Tehsil_District">
-            <End Role="District" EntitySet="Districts" />
-            <End Role="Tehsil" EntitySet="Tehsils" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Item_UOM" Association="Self.FK_Item_UOM">
-            <End Role="UOM" EntitySet="UOMs" />
-            <End Role="Item" EntitySet="Items" />
-          </AssociationSet>
-          <AssociationSet Name="FK_OrganizationItem_Item" Association="Self.FK_OrganizationItem_Item">
-            <End Role="Item" EntitySet="Items" />
-            <End Role="OrganizationItem" EntitySet="OrganizationItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestItem_Item" Association="Self.FK_RequestItem_Item">
-            <End Role="Item" EntitySet="Items" />
-            <End Role="RequestItem" EntitySet="RequestItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_OrganizationItem_Organization" Association="Self.FK_OrganizationItem_Organization">
-            <End Role="Organization" EntitySet="Organizations" />
-            <End Role="OrganizationItem" EntitySet="OrganizationItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_OrganizationPeople_Organization" Association="Self.FK_OrganizationPeople_Organization">
-            <End Role="Organization" EntitySet="Organizations" />
-            <End Role="OrganizationPeople" EntitySet="OrganizationPeoples" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestOrganization_Organization" Association="Self.FK_RequestOrganization_Organization">
-            <End Role="Organization" EntitySet="Organizations" />
-            <End Role="RequestOrganization" EntitySet="RequestOrganizations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_OrganizationPeople_People" Association="Self.FK_OrganizationPeople_People">
-            <End Role="People" EntitySet="People" />
-            <End Role="OrganizationPeople" EntitySet="OrganizationPeoples" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Request_Beneficiary" Association="Self.FK_Request_Beneficiary">
-            <End Role="People" EntitySet="People" />
-            <End Role="Request" EntitySet="Requests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestVolunteer_People" Association="Self.FK_RequestVolunteer_People">
-            <End Role="People" EntitySet="People" />
-            <End Role="RequestVolunteer" EntitySet="RequestVolunteers" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Request_State" Association="Self.FK_Request_State">
-            <End Role="State" EntitySet="States" />
-            <End Role="Request" EntitySet="Requests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Request_Tehsil" Association="Self.FK_Request_Tehsil">
-            <End Role="Tehsil" EntitySet="Tehsils" />
-            <End Role="Request" EntitySet="Requests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Request_UnionCouncil" Association="Self.FK_Request_UnionCouncil">
-            <End Role="UnionCouncil" EntitySet="UnionCouncils" />
-            <End Role="Request" EntitySet="Requests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestItem_Request" Association="Self.FK_RequestItem_Request">
-            <End Role="Request" EntitySet="Requests" />
-            <End Role="RequestItem" EntitySet="RequestItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestOrganization_Request" Association="Self.FK_RequestOrganization_Request">
-            <End Role="Request" EntitySet="Requests" />
-            <End Role="RequestOrganization" EntitySet="RequestOrganizations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestStatus_Request" Association="Self.FK_RequestStatus_Request">
-            <End Role="Request" EntitySet="Requests" />
-            <End Role="RequestStatus" EntitySet="RequestStatus" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestVolunteer_RequestVolunteer" Association="Self.FK_RequestVolunteer_RequestVolunteer">
-            <End Role="Request" EntitySet="Requests" />
-            <End Role="RequestVolunteer" EntitySet="RequestVolunteers" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestItem_UOM" Association="Self.FK_RequestItem_UOM">
-            <End Role="UOM" EntitySet="UOMs" />
-            <End Role="RequestItem" EntitySet="RequestItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestItem_UOM1" Association="Self.FK_RequestItem_UOM1">
-            <End Role="UOM" EntitySet="UOMs" />
-            <End Role="RequestItem" EntitySet="RequestItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UnionCouncil_Tehsil" Association="Self.FK_UnionCouncil_Tehsil">
-            <End Role="Tehsil" EntitySet="Tehsils" />
-            <End Role="UnionCouncil" EntitySet="UnionCouncils" />
-          </AssociationSet>
-          <AssociationSet Name="AspNetUserRoles" Association="Self.AspNetUserRoles">
-            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-          </AssociationSet>
-        </EntityContainer>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="CharityModelStoreContainer" CdmEntityContainer="CharityEntities">
-          <EntitySetMapping Name="C__MigrationHistory">
-            <EntityTypeMapping TypeName="CharityModel.C__MigrationHistory">
-              <MappingFragment StoreEntitySet="__MigrationHistory">
-                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
-                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
-                <ScalarProperty Name="Model" ColumnName="Model" />
-                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Addresses">
-            <EntityTypeMapping TypeName="CharityModel.Address">
-              <MappingFragment StoreEntitySet="Address">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="EntityId" ColumnName="EntityId" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="AddressLine1" ColumnName="AddressLine1" />
-                <ScalarProperty Name="AddressLine2" ColumnName="AddressLine2" />
-                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
-                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
-                <ScalarProperty Name="MobileNo" ColumnName="MobileNo" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
-                <ScalarProperty Name="StateId" ColumnName="StateId" />
-                <ScalarProperty Name="DistrictId" ColumnName="DistrictId" />
-                <ScalarProperty Name="TehsilId" ColumnName="TehsilId" />
-                <ScalarProperty Name="UnionCouncilId" ColumnName="UnionCouncilId" />
-                <ScalarProperty Name="IsPermanentAddress" ColumnName="IsPermanentAddress" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetRoles">
-            <EntityTypeMapping TypeName="CharityModel.AspNetRole">
-              <MappingFragment StoreEntitySet="AspNetRoles">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetUserClaims">
-            <EntityTypeMapping TypeName="CharityModel.AspNetUserClaim">
-              <MappingFragment StoreEntitySet="AspNetUserClaims">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
-                <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetUserLogins">
-            <EntityTypeMapping TypeName="CharityModel.AspNetUserLogin">
-              <MappingFragment StoreEntitySet="AspNetUserLogins">
-                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
-                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetUsers">
-            <EntityTypeMapping TypeName="CharityModel.AspNetUser">
-              <MappingFragment StoreEntitySet="AspNetUsers">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
-                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
-                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
-                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
-                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
-                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
-                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
-                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Countries">
-            <EntityTypeMapping TypeName="CharityModel.Country">
-              <MappingFragment StoreEntitySet="Country">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Districts">
-            <EntityTypeMapping TypeName="CharityModel.District">
-              <MappingFragment StoreEntitySet="District">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
-                <ScalarProperty Name="StateId" ColumnName="StateId" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ExceptionLogs">
-            <EntityTypeMapping TypeName="CharityModel.ExceptionLog">
-              <MappingFragment StoreEntitySet="ExceptionLog">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="FilePath" ColumnName="FilePath" />
-                <ScalarProperty Name="MethodName" ColumnName="MethodName" />
-                <ScalarProperty Name="Exception" ColumnName="Exception" />
-                <ScalarProperty Name="SerializedModel" ColumnName="SerializedModel" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Items">
-            <EntityTypeMapping TypeName="CharityModel.Item">
-              <MappingFragment StoreEntitySet="Item">
+          <FunctionImportMapping FunctionImportName="spGetItemWithChildren" FunctionName="CharityModel.Store.spGetItemWithChildren">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CharityModel.spGetItemWithChildren_Result">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="DefaultUOM" ColumnName="DefaultUOM" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="IsCartItem" ColumnName="IsCartItem" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="C__MigrationHistory">
+            <EntityTypeMapping TypeName="CharityModel.C__MigrationHistory">
+              <MappingFragment StoreEntitySet="__MigrationHistory">
+                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
+                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Addresses">
+            <EntityTypeMapping TypeName="CharityModel.Address">
+              <MappingFragment StoreEntitySet="Address">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsPermanentAddress" ColumnName="IsPermanentAddress" />
+                <ScalarProperty Name="UnionCouncilId" ColumnName="UnionCouncilId" />
+                <ScalarProperty Name="TehsilId" ColumnName="TehsilId" />
+                <ScalarProperty Name="DistrictId" ColumnName="DistrictId" />
+                <ScalarProperty Name="StateId" ColumnName="StateId" />
+                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="MobileNo" ColumnName="MobileNo" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+                <ScalarProperty Name="AddressLine2" ColumnName="AddressLine2" />
+                <ScalarProperty Name="AddressLine1" ColumnName="AddressLine1" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="EntityId" ColumnName="EntityId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetRoles">
+            <EntityTypeMapping TypeName="CharityModel.AspNetRole">
+              <MappingFragment StoreEntitySet="AspNetRoles">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserClaims">
+            <EntityTypeMapping TypeName="CharityModel.AspNetUserClaim">
+              <MappingFragment StoreEntitySet="AspNetUserClaims">
+                <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
+                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserLogins">
+            <EntityTypeMapping TypeName="CharityModel.AspNetUserLogin">
+              <MappingFragment StoreEntitySet="AspNetUserLogins">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
+                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUsers">
+            <EntityTypeMapping TypeName="CharityModel.AspNetUser">
+              <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Countries">
+            <EntityTypeMapping TypeName="CharityModel.Country">
+              <MappingFragment StoreEntitySet="Country">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Districts">
+            <EntityTypeMapping TypeName="CharityModel.District">
+              <MappingFragment StoreEntitySet="District">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="StateId" ColumnName="StateId" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExceptionLogs">
+            <EntityTypeMapping TypeName="CharityModel.ExceptionLog">
+              <MappingFragment StoreEntitySet="ExceptionLog">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="SerializedModel" ColumnName="SerializedModel" />
+                <ScalarProperty Name="Exception" ColumnName="Exception" />
+                <ScalarProperty Name="MethodName" ColumnName="MethodName" />
+                <ScalarProperty Name="FilePath" ColumnName="FilePath" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Items">
+            <EntityTypeMapping TypeName="CharityModel.Item">
+              <MappingFragment StoreEntitySet="Item">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsCartItem" ColumnName="IsCartItem" />
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="DefaultUOM" ColumnName="DefaultUOM" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Logs">
             <EntityTypeMapping TypeName="CharityModel.Log">
               <MappingFragment StoreEntitySet="Log">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="PK" ColumnName="PK" />
-                <ScalarProperty Name="TableName" ColumnName="TableName" />
-                <ScalarProperty Name="SerializedModel" ColumnName="SerializedModel" />
-                <ScalarProperty Name="ActionBy" ColumnName="ActionBy" />
                 <ScalarProperty Name="ActionDate" ColumnName="ActionDate" />
+                <ScalarProperty Name="ActionBy" ColumnName="ActionBy" />
+                <ScalarProperty Name="SerializedModel" ColumnName="SerializedModel" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="PK" ColumnName="PK" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Organizations">
             <EntityTypeMapping TypeName="CharityModel.Organization">
               <MappingFragment StoreEntitySet="Organization">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
-                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="LogoUrl" ColumnName="LogoUrl" />
-                <ScalarProperty Name="OwnedBy" ColumnName="OwnedBy" />
-                <ScalarProperty Name="IsVerfied" ColumnName="IsVerfied" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsVerfied" ColumnName="IsVerfied" />
+                <ScalarProperty Name="OwnedBy" ColumnName="OwnedBy" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="LogoUrl" ColumnName="LogoUrl" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OrganizationItems">
             <EntityTypeMapping TypeName="CharityModel.OrganizationItem">
               <MappingFragment StoreEntitySet="OrganizationItem">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
-                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OrganizationPeoples">
             <EntityTypeMapping TypeName="CharityModel.OrganizationPeople">
               <MappingFragment StoreEntitySet="OrganizationPeople">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="PeopleId" ColumnName="PeopleId" />
-                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
+                <ScalarProperty Name="PeopleId" ColumnName="PeopleId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="People">
             <EntityTypeMapping TypeName="CharityModel.Person">
               <MappingFragment StoreEntitySet="People">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="IdentificationNo" ColumnName="IdentificationNo" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Requests">
-            <EntityTypeMapping TypeName="CharityModel.Request">
-              <MappingFragment StoreEntitySet="Request">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="PeopleId" ColumnName="PeopleId" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
-                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
-                <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
-                <ScalarProperty Name="IsCollected" ColumnName="IsCollected" />
-                <ScalarProperty Name="CollectionDate" ColumnName="CollectionDate" />
-                <ScalarProperty Name="PrefferedCollectionTime" ColumnName="PrefferedCollectionTime" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="AddressLatLong" ColumnName="AddressLatLong" />
-                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
-                <ScalarProperty Name="StateId" ColumnName="StateId" />
-                <ScalarProperty Name="DistrictId" ColumnName="DistrictId" />
-                <ScalarProperty Name="TehsilId" ColumnName="TehsilId" />
-                <ScalarProperty Name="UnionCouncilId" ColumnName="UnionCouncilId" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RequestItems">
-            <EntityTypeMapping TypeName="CharityModel.RequestItem">
-              <MappingFragment StoreEntitySet="RequestItem">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
-                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="SelectedUnit" ColumnName="SelectedUnit" />
-                <ScalarProperty Name="ApprovedQuantity" ColumnName="ApprovedQuantity" />
-                <ScalarProperty Name="ApprovedUnit" ColumnName="ApprovedUnit" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RequestOrganizations">
-            <EntityTypeMapping TypeName="CharityModel.RequestOrganization">
-              <MappingFragment StoreEntitySet="RequestOrganization">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
-                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RequestStatus">
-            <EntityTypeMapping TypeName="CharityModel.RequestStatu">
-              <MappingFragment StoreEntitySet="RequestStatus">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RequestVolunteers">
-            <EntityTypeMapping TypeName="CharityModel.RequestVolunteer">
-              <MappingFragment StoreEntitySet="RequestVolunteer">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
-                <ScalarProperty Name="VolunteerId" ColumnName="VolunteerId" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="States">
-            <EntityTypeMapping TypeName="CharityModel.State">
-              <MappingFragment StoreEntitySet="State">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
-                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="CharityModel.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="definition" ColumnName="definition" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Tehsils">
-            <EntityTypeMapping TypeName="CharityModel.Tehsil">
-              <MappingFragment StoreEntitySet="Tehsil">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
-                <ScalarProperty Name="DistrictId" ColumnName="DistrictId" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UnionCouncils">
-            <EntityTypeMapping TypeName="CharityModel.UnionCouncil">
-              <MappingFragment StoreEntitySet="UnionCouncil">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
-                <ScalarProperty Name="TehsilId" ColumnName="TehsilId" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UOMs">
-            <EntityTypeMapping TypeName="CharityModel.UOM">
-              <MappingFragment StoreEntitySet="UOM">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
-                <ScalarProperty Name="Abbreviation" ColumnName="Abbreviation" />
-                <ScalarProperty Name="NoOfBaseUnit" ColumnName="NoOfBaseUnit" />
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RefreshTokens">
             <EntityTypeMapping TypeName="CharityModel.RefreshToken">
               <MappingFragment StoreEntitySet="RefreshToken">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="IssuedTime" ColumnName="IssuedTime" />
-                <ScalarProperty Name="ExpiredTime" ColumnName="ExpiredTime" />
                 <ScalarProperty Name="ProtectedTicket" ColumnName="ProtectedTicket" />
+                <ScalarProperty Name="ExpiredTime" ColumnName="ExpiredTime" />
+                <ScalarProperty Name="IssuedTime" ColumnName="IssuedTime" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Requests">
+            <EntityTypeMapping TypeName="CharityModel.Request">
+              <MappingFragment StoreEntitySet="Request">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="UnionCouncilId" ColumnName="UnionCouncilId" />
+                <ScalarProperty Name="TehsilId" ColumnName="TehsilId" />
+                <ScalarProperty Name="DistrictId" ColumnName="DistrictId" />
+                <ScalarProperty Name="StateId" ColumnName="StateId" />
+                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
+                <ScalarProperty Name="AddressLatLong" ColumnName="AddressLatLong" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="PrefferedCollectionTime" ColumnName="PrefferedCollectionTime" />
+                <ScalarProperty Name="CollectionDate" ColumnName="CollectionDate" />
+                <ScalarProperty Name="IsCollected" ColumnName="IsCollected" />
+                <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
+                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="PeopleId" ColumnName="PeopleId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RequestItems">
+            <EntityTypeMapping TypeName="CharityModel.RequestItem">
+              <MappingFragment StoreEntitySet="RequestItem">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ApprovedUnit" ColumnName="ApprovedUnit" />
+                <ScalarProperty Name="ApprovedQuantity" ColumnName="ApprovedQuantity" />
+                <ScalarProperty Name="SelectedUnit" ColumnName="SelectedUnit" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RequestOrganizations">
+            <EntityTypeMapping TypeName="CharityModel.RequestOrganization">
+              <MappingFragment StoreEntitySet="RequestOrganization">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
+                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RequestStatus">
+            <EntityTypeMapping TypeName="CharityModel.RequestStatu">
+              <MappingFragment StoreEntitySet="RequestStatus">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RequestVolunteers">
+            <EntityTypeMapping TypeName="CharityModel.RequestVolunteer">
+              <MappingFragment StoreEntitySet="RequestVolunteer">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="VolunteerId" ColumnName="VolunteerId" />
+                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="States">
+            <EntityTypeMapping TypeName="CharityModel.State">
+              <MappingFragment StoreEntitySet="State">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tehsils">
+            <EntityTypeMapping TypeName="CharityModel.Tehsil">
+              <MappingFragment StoreEntitySet="Tehsil">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="DistrictId" ColumnName="DistrictId" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UnionCouncils">
+            <EntityTypeMapping TypeName="CharityModel.UnionCouncil">
+              <MappingFragment StoreEntitySet="UnionCouncil">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="TehsilId" ColumnName="TehsilId" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UOMs">
+            <EntityTypeMapping TypeName="CharityModel.UOM">
+              <MappingFragment StoreEntitySet="UOM">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="NoOfBaseUnit" ColumnName="NoOfBaseUnit" />
+                <ScalarProperty Name="Abbreviation" ColumnName="Abbreviation" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <AssociationSetMapping Name="AspNetUserRoles" TypeName="CharityModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
-            <EndProperty Name="AspNetRoles">
-              <ScalarProperty Name="Id" ColumnName="RoleId" />
-            </EndProperty>
-            <EndProperty Name="AspNetUsers">
+            <EndProperty Name="AspNetUser">
               <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
+            <EndProperty Name="AspNetRole">
+              <ScalarProperty Name="Id" ColumnName="RoleId" />
+            </EndProperty>
           </AssociationSetMapping>
-        </EntityContainerMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

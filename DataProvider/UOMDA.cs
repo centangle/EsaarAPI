@@ -5,6 +5,7 @@ using System.Data;
 using Models;
 using System;
 using System.Data.Entity;
+using DataProvider.Helpers;
 
 namespace DataProvider
 {
@@ -19,7 +20,6 @@ namespace DataProvider
                     try
                     {
                         UOM dbModel = new UOM();
-                        dbModel.Id = model.Id;
                         dbModel.Name = model.Name;
                         dbModel.NativeName = model.NativeName;
                         dbModel.Abbreviation = model.Abbreviation;
@@ -29,8 +29,12 @@ namespace DataProvider
                         dbModel.IsActive = model.IsActive;
                         context.UOMs.Add(dbModel);
                         bool result = await context.SaveChangesAsync() > 0;
-                        model.Id = dbModel.Id;
-                        await AddChildUOM(context, model);
+                        if (result)
+                        {
+                            model.Id = dbModel.Id;
+                            AddChildUOM(context, model);
+                            await context.SaveChangesAsync();
+                        }
                         transaction.Commit();
                         return model.Id;
                     }
@@ -51,18 +55,19 @@ namespace DataProvider
                 {
                     try
                     {
-                        UOM uOM = await context.UOMs.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
-                        if (uOM != null)
+                        UOM dbModel = await context.UOMs.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+                        if (dbModel != null)
                         {
-                            uOM.Name = model.Name;
-                            uOM.NativeName = model.NativeName;
-                            uOM.Abbreviation = model.Abbreviation;
-                            uOM.Type = (int)model.Type;
-                            uOM.IsDeleted = model.IsDeleted;
-                            await DeleteChildUOMByParentId(context, uOM.Id);
-                            var childAdded = await AddChildUOM(context, model);
-                            bool result = (await context.SaveChangesAsync() > 0 || childAdded);
+                            dbModel.Name = model.Name;
+                            dbModel.NativeName = model.NativeName;
+                            dbModel.Abbreviation = model.Abbreviation;
+                            dbModel.Type = (int)model.Type;
+                            dbModel.IsDeleted = model.IsDeleted;
+                            dbModel.IsActive = model.IsActive;
+                            var childModified = await ModifyChildItems(context, model);
+                            bool result = (await context.SaveChangesAsync() > 0 && childModified);
                             transaction.Commit();
+                            return result;
                         }
                         return false;
                     }
@@ -76,21 +81,21 @@ namespace DataProvider
             }
         }
 
-        public async Task<bool> DeleteUOMById(int Id)
+        public async Task<bool> DeleteUOM(int Id)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                UOM uOM = await context.UOMs.Where(x => x.Id == Id).FirstOrDefaultAsync();
-                if (uOM != null)
+                UOM dbModel = await context.UOMs.Where(x => x.Id == Id).FirstOrDefaultAsync();
+                if (dbModel != null)
                 {
-                    uOM.IsDeleted = true;
+                    dbModel.IsDeleted = true;
                     return await context.SaveChangesAsync() > 0;
                 }
                 return false;
             }
         }
 
-        public async Task<PaginatedResultModel<UOMModel>> GetUOMByFilter(UOMSearchModel filters)
+        public async Task<PaginatedResultModel<UOMModel>> GetUOM(UOMSearchModel filters)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -110,7 +115,7 @@ namespace DataProvider
                 List<UOMModel> UOMList = await UOMsQueryable.OrderBy(x => x.Name).Skip((filters.CurrentPage - 1) * filters.RecordsPerPage).Take(filters.RecordsPerPage).ToListAsync();
                 foreach (var uom in UOMList)
                 {
-                    uom.ChildUOMS = await (from u in context.UOMs
+                    uom.Childrens = await (from u in context.UOMs
                                            where u.ParentId == uom.Id
                                            select new UOMModel
                                            {
@@ -130,7 +135,7 @@ namespace DataProvider
             }
         }
 
-        public async Task<PaginatedResultModel<UOMModel>> GetUOMsForDDAsync(UOMSearchModel filters)
+        public async Task<PaginatedResultModel<UOMModel>> GetUOMForDD(UOMSearchModel filters)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -171,28 +176,54 @@ namespace DataProvider
             }
         }
 
-        private async Task<bool> AddChildUOM(CharityEntities context, UOMModel model)
+        private async Task<bool> ModifyChildItems(CharityEntities context, UOMModel model)
         {
-            foreach (var cuom in model.ChildUOMS)
+            var masterList = await context.UOMs.Where(x => x.ParentId == model.Id).ToListAsync();
+            var newItems = UpdatedListItem.NewItems(model.Childrens);
+            var updatedItems = UpdatedListItem.UpdatedItems(masterList, model.Childrens);
+            var deletedItems = UpdatedListItem.DeletedItems(masterList, model.Childrens);
+            AddChildUOM(context, model);
+            UpdateChildUOM(updatedItems, model.Childrens);
+            DeleteChildUOM(deletedItems);
+            return await context.SaveChangesAsync() > 0;
+        }
+        private void AddChildUOM(CharityEntities context, UOMModel model)
+        {
+            foreach (var item in model.Childrens)
             {
                 UOM dbModel = new UOM();
+                dbModel.Name = item.Name;
+                dbModel.NativeName = item.NativeName;
+                dbModel.Abbreviation = item.Abbreviation;
+                dbModel.NoOfBaseUnit = item.NoOfBaseUnit;
+                dbModel.IsActive = item.IsActive;
+                dbModel.IsDeleted = item.IsDeleted;
+                dbModel.ParentId = model.Id;
+                context.UOMs.Add(dbModel);
+            }
+        }
+
+        private void UpdateChildUOM(List<UOM> masterItems, ICollection<UOMModel> modifiedItems)
+        {
+            foreach (var cuom in modifiedItems)
+            {
+                UOM dbModel = masterItems.Where(x => x.Id == cuom.Id).FirstOrDefault();
                 dbModel.Name = cuom.Name;
                 dbModel.NativeName = cuom.NativeName;
                 dbModel.Abbreviation = cuom.Abbreviation;
                 dbModel.NoOfBaseUnit = cuom.NoOfBaseUnit;
                 dbModel.IsActive = cuom.IsActive;
                 dbModel.IsDeleted = cuom.IsDeleted;
-                dbModel.ParentId = model.Id;
-                context.UOMs.Add(dbModel);
+                dbModel.ParentId = cuom.ParentId;
             }
-            return await context.SaveChangesAsync() > 0;
         }
 
-        private async Task<bool> DeleteChildUOMByParentId(CharityEntities context, int ParentId)
+        private void DeleteChildUOM(List<UOM> deletedItems)
         {
-            List<UOM> childUOMs = await context.UOMs.Where(x => x.ParentId == ParentId).AsNoTracking().ToListAsync();
-            context.UOMs.RemoveRange(childUOMs);
-            return await context.SaveChangesAsync() > 0;
+            foreach (var item in deletedItems)
+            {
+                item.IsDeleted = true;
+            }
         }
     }
 }

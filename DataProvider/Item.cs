@@ -17,6 +17,7 @@ namespace DataProvider
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Item()
         {
+            this.Item1 = new HashSet<Item>();
             this.OrganizationItems = new HashSet<OrganizationItem>();
             this.RequestItems = new HashSet<RequestItem>();
         }
@@ -27,11 +28,15 @@ namespace DataProvider
         public string NativeName { get; set; }
         public int DefaultUOM { get; set; }
         public string Description { get; set; }
+        public Nullable<int> Type { get; set; }
         public string ImageUrl { get; set; }
         public bool IsCartItem { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Item> Item1 { get; set; }
+        public virtual Item Item2 { get; set; }
         public virtual UOM UOM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrganizationItem> OrganizationItems { get; set; }

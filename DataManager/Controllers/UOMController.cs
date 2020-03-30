@@ -10,9 +10,9 @@ namespace DataManager.Controllers
         public async Task<PaginatedResultModel<UOMModel>> Get(string name = null, bool forDropDown = false)
         {
             if (forDropDown)
-                return await logic.GetUOMsForDDAsync(new UOMSearchModel { Name = name });
+                return await logic.GetUOMForDD(new UOMSearchModel { Name = name });
             else
-                return await logic.GetUOMByFilter(new UOMSearchModel { Name = name });
+                return await logic.GetUOM(new UOMSearchModel { Name = name });
         }
 
         public async Task<int> Post(UOMModel model)
@@ -27,7 +27,7 @@ namespace DataManager.Controllers
 
         public async Task<bool> Delete(int id)
         {
-            return await logic.DeleteUOMById(id);
+            return await logic.DeleteUOM(id);
         }
     }
 }

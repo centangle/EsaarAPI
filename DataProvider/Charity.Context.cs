@@ -12,6 +12,8 @@ namespace DataProvider
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class CharityEntities : DbContext
     {
@@ -40,16 +42,24 @@ namespace DataProvider
         public virtual DbSet<OrganizationItem> OrganizationItems { get; set; }
         public virtual DbSet<OrganizationPeople> OrganizationPeoples { get; set; }
         public virtual DbSet<Person> People { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<Request> Requests { get; set; }
         public virtual DbSet<RequestItem> RequestItems { get; set; }
         public virtual DbSet<RequestOrganization> RequestOrganizations { get; set; }
         public virtual DbSet<RequestStatu> RequestStatus { get; set; }
         public virtual DbSet<RequestVolunteer> RequestVolunteers { get; set; }
         public virtual DbSet<State> States { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Tehsil> Tehsils { get; set; }
         public virtual DbSet<UnionCouncil> UnionCouncils { get; set; }
         public virtual DbSet<UOM> UOMs { get; set; }
-        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+    
+        public virtual ObjectResult<spGetItemWithChildren_Result> spGetItemWithChildren(Nullable<int> id)
+        {
+            var idParameter = id.HasValue ?
+                new ObjectParameter("Id", id) :
+                new ObjectParameter("Id", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<spGetItemWithChildren_Result>("spGetItemWithChildren", idParameter);
+        }
     }
 }

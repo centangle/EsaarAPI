@@ -19,19 +19,19 @@ namespace BusinessLogic
             return await DA.UpdateUOM(model);
         }
 
-        public async Task<bool> DeleteUOMById(int Id)
+        public async Task<bool> DeleteUOM(int Id)
         {
-            return await DA.DeleteUOMById(Id);
+            return await DA.DeleteUOM(Id);
         }
 
-        public async Task<PaginatedResultModel<UOMModel>> GetUOMByFilter(UOMSearchModel filters)
+        public async Task<PaginatedResultModel<UOMModel>> GetUOM(UOMSearchModel filters)
         {
-            return await DA.GetUOMByFilter(filters);
+            return await DA.GetUOM(filters);
         }
 
-        public async Task<PaginatedResultModel<UOMModel>> GetUOMsForDDAsync(UOMSearchModel filters)
+        public async Task<PaginatedResultModel<UOMModel>> GetUOMForDD(UOMSearchModel filters)
         {
-            return await DA.GetUOMsForDDAsync(filters);
+            return await DA.GetUOMForDD(filters);
         }
 
     }
