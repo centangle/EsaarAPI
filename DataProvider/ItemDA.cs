@@ -222,6 +222,101 @@ namespace DataProvider
             }
         }
 
+        public async Task<List<ItemModel>> GetPeripheralItems()
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                return await (from i in context.Items
+                              join pi in context.UOMs on i.ParentId equals pi.Id into tpi
+                              from pi in tpi.DefaultIfEmpty()
+                              join uom in context.UOMs on i.DefaultUOM equals uom.Id into tuom
+                              from uom in tuom.DefaultIfEmpty()
+                              where i.IsCartItem == true
+                              && i.IsDeleted == false
+                              select new ItemModel
+                              {
+                                  Id = i.Id,
+                                  Parent = new BriefModel()
+                                  {
+                                      Id = pi == null ? 0 : pi.Id,
+                                      Name = pi == null ? "" : pi.Name,
+                                      NativeName = pi == null ? "" : pi.NativeName
+                                  },
+                                  Name = i.Name,
+                                  NativeName = i.NativeName,
+                                  DefaultUOM = new BriefModel()
+                                  {
+                                      Id = uom == null ? 0 : uom.Id,
+                                      Name = uom == null ? "" : uom.Name,
+                                      NativeName = uom == null ? "" : uom.NativeName
+                                  },
+
+                                  Description = i.Description,
+                                  Type = (ItemTypeCatalog)(i.Type ?? 0),
+                                  ImageUrl = i.ImageUrl,
+                                  IsCartItem = i.IsCartItem,
+                                  IsActive = i.IsActive,
+                              }).ToListAsync();
+            }
+        }
+
+        public async Task<List<ItemModel>> GetRootItems()
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                return await (from i in context.Items
+                              join pi in context.UOMs on i.ParentId equals pi.Id into tpi
+                              from pi in tpi.DefaultIfEmpty()
+                              join uom in context.UOMs on i.DefaultUOM equals uom.Id into tuom
+                              from uom in tuom.DefaultIfEmpty()
+                              where i.ParentId == null
+                              && i.IsDeleted == false
+                              select new ItemModel
+                              {
+                                  Id = i.Id,
+                                  Parent = new BriefModel()
+                                  {
+                                      Id = pi == null ? 0 : pi.Id,
+                                      Name = pi == null ? "" : pi.Name,
+                                      NativeName = pi == null ? "" : pi.NativeName
+                                  },
+                                  Name = i.Name,
+                                  NativeName = i.NativeName,
+                                  DefaultUOM = new BriefModel()
+                                  {
+                                      Id = uom == null ? 0 : uom.Id,
+                                      Name = uom == null ? "" : uom.Name,
+                                      NativeName = uom == null ? "" : uom.NativeName
+                                  },
+
+                                  Description = i.Description,
+                                  Type = (ItemTypeCatalog)(i.Type ?? 0),
+                                  ImageUrl = i.ImageUrl,
+                                  IsCartItem = i.IsCartItem,
+                                  IsActive = i.IsActive,
+                              }).ToListAsync();
+            }
+        }
+
+        public async Task<List<ItemModel>> GetAllItems()
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                List<ItemModel> items = new List<ItemModel>();
+                context.Configuration.LazyLoadingEnabled = false;// Otherwise Children Items which are delete are also loaded
+                var ItemsDBList = await context.Items.SqlQuery(GetAllItemsTreeQuery()).ToListAsync();
+                var rootNodes = ItemsDBList.Where(x => x.ParentId == null || x.ParentId == 0).ToList();
+                foreach (var rootNode in rootNodes)
+                {
+                    MapperConfiguration mapperConfig = GetItemMapperConfig();
+                    var nodeItems = TreeHelper.GetTreeData<ItemModel, Item, ItemModel>(ItemsDBList, true, true, mapperConfig, rootNode.Id);
+                    items.Add(nodeItems.FirstOrDefault());
+                }
+                return items;
+            }
+
+        }
+
         public async Task<IEnumerable<T>> GetSingleItemTreeEF<T, M>(CharityEntities context, int id, bool returnViewModel = true, bool getHierarchicalData = true)
             where T : class, IBase
             where M : class, ITree<M>
@@ -245,6 +340,25 @@ namespace DataProvider
             }
         }
 
+        private string GetAllItemsTreeQuery()
+        {
+            return @"
+                        WITH cte As
+                        (
+                            SELECT ParentItem.*
+                            FROM Item ParentItem
+                            WHERE ParentId is null
+                            and IsDeleted=0
+                            UNION All
+                                SELECT ChildItem.*
+                                FROM Item ChildItem
+                                JOIN cte
+                                On cte.id = ChildItem.ParentId
+                                where ChildItem.IsDeleted=0
+                        )
+                        SELECT*
+                        FROM cte";
+        }
         private string GetItemTreeQuery()
         {
             return @"

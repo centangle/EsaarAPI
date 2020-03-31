@@ -41,6 +41,18 @@ namespace BusinessLogic
         {
             return await DA.GetSingleItemTree<ItemModel, ItemModel>(id);
         }
+        public async Task<IEnumerable<ItemModel>> GetPeripheralItems()
+        {
+            return await DA.GetPeripheralItems();
+        }
+        public async Task<IEnumerable<ItemModel>> GetRootItems()
+        {
+            return await DA.GetRootItems();
+        }
+        public async Task<IEnumerable<ItemModel>> GetAllItems()
+        {
+            return await DA.GetAllItems();
+        }
         public async Task<bool> DeleteItem(int id)
         {
             return await DA.DeleteItem(id);

@@ -18,6 +18,24 @@ namespace DataManager.Controllers
         {
             return (await logic.GetSingleItemHierarchy(id)).FirstOrDefault();
         }
+
+        [HttpGet]
+        public async Task<IEnumerable<ItemModel>> GetPeripheralItems()
+        {
+            return await logic.GetPeripheralItems();
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<ItemModel>> GetRootItems()
+        {
+            return await logic.GetRootItems();
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<ItemModel>> GetAllItems()
+        {
+            return await logic.GetAllItems();
+        }
         [HttpPost]
         public async Task<int> Create(ItemModel model)
         {
