@@ -20,10 +20,11 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="250" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="250" />
           <Property Name="EntityId" Type="int" />
           <Property Name="Type" Type="int" />
-          <Property Name="AddressLine1" Type="varchar" MaxLength="1000" />
+          <Property Name="AddressLine1" Type="nvarchar" MaxLength="1000" />
           <Property Name="AddressLine2" Type="varchar" MaxLength="1000" />
           <Property Name="ZipCode" Type="varchar" MaxLength="250" />
           <Property Name="PhoneNo" Type="varchar" MaxLength="50" />
@@ -133,7 +134,7 @@
           <Property Name="ParentId" Type="int" />
           <Property Name="Name" Type="varchar" MaxLength="500" Nullable="false" />
           <Property Name="NativeName" Type="varchar" MaxLength="500" />
-          <Property Name="DefaultUOM" Type="int" Nullable="false" />
+          <Property Name="DefaultUOM" Type="int" />
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="Type" Type="int" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
@@ -193,7 +194,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserId" Type="nvarchar" MaxLength="128" />
+          <Property Name="AuthUserId" Type="nvarchar" MaxLength="128" />
           <Property Name="Name" Type="varchar" MaxLength="500" Nullable="false" />
           <Property Name="NativeName" Type="varchar" MaxLength="500" />
           <Property Name="IdentificationNo" Type="varchar" MaxLength="128" />
@@ -492,7 +493,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Item_UOM">
-          <End Role="UOM" Type="Self.UOM" Multiplicity="1" />
+          <End Role="UOM" Type="Self.UOM" Multiplicity="0..1" />
           <End Role="Item" Type="Self.Item" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UOM">
@@ -571,7 +572,7 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="People">
-              <PropertyRef Name="UserId" />
+              <PropertyRef Name="AuthUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -795,9 +796,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="spGetItemWithChildren" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="Id" Type="int" Mode="In" />
-        </Function>
         <EntityContainer Name="CharityModelStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Address" EntityType="Self.Address" Schema="dbo" store:Type="Tables" />
@@ -1180,10 +1178,11 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="EntityId" Type="Int32" />
           <Property Name="Type" Type="Int32" />
-          <Property Name="AddressLine1" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="AddressLine1" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="AddressLine2" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
           <Property Name="ZipCode" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="PhoneNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -1306,7 +1305,7 @@
           <Property Name="ParentId" Type="Int32" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="DefaultUOM" Type="Int32" Nullable="false" />
+          <Property Name="DefaultUOM" Type="Int32" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Type" Type="Int32" />
           <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
@@ -1380,7 +1379,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="AuthUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="IdentificationNo" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
@@ -1669,7 +1668,7 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Person">
-              <PropertyRef Name="UserId" />
+              <PropertyRef Name="AuthUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1750,7 +1749,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Item_UOM">
-          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="1" />
+          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="0..1" />
           <End Type="CharityModel.Item" Role="Item" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UOM">
@@ -2001,23 +2000,6 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="CharityModelStoreContainer" CdmEntityContainer="CharityEntities">
-          <FunctionImportMapping FunctionImportName="spGetItemWithChildren" FunctionName="CharityModel.Store.spGetItemWithChildren">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="CharityModel.spGetItemWithChildren_Result">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
-                <ScalarProperty Name="DefaultUOM" ColumnName="DefaultUOM" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
-                <ScalarProperty Name="IsCartItem" ColumnName="IsCartItem" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="C__MigrationHistory">
             <EntityTypeMapping TypeName="CharityModel.C__MigrationHistory">
               <MappingFragment StoreEntitySet="__MigrationHistory">
@@ -2047,6 +2029,7 @@
                 <ScalarProperty Name="AddressLine1" ColumnName="AddressLine1" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="EntityId" ColumnName="EntityId" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
@@ -2213,7 +2196,7 @@
                 <ScalarProperty Name="IdentificationNo" ColumnName="IdentificationNo" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="AuthUserId" ColumnName="AuthUserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2372,7 +2355,7 @@
               <ScalarProperty Name="Id" ColumnName="RoleId" />
             </EndProperty>
           </AssociationSetMapping>
-          </EntityContainerMapping>
+        </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

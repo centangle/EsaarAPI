@@ -23,7 +23,7 @@ namespace DataProvider
         }
     
         public int Id { get; set; }
-        public string UserId { get; set; }
+        public string AuthUserId { get; set; }
         public string Name { get; set; }
         public string NativeName { get; set; }
         public string IdentificationNo { get; set; }

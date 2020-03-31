@@ -171,7 +171,8 @@ namespace DataProvider
         {
             dbModel.Name = model.Name;
             dbModel.NativeName = model.NativeName;
-            dbModel.DefaultUOM = model.DefaultUOM.Id;
+            if (model.DefaultUOM != null)
+                dbModel.DefaultUOM = model.DefaultUOM.Id;
             dbModel.Description = model.Description;
             dbModel.IsCartItem = model.IsCartItem;
             dbModel.IsActive = model.IsActive;
@@ -382,7 +383,7 @@ namespace DataProvider
         {
             return new MapperConfiguration(cfg => cfg.CreateMap<Item, ItemModel>()
                .ForMember(dest => dest.DefaultUOM,
-               input => input.MapFrom(i => new BriefModel { Id = i.DefaultUOM })));
+               input => input.MapFrom(i => new BriefModel { Id = i.DefaultUOM ?? 0 })));
         }
     }
 }

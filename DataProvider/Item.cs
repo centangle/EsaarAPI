@@ -26,7 +26,7 @@ namespace DataProvider
         public Nullable<int> ParentId { get; set; }
         public string Name { get; set; }
         public string NativeName { get; set; }
-        public int DefaultUOM { get; set; }
+        public Nullable<int> DefaultUOM { get; set; }
         public string Description { get; set; }
         public Nullable<int> Type { get; set; }
         public string ImageUrl { get; set; }

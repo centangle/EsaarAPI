@@ -16,6 +16,7 @@ namespace DataProvider
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string NativeName { get; set; }
         public Nullable<int> EntityId { get; set; }
         public Nullable<int> Type { get; set; }
         public string AddressLine1 { get; set; }
