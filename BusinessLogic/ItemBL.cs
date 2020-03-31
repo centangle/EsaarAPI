@@ -6,27 +6,45 @@ namespace BusinessLogic
 {
     public partial class Logic
     {
-        public async Task<int> AddSingleItem(ItemModel model)
+        public async Task<int> CreateItem(ItemModel model)
         {
-            return await DA.AddSingleItem(model);
+            return await DA.CreateItem(model);
         }
-        public async Task<bool> UpdateSingleItem(ItemModel model)
+        public async Task<bool> UpdateItem(ItemModel model)
         {
-            return await DA.UpdateSingleItem(model);
+            return await DA.UpdateItem(model);
         }
-        public async Task<int> AddMultipleChildItem(ItemModel model)
+        public async Task<int> CreateSingleItemWithChildrens(ItemModel model)
         {
-            return await DA.AddMultipleChildItem(model);
-        }
-
-        public async Task<bool> UpdateMultipleChildItem(ItemModel model)
-        {
-            return await DA.UpdateMultipleChildItem(model);
+            return await DA.CreateSingleItemWithChildrens(model);
         }
 
+        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model)
+        {
+            return await DA.UpdateSingleItemWithChildren(model);
+        }
+        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
+        {
+            return await DA.CreateMultipleItemsWithChildrens(items);
+        }
+
+        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
+        {
+            return await DA.UpdateMultipleItemsWithChildrens(items);
+        }
+
+        public async Task<ItemModel> GetItem(int id)
+        {
+            return await DA.GetItem(id);
+        }
         public async Task<IEnumerable<ItemModel>> GetSingleItemHierarchy(int id)
         {
-            return await DA.GetSingleItemTree<ItemModel,ItemModel>(id);
+            return await DA.GetSingleItemTree<ItemModel, ItemModel>(id);
+        }
+        public async Task<bool> DeleteItem(int id)
+        {
+            return await DA.DeleteItem(id);
         }
     }
+
 }

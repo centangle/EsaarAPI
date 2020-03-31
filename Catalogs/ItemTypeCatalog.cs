@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Catalogs
 {
-    public class ItemTypeCatalog
+    public enum ItemTypeCatalog : int
     {
+        General
     }
 }

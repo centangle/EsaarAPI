@@ -17,6 +17,7 @@ namespace Models
         public string Name { get; set; }
         public string NativeName { get; set; }
         public int? ParentId { get; set; }
+        public BriefModel Parent { get; set; }
         public BriefModel DefaultUOM { get; set; }
         public ItemTypeCatalog Type { get; set; }
         [IgnoreDataMember]

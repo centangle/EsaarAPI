@@ -1,52 +1,55 @@
-﻿using DataManager.Catalogs;
-using Models;
-using System;
+﻿using Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
 
 namespace DataManager.Controllers
 {
     public class ItemController : BaseController
     {
-
-        public IEnumerable<string> Get()
+        public async Task<ItemModel> Get(int id)
         {
-            return new string[] { "value1", "value2" };
+            return await logic.GetItem(id);
         }
 
-        // GET: api/Item/5
-        public async Task<IEnumerable<ItemModel>> Get(int id)
+        public async Task<IEnumerable<ItemModel>> GetSingleItemTree(int id)
         {
             return await logic.GetSingleItemHierarchy(id);
         }
 
-        public async Task<int> Post(ItemModel model, ItemUpdationMethodCatalog creationMethod)
+        public async Task<int> Create(ItemModel model)
         {
-            if (creationMethod == ItemUpdationMethodCatalog.Single)
-                return await logic.AddSingleItem(model);
-            else if (creationMethod == ItemUpdationMethodCatalog.SingleWithMultipleChild)
-                return await logic.AddMultipleChildItem(model);
-            else
-                return 0;
+            return await logic.CreateItem(model);
         }
 
-        public async Task<bool> Put(ItemModel model, ItemUpdationMethodCatalog updationMethod)
+        public async Task<bool> Update(ItemModel model)
         {
-            if (updationMethod == ItemUpdationMethodCatalog.Single)
-                return await logic.UpdateSingleItem(model);
-            else if (updationMethod == ItemUpdationMethodCatalog.SingleWithMultipleChild)
-                return await logic.UpdateMultipleChildItem(model);
-            else
-                return false;
+            return await logic.UpdateItem(model);
+        }
+
+        public async Task<int> CreateSingleItemWithChildrens(ItemModel model)
+        {
+            return await logic.CreateSingleItemWithChildrens(model);
+        }
+
+        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model)
+        {
+            return await logic.UpdateSingleItemWithChildren(model);
+        }
+
+        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
+        {
+            return await logic.CreateMultipleItemsWithChildrens(items);
+        }
+
+        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
+        {
+            return await logic.UpdateMultipleItemsWithChildrens(items);
         }
 
         // DELETE: api/Item/5
-        public void Delete(int id)
+        public async Task<bool> Delete(int id)
         {
+            return await logic.DeleteItem(id);
         }
     }
 }

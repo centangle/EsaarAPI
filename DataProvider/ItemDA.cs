@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Catalogs;
 using Dapper;
 using DataProvider.Helpers;
 using Models;
@@ -18,7 +19,7 @@ namespace DataProvider
 {
     public partial class DataAccess
     {
-        public async Task<int> AddSingleItem(ItemModel model)
+        public async Task<int> CreateItem(ItemModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -29,7 +30,7 @@ namespace DataProvider
                 return model.Id;
             }
         }
-        public async Task<bool> UpdateSingleItem(ItemModel model)
+        public async Task<bool> UpdateItem(ItemModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -43,7 +44,7 @@ namespace DataProvider
             }
 
         }
-        public async Task<int> AddMultipleChildItem(ItemModel model)
+        public async Task<int> CreateSingleItemWithChildrens(ItemModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -66,7 +67,7 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> UpdateMultipleChildItem(ItemModel model)
+        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -93,6 +94,61 @@ namespace DataProvider
                 return false;
             }
         }
+        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var item in items)
+                        {
+                            var dbModel = AddTreeItem<Item, ItemModel>(item, true);
+                            context.Items.Add(dbModel);
+                            await context.SaveChangesAsync();
+                            item.Id = dbModel.Id;
+                        }
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var item in items)
+                        {
+                            var root = (await GetSingleItemTreeEF<Item, Item>(context, item.Id, false)).First();
+                            var itemToUpdate = context.Items.Where(x => x.Id == item.Id && x.IsDeleted == false).FirstOrDefault();
+                            if (itemToUpdate != null)
+                            {
+                                UpdateTreeItem(context, root, item);
+                                await context.SaveChangesAsync();
+                            }
+                        }
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
         public async Task<bool> DeleteItem(int Id)
         {
             using (CharityEntities context = new CharityEntities())
@@ -100,7 +156,8 @@ namespace DataProvider
                 Item dbModel = await context.Items.Where(x => x.Id == Id).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
-                    dbModel.IsDeleted = true;
+                    var root = (await GetSingleItemTreeEF<Item, Item>(context, dbModel.Id, false)).First();
+                    DeleteItemTree(root);
                     return await context.SaveChangesAsync() > 0;
                 }
                 return false;
@@ -123,44 +180,42 @@ namespace DataProvider
             return dbModel;
 
         }
-
-        public async Task<PaginatedResultModel<UOMModel>> GetItem(UOMSearchModel filters)
+        public async Task<ItemModel> GetItem(int id)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                PaginatedResultModel<UOMModel> searchResult = new PaginatedResultModel<UOMModel>();
-                IQueryable<UOMModel> UOMsQueryable = (from u in context.UOMs
-                                                      where (string.IsNullOrEmpty(filters.Name) || u.Name.ToLower().Contains(filters.Name.ToLower()))
-                                                       && (u.ParentId == null)
-                                                       && u.IsDeleted == false
-                                                      select new UOMModel
-                                                      {
-                                                          Id = u.Id,
-                                                          Name = u.Name,
-                                                          Abbreviation = u.Abbreviation,
-                                                          NoOfBaseUnit = u.NoOfBaseUnit,
-                                                          ParentId = null,
-                                                      }).AsQueryable();
-                List<UOMModel> UOMList = await UOMsQueryable.OrderBy(x => x.Name).Skip((filters.CurrentPage - 1) * filters.RecordsPerPage).Take(filters.RecordsPerPage).ToListAsync();
-                foreach (var uom in UOMList)
-                {
-                    uom.Childrens = await (from u in context.UOMs
-                                           where u.ParentId == uom.Id
-                                           select new UOMModel
-                                           {
-                                               Id = u.Id,
-                                               Name = u.Name,
-                                               Abbreviation = u.Abbreviation,
-                                               NoOfBaseUnit = u.NoOfBaseUnit,
-                                               ParentId = u.ParentId,
-                                           }).ToListAsync();
-                }
-                searchResult.Items = UOMList ?? new List<UOMModel>();
-                if (filters.CalculateTotal)
-                {
-                    searchResult.TotalCount = UOMsQueryable == null ? 0 : UOMsQueryable.Count();
-                }
-                return searchResult;
+                return await (from i in context.Items
+                              join pi in context.UOMs on i.ParentId equals pi.Id into tpi
+                              from pi in tpi.DefaultIfEmpty()
+                              join uom in context.UOMs on i.DefaultUOM equals uom.Id into tuom
+                              from uom in tuom.DefaultIfEmpty()
+                              where i.Id == id
+                              && i.IsDeleted == false
+                              select new ItemModel
+                              {
+                                  Id = i.Id,
+                                  ParentId= pi == null ? 0 : pi.Id,
+                                  Parent = new BriefModel()
+                                  {
+                                      Id = pi == null ? 0 : pi.Id,
+                                      Name = pi == null ? "" : pi.Name,
+                                      NativeName = pi == null ? "" : pi.NativeName
+                                  },
+                                  Name = i.Name,
+                                  NativeName = i.NativeName,
+                                  DefaultUOM = new BriefModel()
+                                  {
+                                      Id = uom == null ? 0 : uom.Id,
+                                      Name = uom == null ? "" : uom.Name,
+                                      NativeName = uom == null ? "" : uom.NativeName
+                                  },
+
+                                  Description = i.Description,
+                                  Type = (ItemTypeCatalog)(i.Type ?? 0),
+                                  ImageUrl = i.ImageUrl,
+                                  IsCartItem = i.IsCartItem,
+                                  IsActive = i.IsActive,
+                              }).FirstOrDefaultAsync();
             }
         }
 
