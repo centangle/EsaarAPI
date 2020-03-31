@@ -42,6 +42,8 @@ namespace DataProvider
                     SetItem(dbModel, model, false);
                     if (model.ParentId != 0)
                         dbModel.ParentId = model.ParentId;
+                    else
+                        dbModel.ParentId = null;
                     return await context.SaveChangesAsync() > 0;
                 }
                 return false;
@@ -171,7 +173,9 @@ namespace DataProvider
         {
             dbModel.Name = model.Name;
             dbModel.NativeName = model.NativeName;
-            if (model.DefaultUOM != null)
+            if (model.DefaultUOM == null)
+                dbModel.DefaultUOM = null;
+            else
                 dbModel.DefaultUOM = model.DefaultUOM.Id;
             dbModel.Description = model.Description;
             dbModel.IsCartItem = model.IsCartItem;
