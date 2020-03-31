@@ -340,6 +340,10 @@
       <Project>{45731f17-6a8f-418b-9ba1-9d02fd8bff19}</Project>
       <Name>BusinessLogic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Catalogs\Catalogs.csproj">
+      <Project>{2B92D596-BC79-4A45-87E7-00B2744880F6}</Project>
+      <Name>Catalogs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Helpers\Helpers.csproj">
       <Project>{f4ea60f3-f5af-4a82-ac80-92ef0ee8168e}</Project>
       <Name>Helpers</Name>

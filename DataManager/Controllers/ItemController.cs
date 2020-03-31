@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using Catalogs;
+using Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +15,10 @@ namespace DataManager.Controllers
             return await logic.GetItem(id);
         }
         [HttpGet]
-        public async Task<ItemModel> GetSingleItemTree(int id)
+        public async Task<IEnumerable<ItemModel>> GetSingleItemTree(int id, DataStructureCatalog dataStructure)
         {
-            return (await logic.GetSingleItemHierarchy(id)).FirstOrDefault();
+            bool getHierarichalData = (dataStructure == DataStructureCatalog.List ? false : true);
+            return await logic.GetSingleItemHierarchy(id, getHierarichalData);
         }
 
         [HttpGet]
@@ -32,9 +34,10 @@ namespace DataManager.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ItemModel>> GetAllItems()
+        public async Task<IEnumerable<ItemModel>> GetAllItems(DataStructureCatalog dataStructure)
         {
-            return await logic.GetAllItems();
+            bool getHierarichalData = (dataStructure == DataStructureCatalog.List ? false : true);
+            return await logic.GetAllItems(getHierarichalData);
         }
         [HttpPost]
         public async Task<int> Create(ItemModel model)

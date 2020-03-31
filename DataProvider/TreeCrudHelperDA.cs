@@ -1,6 +1,8 @@
-﻿using DataProvider.Helpers;
+﻿using AutoMapper;
+using DataProvider.Helpers;
 using Models;
 using Models.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DataProvider
@@ -83,6 +85,36 @@ namespace DataProvider
                 {
                     DeleteItemTree(item);
                 }
+            }
+        }
+
+        public static IEnumerable<T> GetSingleNodeTree<T, D, M>(int id, MapperConfiguration mapperConfig, IEnumerable<D> itemsDBList, bool returnViewModel = true, bool getHierarchicalData = true)
+            where T : class, IBase
+            where D : class, ITree<D>
+            where M : class, ITree<M>
+        {
+            var items= TreeHelper.GetTreeData<T, D, M>(id, mapperConfig, itemsDBList, returnViewModel, getHierarchicalData);
+            return items;
+        }
+        public IEnumerable<T> GetAllNodes<T, D, M>(MapperConfiguration mapperConfig, IEnumerable<D> itemsDBList, bool returnViewModel = true, bool getHierarchicalData = true)
+             where T : class, IBase
+            where D : class, ITree<D>
+            where M : class, ITree<M>
+        {
+            if (getHierarchicalData)
+            {
+                List<T> items = new List<T>();
+                var rootNodes = itemsDBList.Where(x => x.ParentId == null || x.ParentId == 0).ToList();
+                foreach (var rootNode in rootNodes)
+                {
+                    var nodeItems = TreeHelper.GetTreeData<T, D, M>(rootNode.Id, mapperConfig, itemsDBList, returnViewModel, getHierarchicalData);
+                    items.Add(nodeItems.FirstOrDefault());
+                }
+                return items;
+            }
+            else
+            {
+                return TreeHelper.GetTreeData<T, D, M>(0, mapperConfig, itemsDBList, returnViewModel, getHierarchicalData);
             }
         }
     }

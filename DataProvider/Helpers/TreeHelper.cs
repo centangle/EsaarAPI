@@ -2,12 +2,13 @@
 using Models.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DataProvider.Helpers
 {
     public static class TreeHelper
     {
-        public static IEnumerable<T> GetTreeData<T, D, M>(IEnumerable<D> dbList, bool returnViewModel, bool getHierarchicalData, MapperConfiguration mapperConfig,int rootNodeId)
+        public static IEnumerable<T> GetTreeData<T, D, M>(int rootNodeId, MapperConfiguration mapperConfig, IEnumerable<D> dbList, bool returnViewModel, bool getHierarchicalData)
             where D : ITree<D>
             where M : class, ITree<M>
             where T : class, IBase
@@ -15,7 +16,7 @@ namespace DataProvider.Helpers
             List<T> items = new List<T>();
             if (getHierarchicalData)
             {
-                var rootNode = dbList.Where(x => x.Id== rootNodeId).FirstOrDefault();
+                var rootNode = dbList.Where(x => x.Id == rootNodeId).FirstOrDefault();
                 if (returnViewModel)
                 {
                     var item = GetMappedItem<D, M>(rootNode, mapperConfig);
@@ -74,5 +75,7 @@ namespace DataProvider.Helpers
             IMapper iMapper = mapperConfig.CreateMapper();
             return iMapper.Map<D, M>(dbItem);
         }
+
+
     }
 }

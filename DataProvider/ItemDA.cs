@@ -77,7 +77,7 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var root = (await GetSingleItemTreeEF<Item, Item>(context, model.Id, false)).First();
+                var root = (await GetSingleItemTree<Item, Item>(context, model.Id, false)).First();
                 var itemToUpdate = context.Items.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefault();
                 if (itemToUpdate != null)
                 {
@@ -136,7 +136,7 @@ namespace DataProvider
                     {
                         foreach (var item in items)
                         {
-                            var root = (await GetSingleItemTreeEF<Item, Item>(context, item.Id, false)).First();
+                            var root = (await GetSingleItemTree<Item, Item>(context, item.Id, false)).First();
                             var itemToUpdate = context.Items.Where(x => x.Id == item.Id && x.IsDeleted == false).FirstOrDefault();
                             if (itemToUpdate != null)
                             {
@@ -162,7 +162,7 @@ namespace DataProvider
                 Item dbModel = await context.Items.Where(x => x.Id == Id).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
-                    var root = (await GetSingleItemTreeEF<Item, Item>(context, dbModel.Id, false)).First();
+                    var root = (await GetSingleItemTree<Item, Item>(context, dbModel.Id, false)).First();
                     DeleteItemTree(root);
                     return await context.SaveChangesAsync() > 0;
                 }
@@ -303,46 +303,35 @@ namespace DataProvider
             }
         }
 
-        public async Task<List<ItemModel>> GetAllItems()
+        public async Task<IEnumerable<ItemModel>> GetAllItems(bool getHierarchicalData)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                List<ItemModel> items = new List<ItemModel>();
-                context.Configuration.LazyLoadingEnabled = false;// Otherwise Children Items which are delete are also loaded
-                var ItemsDBList = await context.Items.SqlQuery(GetAllItemsTreeQuery()).ToListAsync();
-                var rootNodes = ItemsDBList.Where(x => x.ParentId == null || x.ParentId == 0).ToList();
-                foreach (var rootNode in rootNodes)
-                {
-                    MapperConfiguration mapperConfig = GetItemMapperConfig();
-                    var nodeItems = TreeHelper.GetTreeData<ItemModel, Item, ItemModel>(ItemsDBList, true, true, mapperConfig, rootNode.Id);
-                    items.Add(nodeItems.FirstOrDefault());
-                }
-                return items;
+                var itemsDBList = await context.Items.SqlQuery(GetAllItemsTreeQuery()).AsNoTracking().ToListAsync();
+                MapperConfiguration mapperConfig = GetItemMapperConfig();
+                return GetAllNodes<ItemModel, Item, ItemModel>(mapperConfig, itemsDBList, true, getHierarchicalData);
             }
 
         }
-
-        public async Task<IEnumerable<T>> GetSingleItemTreeEF<T, M>(CharityEntities context, int id, bool returnViewModel = true, bool getHierarchicalData = true)
+        public async Task<IEnumerable<ItemModel>> GetSingleTreeItem(int id, bool getHierarchicalData)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                context.Configuration.AutoDetectChangesEnabled = false;
+                return await GetSingleItemTree<ItemModel, ItemModel>(context, id, true, getHierarchicalData);
+            }
+        }
+        private async Task<IEnumerable<T>> GetSingleItemTree<T, M>(CharityEntities context, int id, bool returnViewModel = true, bool getHierarchicalData = true)
             where T : class, IBase
             where M : class, ITree<M>
         {
-            context.Configuration.LazyLoadingEnabled = false;// Otherwise Children Items which are delete are also loaded
+
+            context.Configuration.AutoDetectChangesEnabled = false;
             var ItemsDBList = await context.Items.SqlQuery(GetItemTreeQuery(), new SqlParameter("@Id", id)).ToListAsync();
             MapperConfiguration mapperConfig = GetItemMapperConfig();
-            return TreeHelper.GetTreeData<T, Item, M>(ItemsDBList, returnViewModel, getHierarchicalData, mapperConfig, id);
-        }
-        public async Task<IEnumerable<T>> GetSingleItemTree<T, M>(int id, bool returnViewModel = true, bool getHierarchicalData = true)
-            where T : class, IBase
-            where M : class, ITree<M>
-        {
-            using (IDbConnection connection = new SqlConnection(Helper.ConnectionStringValue()))
-            {
-                var queryParameters = new DynamicParameters();
-                queryParameters.Add("@Id", id);
-                var ItemsDBList = await connection.QueryAsync<Item>(GetItemTreeQuery(), queryParameters);
-                MapperConfiguration mapperConfig = GetItemMapperConfig();
-                return TreeHelper.GetTreeData<T, Item, M>(ItemsDBList, returnViewModel, getHierarchicalData, mapperConfig, id);
-            }
+            var items = GetSingleNodeTree<T, Item, M>(id, mapperConfig, ItemsDBList, returnViewModel, getHierarchicalData);
+            context.Configuration.AutoDetectChangesEnabled = true;
+            return items;
         }
 
         private string GetAllItemsTreeQuery()
@@ -387,7 +376,12 @@ namespace DataProvider
         {
             return new MapperConfiguration(cfg => cfg.CreateMap<Item, ItemModel>()
                .ForMember(dest => dest.DefaultUOM,
-               input => input.MapFrom(i => new BriefModel { Id = i.DefaultUOM ?? 0 })));
+               input => input.MapFrom(i => new BriefModel { Id = i.DefaultUOM ?? 0 }))
+               .ForMember(dest => dest.Parent,
+               input => input.MapFrom(i => new BriefModel { Id = i.ParentId ?? 0 }))
+               .ForMember(s => s.Childrens, m => m.Ignore())
+               );
+
         }
     }
 }

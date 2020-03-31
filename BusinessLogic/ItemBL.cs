@@ -37,9 +37,9 @@ namespace BusinessLogic
         {
             return await DA.GetItem(id);
         }
-        public async Task<IEnumerable<ItemModel>> GetSingleItemHierarchy(int id)
+        public async Task<IEnumerable<ItemModel>> GetSingleItemHierarchy(int id, bool getHierarchicalData)
         {
-            return await DA.GetSingleItemTree<ItemModel, ItemModel>(id);
+            return await DA.GetSingleTreeItem(id, getHierarchicalData);
         }
         public async Task<IEnumerable<ItemModel>> GetPeripheralItems()
         {
@@ -49,9 +49,9 @@ namespace BusinessLogic
         {
             return await DA.GetRootItems();
         }
-        public async Task<IEnumerable<ItemModel>> GetAllItems()
+        public async Task<IEnumerable<ItemModel>> GetAllItems(bool getHierarchicalData)
         {
-            return await DA.GetAllItems();
+            return await DA.GetAllItems(getHierarchicalData);
         }
         public async Task<bool> DeleteItem(int id)
         {
@@ -59,4 +59,7 @@ namespace BusinessLogic
         }
     }
 
+    public class DataStructureCatalog
+    {
+    }
 }
