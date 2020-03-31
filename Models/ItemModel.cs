@@ -16,7 +16,18 @@ namespace Models
         [Required]
         public string Name { get; set; }
         public string NativeName { get; set; }
-        public int? ParentId { get; set; }
+        [IgnoreDataMember]
+        public int? ParentId
+        {
+            get
+            {
+                if (Parent != null)
+                    return Parent.Id;
+                else
+                    return 0;
+            }
+            set { }
+        }
         public BriefModel Parent { get; set; }
         public BriefModel DefaultUOM { get; set; }
         public ItemTypeCatalog Type { get; set; }

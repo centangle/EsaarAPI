@@ -7,7 +7,7 @@ namespace DataProvider.Helpers
 {
     public static class TreeHelper
     {
-        public static IEnumerable<T> GetTreeData<T, D, M>(IEnumerable<D> dbList, bool returnViewModel, bool getHierarchicalData, MapperConfiguration mapperConfig)
+        public static IEnumerable<T> GetTreeData<T, D, M>(IEnumerable<D> dbList, bool returnViewModel, bool getHierarchicalData, MapperConfiguration mapperConfig,int rootNodeId)
             where D : ITree<D>
             where M : class, ITree<M>
             where T : class, IBase
@@ -15,7 +15,7 @@ namespace DataProvider.Helpers
             List<T> items = new List<T>();
             if (getHierarchicalData)
             {
-                var rootNode = dbList.Where(x => x.ParentId == null || x.ParentId == 0).FirstOrDefault();
+                var rootNode = dbList.Where(x => x.Id== rootNodeId).FirstOrDefault();
                 if (returnViewModel)
                 {
                     var item = GetMappedItem<D, M>(rootNode, mapperConfig);

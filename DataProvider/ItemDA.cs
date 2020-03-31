@@ -23,7 +23,9 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var dbModel = AddTreeItem<Item, ItemModel>(model, true);
+                var dbModel = SetItem(new Item(), model, true);
+                if (model.ParentId != 0)
+                    dbModel.ParentId = model.ParentId;
                 context.Items.Add(dbModel);
                 await context.SaveChangesAsync();
                 model.Id = dbModel.Id;
@@ -38,6 +40,8 @@ namespace DataProvider
                 if (dbModel != null)
                 {
                     SetItem(dbModel, model, false);
+                    if (model.ParentId != 0)
+                        dbModel.ParentId = model.ParentId;
                     return await context.SaveChangesAsync() > 0;
                 }
                 return false;
@@ -194,7 +198,6 @@ namespace DataProvider
                               select new ItemModel
                               {
                                   Id = i.Id,
-                                  ParentId= pi == null ? 0 : pi.Id,
                                   Parent = new BriefModel()
                                   {
                                       Id = pi == null ? 0 : pi.Id,
@@ -223,9 +226,10 @@ namespace DataProvider
             where T : class, IBase
             where M : class, ITree<M>
         {
+            context.Configuration.LazyLoadingEnabled = false;// Otherwise Children Items which are delete are also loaded
             var ItemsDBList = await context.Items.SqlQuery(GetItemTreeQuery(), new SqlParameter("@Id", id)).ToListAsync();
             MapperConfiguration mapperConfig = GetItemMapperConfig();
-            return TreeHelper.GetTreeData<T, Item, M>(ItemsDBList, returnViewModel, getHierarchicalData, mapperConfig);
+            return TreeHelper.GetTreeData<T, Item, M>(ItemsDBList, returnViewModel, getHierarchicalData, mapperConfig, id);
         }
         public async Task<IEnumerable<T>> GetSingleItemTree<T, M>(int id, bool returnViewModel = true, bool getHierarchicalData = true)
             where T : class, IBase
@@ -237,7 +241,7 @@ namespace DataProvider
                 queryParameters.Add("@Id", id);
                 var ItemsDBList = await connection.QueryAsync<Item>(GetItemTreeQuery(), queryParameters);
                 MapperConfiguration mapperConfig = GetItemMapperConfig();
-                return TreeHelper.GetTreeData<T, Item, M>(ItemsDBList, returnViewModel, getHierarchicalData, mapperConfig);
+                return TreeHelper.GetTreeData<T, Item, M>(ItemsDBList, returnViewModel, getHierarchicalData, mapperConfig, id);
             }
         }
 

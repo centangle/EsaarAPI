@@ -1,4 +1,5 @@
 ﻿
+using Models;
 using Models.Interfaces;
 using System.Collections.Generic;
 
@@ -17,5 +18,6 @@ namespace DataProvider
                 Item1 = value;
             }
         }
+        public BriefModel Parent { get; set; }
     }
 }
