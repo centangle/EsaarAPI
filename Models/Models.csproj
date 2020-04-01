@@ -49,6 +49,7 @@
     <Compile Include="Interfaces\IBase.cs" />
     <Compile Include="Interfaces\IImage.cs" />
     <Compile Include="Interfaces\ITree.cs" />
+    <Compile Include="OrganizationModel.cs" />
     <Compile Include="ItemModel.cs" />
     <Compile Include="PaginatedResultModel.cs" />
     <Compile Include="UOMModel.cs" />

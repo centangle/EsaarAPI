@@ -25,15 +25,17 @@ namespace DataProvider
     
         public int Id { get; set; }
         public string Name { get; set; }
-        public Nullable<int> ParentId { get; set; }
         public string NativeName { get; set; }
+        public Nullable<int> ParentId { get; set; }
         public string Description { get; set; }
         public string LogoUrl { get; set; }
         public Nullable<int> Type { get; set; }
         public int OwnedBy { get; set; }
-        public bool IsVerfied { get; set; }
+        public bool IsVerified { get; set; }
+        public bool IsPeripheralOrganization { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
+        public System.DateTime CreatedDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Organization> Organization1 { get; set; }

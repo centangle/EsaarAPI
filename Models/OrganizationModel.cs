@@ -1,17 +1,18 @@
 ﻿using Catalogs;
 using Models.Base;
 using Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace Models
 {
-    public class ItemModel : BaseModel, IImage, ITree<ItemModel>
+    public class OrganizationModel : BaseModel, IImage, ITree<OrganizationModel>
     {
-        public ItemModel()
+        public OrganizationModel()
         {
-            Children = new List<ItemModel>();
+            Children = new List<OrganizationModel>();
         }
         [Required]
         public string Name { get; set; }
@@ -29,21 +30,23 @@ namespace Models
             set { }
         }
         public BriefModel Parent { get; set; }
-        public BriefModel DefaultUOM { get; set; }
-        public ItemTypeCatalog Type { get; set; }
+        public OrganizationTypeCatalog Type { get; set; }
         [IgnoreDataMember]
         public string BaseFolder
         {
             get
             {
-                return "Items";
+                return "Organizations";
             }
         }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
         public string ImageInBase64 { get; set; }
-        public bool IsPeripheralItem { get; set; }
-
-        public ICollection<ItemModel> Children { get; set; }
+        [Required]
+        public BriefModel OwnedBy { get; set; }
+        public bool IsPeripheralOrganization { get; set; }
+        public bool IsVerified { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public ICollection<OrganizationModel> Children { get; set; }
     }
 }

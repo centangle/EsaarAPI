@@ -9,27 +9,27 @@ namespace DataProvider
 {
     public partial class DataAccess
     {
-        private D AddTreeItem<D, M>(M model, bool isNew)
+        private D AddTreeNode<D, M>(M model, bool isNew)
             where M : class, ITree<M>
             where D : class, ITree<D>, new()
         {
-            var dbModel = SetTreeItem(new D(), model, isNew);
-            if (model.Childrens != null && model.Childrens.Count > 0)
+            var dbModel = SetTreeNode(new D(), model, isNew);
+            if (model.Children != null && model.Children.Count > 0)
             {
-                foreach (var item in model.Childrens)
+                foreach (var item in model.Children)
                 {
                     if (item != null)
                     {
-                        if (item.Childrens != null && item.Childrens.Count > 0)
+                        if (item.Children != null && item.Children.Count > 0)
                         {
-                            dbModel.Childrens.Add(AddTreeItem<D, M>(item as M, isNew));
+                            dbModel.Children.Add(AddTreeNode<D, M>(item as M, isNew));
                         }
                         else
                         {
-                            D addedItem = SetTreeItem(new D(), item, isNew);
+                            D addedItem = SetTreeNode(new D(), item, isNew);
                             if (addedItem != null)
                             {
-                                dbModel.Childrens.Add(addedItem);
+                                dbModel.Children.Add(addedItem);
                             }
                         }
                     }
@@ -37,36 +37,36 @@ namespace DataProvider
             }
             return dbModel;
         }
-        private void UpdateTreeItem<D, M>(CharityEntities context, D dbModel, M model)
+        private void UpdateTreeNode<D, M>(CharityEntities context, D dbModel, M model)
             where M : class, ITree<M>
             where D : class, ITree<D>, new()
         {
-            SetTreeItem(dbModel, model, false);
-            var masterList = dbModel.Childrens;
-            var newItems = UpdatedListItem.NewItems(model.Childrens);
-            var updatedItems = UpdatedListItem.UpdatedItems(masterList, model.Childrens);
-            var deletedItems = UpdatedListItem.DeletedItems(masterList, model.Childrens);
+            SetTreeNode(dbModel, model, false);
+            var masterList = dbModel.Children;
+            var newItems = UpdatedListItem.NewItems(model.Children);
+            var updatedItems = UpdatedListItem.UpdatedItems(masterList, model.Children);
+            var deletedItems = UpdatedListItem.DeletedItems(masterList, model.Children);
             foreach (var item in newItems)
             {
-                dbModel.Childrens.Add(AddTreeItem<D, M>(item, true));
+                dbModel.Children.Add(AddTreeNode<D, M>(item, true));
             }
             foreach (var dbItem in updatedItems)
             {
-                var item = model.Childrens.Where(x => x.Id == dbItem.Id).FirstOrDefault();
-                SetTreeItem(dbItem, item, false);
+                var item = model.Children.Where(x => x.Id == dbItem.Id).FirstOrDefault();
+                SetTreeNode(dbItem, item, false);
                 // Update Hierarchy
-                foreach (var dbChildItem in dbItem.Childrens)
+                foreach (var dbChildItem in dbItem.Children)
                 {
-                    var childItem = item.Childrens.Where(x => x.Id == dbChildItem.Id).FirstOrDefault();
-                    UpdateTreeItem(context, dbChildItem, childItem);
+                    var childItem = item.Children.Where(x => x.Id == dbChildItem.Id).FirstOrDefault();
+                    UpdateTreeNode(context, dbChildItem, childItem);
                 }
             }
             foreach (var dbItem in deletedItems)
             {
-                DeleteItemTree(dbItem);
+                DeleteItemNode(dbItem);
             }
         }
-        private D SetTreeItem<D, M>(D dbModel, M model, bool isNew)
+        private D SetTreeNode<D, M>(D dbModel, M model, bool isNew)
             where M : class, ITree<M>
             where D : class
         {
@@ -76,14 +76,14 @@ namespace DataProvider
             }
             return null;
         }
-        private void DeleteItemTree<D>(D dbModel) where D : ITree<D>
+        private void DeleteItemNode<D>(D dbModel) where D : ITree<D>
         {
             dbModel.IsDeleted = true;
-            if (dbModel.Childrens != null && dbModel.Childrens.Count > 0)
+            if (dbModel.Children != null && dbModel.Children.Count > 0)
             {
-                foreach (var item in dbModel.Childrens)
+                foreach (var item in dbModel.Children)
                 {
-                    DeleteItemTree(item);
+                    DeleteItemNode(item);
                 }
             }
         }

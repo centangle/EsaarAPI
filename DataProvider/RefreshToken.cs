@@ -19,5 +19,6 @@ namespace DataProvider
         public Nullable<System.DateTime> IssuedTime { get; set; }
         public Nullable<System.DateTime> ExpiredTime { get; set; }
         public string ProtectedTicket { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
     }
 }

@@ -19,6 +19,7 @@ namespace DataProvider
         public int OrganizationId { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
     
         public virtual Organization Organization { get; set; }
         public virtual Person Person { get; set; }

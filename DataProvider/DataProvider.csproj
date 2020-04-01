@@ -103,6 +103,7 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="EDMXPartialClasses\Item.cs" />
+    <Compile Include="EDMXPartialClasses\Organization.cs" />
     <Compile Include="EDMXPartialClasses\UOM.cs" />
     <Compile Include="ExceptionLog.cs">
       <DependentUpon>Charity.tt</DependentUpon>
@@ -121,6 +122,7 @@
     <Compile Include="Organization.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="OrganizationDA.cs" />
     <Compile Include="OrganizationItem.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -186,6 +188,10 @@
     <ProjectReference Include="..\Catalogs\Catalogs.csproj">
       <Project>{2B92D596-BC79-4A45-87E7-00B2744880F6}</Project>
       <Name>Catalogs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Helpers\Helpers.csproj">
+      <Project>{F4EA60F3-F5AF-4A82-AC80-92EF0EE8168E}</Project>
+      <Name>Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{beb58624-7608-486f-8942-99d06a0a869c}</Project>

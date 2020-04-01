@@ -25,11 +25,11 @@
           <Property Name="EntityId" Type="int" />
           <Property Name="Type" Type="int" />
           <Property Name="AddressLine1" Type="nvarchar" MaxLength="1000" />
-          <Property Name="AddressLine2" Type="varchar" MaxLength="1000" />
-          <Property Name="ZipCode" Type="varchar" MaxLength="250" />
-          <Property Name="PhoneNo" Type="varchar" MaxLength="50" />
-          <Property Name="MobileNo" Type="varchar" MaxLength="50" />
-          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="AddressLine2" Type="nvarchar" MaxLength="1000" />
+          <Property Name="ZipCode" Type="nvarchar" MaxLength="250" />
+          <Property Name="PhoneNo" Type="varchar" MaxLength="20" />
+          <Property Name="MobileNo" Type="varchar" MaxLength="20" />
+          <Property Name="Email" Type="nvarchar" MaxLength="100" />
           <Property Name="CountryId" Type="int" />
           <Property Name="StateId" Type="int" />
           <Property Name="DistrictId" Type="int" />
@@ -95,8 +95,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="500" Nullable="false" />
-          <Property Name="NativeName" Type="varchar" MaxLength="500" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
           <Property Name="Longitude" Type="varchar" MaxLength="500" />
           <Property Name="Latitude" Type="varchar" MaxLength="500" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
@@ -107,8 +107,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="500" Nullable="false" />
-          <Property Name="NativeName" Type="varchar" MaxLength="500" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
           <Property Name="StateId" Type="int" Nullable="false" />
           <Property Name="Longitude" Type="varchar" MaxLength="500" />
           <Property Name="Latitude" Type="varchar" MaxLength="500" />
@@ -120,11 +120,11 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="FilePath" Type="varchar" MaxLength="1000" />
-          <Property Name="MethodName" Type="varchar" MaxLength="250" />
+          <Property Name="FilePath" Type="nvarchar" MaxLength="1000" />
+          <Property Name="MethodName" Type="nvarchar" MaxLength="250" />
           <Property Name="Exception" Type="text" />
           <Property Name="SerializedModel" Type="text" />
-          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="Item">
           <Key>
@@ -132,13 +132,13 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ParentId" Type="int" />
-          <Property Name="Name" Type="varchar" MaxLength="500" Nullable="false" />
-          <Property Name="NativeName" Type="varchar" MaxLength="500" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
           <Property Name="DefaultUOM" Type="int" />
-          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="Type" Type="int" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
-          <Property Name="IsCartItem" Type="bit" Nullable="false" />
+          <Property Name="IsPeripheralItem" Type="bit" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
         </EntityType>
@@ -148,26 +148,28 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PK" Type="nvarchar" MaxLength="128" />
-          <Property Name="TableName" Type="varchar" MaxLength="100" />
+          <Property Name="TableName" Type="nvarchar" MaxLength="100" />
           <Property Name="SerializedModel" Type="text" />
           <Property Name="ActionBy" Type="int" />
-          <Property Name="ActionDate" Type="datetime" />
+          <Property Name="ActionDate" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="Organization">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="500" />
           <Property Name="ParentId" Type="int" />
-          <Property Name="NativeName" Type="varchar" MaxLength="500" />
-          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="LogoUrl" Type="varchar" MaxLength="500" />
           <Property Name="Type" Type="int" />
           <Property Name="OwnedBy" Type="int" Nullable="false" />
-          <Property Name="IsVerfied" Type="bit" Nullable="false" />
+          <Property Name="IsVerified" Type="bit" Nullable="false" />
+          <Property Name="IsPeripheralOrganization" Type="bit" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
         <EntityType Name="OrganizationItem">
           <Key>
@@ -178,6 +180,7 @@
           <Property Name="ItemId" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="OrganizationPeople">
           <Key>
@@ -188,6 +191,7 @@
           <Property Name="OrganizationId" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="People">
           <Key>
@@ -195,22 +199,26 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="AuthUserId" Type="nvarchar" MaxLength="128" />
-          <Property Name="Name" Type="varchar" MaxLength="500" Nullable="false" />
-          <Property Name="NativeName" Type="varchar" MaxLength="500" />
-          <Property Name="IdentificationNo" Type="varchar" MaxLength="128" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
+          <Property Name="IdentificationNo" Type="varchar" MaxLength="40" />
           <Property Name="Type" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="RefreshToken">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="varchar" MaxLength="500" Nullable="false" />
-          <Property Name="UserId" Type="varchar" MaxLength="128" />
+          <Property Name="Id" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" />
           <Property Name="IssuedTime" Type="datetime" />
           <Property Name="ExpiredTime" Type="datetime" />
-          <Property Name="ProtectedTicket" Type="varchar" MaxLength="5000" />
+          <Property Name="ProtectedTicket" Type="nvarchar" MaxLength="4000" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="Request">
           <Key>
@@ -219,15 +227,15 @@
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="PeopleId" Type="int" Nullable="false" />
           <Property Name="Type" Type="int" />
-          <Property Name="Note" Type="varchar(max)" />
+          <Property Name="Note" Type="nvarchar(max)" />
           <Property Name="Date" Type="date" Nullable="false" />
           <Property Name="DueDate" Type="datetime" />
           <Property Name="IsApproved" Type="bit" Nullable="false" />
           <Property Name="ApprovedDate" Type="datetime" />
           <Property Name="IsCollected" Type="bit" Nullable="false" />
           <Property Name="CollectionDate" Type="datetime" />
-          <Property Name="PrefferedCollectionTime" Type="nchar" MaxLength="10" />
-          <Property Name="Address" Type="varchar(max)" />
+          <Property Name="PrefferedCollectionTime" Type="nvarchar" MaxLength="100" />
+          <Property Name="Address" Type="nvarchar(max)" />
           <Property Name="AddressLatLong" Type="varchar" MaxLength="500" />
           <Property Name="CountryId" Type="int" />
           <Property Name="StateId" Type="int" />
@@ -268,9 +276,9 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="RequestId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Status" Type="int" Nullable="false" />
-          <Property Name="Note" Type="varchar(max)" />
+          <Property Name="Note" Type="nvarchar(max)" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
-          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="Type" Type="int" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
@@ -284,14 +292,15 @@
           <Property Name="VolunteerId" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="State">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="500" />
-          <Property Name="NativeName" Type="varchar" MaxLength="500" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
           <Property Name="CountryId" Type="int" Nullable="false" />
           <Property Name="Longitude" Type="varchar" MaxLength="500" />
           <Property Name="Latitude" Type="varchar" MaxLength="500" />
@@ -303,8 +312,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="500" />
-          <Property Name="NativeName" Type="varchar" MaxLength="500" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
           <Property Name="DistrictId" Type="int" Nullable="false" />
           <Property Name="Longitude" Type="varchar" MaxLength="500" />
           <Property Name="Latitude" Type="varchar" MaxLength="500" />
@@ -316,8 +325,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="500" />
-          <Property Name="NativeName" Type="varchar" MaxLength="500" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
           <Property Name="TehsilId" Type="int" Nullable="false" />
           <Property Name="Longitude" Type="varchar" MaxLength="500" />
           <Property Name="Latitude" Type="varchar" MaxLength="500" />
@@ -329,9 +338,9 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
-          <Property Name="NativeName" Type="varchar" MaxLength="150" />
-          <Property Name="Abbreviation" Type="varchar" MaxLength="100" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
+          <Property Name="Abbreviation" Type="nvarchar" MaxLength="30" />
           <Property Name="NoOfBaseUnit" Type="float" Nullable="false" />
           <Property Name="ParentId" Type="int" />
           <Property Name="Type" Type="int" Nullable="false" />
@@ -813,7 +822,6 @@
           <EntitySet Name="OrganizationItem" EntityType="Self.OrganizationItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganizationPeople" EntityType="Self.OrganizationPeople" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="People" EntityType="Self.People" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RefreshToken" EntityType="Self.RefreshToken" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Request" EntityType="Self.Request" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestItem" EntityType="Self.RequestItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestOrganization" EntityType="Self.RequestOrganization" Schema="dbo" store:Type="Tables" />
@@ -823,6 +831,16 @@
           <EntitySet Name="Tehsil" EntityType="Self.Tehsil" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnionCouncil" EntityType="Self.UnionCouncil" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UOM" EntityType="Self.UOM" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RefreshToken" EntityType="Self.RefreshToken" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [RefreshToken].[Id] AS [Id], 
+    [RefreshToken].[UserId] AS [UserId], 
+    [RefreshToken].[IssuedTime] AS [IssuedTime], 
+    [RefreshToken].[ExpiredTime] AS [ExpiredTime], 
+    [RefreshToken].[ProtectedTicket] AS [ProtectedTicket], 
+    [RefreshToken].[CreatedDate] AS [CreatedDate]
+    FROM [dbo].[RefreshToken] AS [RefreshToken]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_Address_Address" Association="Self.FK_Address_Address">
             <End Role="Address" EntitySet="Address" />
             <End Role="Address1" EntitySet="Address" />
@@ -995,7 +1013,6 @@
           <EntitySet Name="OrganizationItems" EntityType="CharityModel.OrganizationItem" />
           <EntitySet Name="OrganizationPeoples" EntityType="CharityModel.OrganizationPeople" />
           <EntitySet Name="People" EntityType="CharityModel.Person" />
-          <EntitySet Name="RefreshTokens" EntityType="CharityModel.RefreshToken" />
           <EntitySet Name="Requests" EntityType="CharityModel.Request" />
           <EntitySet Name="RequestItems" EntityType="CharityModel.RequestItem" />
           <EntitySet Name="RequestOrganizations" EntityType="CharityModel.RequestOrganization" />
@@ -1005,6 +1022,7 @@
           <EntitySet Name="Tehsils" EntityType="CharityModel.Tehsil" />
           <EntitySet Name="UnionCouncils" EntityType="CharityModel.UnionCouncil" />
           <EntitySet Name="UOMs" EntityType="CharityModel.UOM" />
+          <EntitySet Name="RefreshTokens" EntityType="CharityModel.RefreshToken" />
           <AssociationSet Name="FK_Address_Address" Association="CharityModel.FK_Address_Address">
             <End Role="Address" EntitySet="Addresses" />
             <End Role="Address1" EntitySet="Addresses" />
@@ -1159,7 +1177,7 @@
           <Property Type="String" Name="Description" Nullable="true" />
           <Property Type="Int32" Name="Type" Nullable="true" />
           <Property Type="String" Name="ImageUrl" Nullable="true" MaxLength="200" />
-          <Property Type="Boolean" Name="IsCartItem" Nullable="true" />
+          <Property Type="Boolean" Name="IsPeripheralItem" Nullable="true" />
           <Property Type="Boolean" Name="IsActive" Nullable="true" />
           <Property Type="Boolean" Name="IsDeleted" Nullable="true" />
         </ComplexType>
@@ -1183,11 +1201,11 @@
           <Property Name="EntityId" Type="Int32" />
           <Property Name="Type" Type="Int32" />
           <Property Name="AddressLine1" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="AddressLine2" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
-          <Property Name="ZipCode" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="PhoneNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="MobileNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="AddressLine2" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ZipCode" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="MobileNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="CountryId" Type="Int32" />
           <Property Name="StateId" Type="Int32" />
           <Property Name="DistrictId" Type="Int32" />
@@ -1259,8 +1277,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
@@ -1274,8 +1292,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="StateId" Type="Int32" Nullable="false" />
           <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
@@ -1291,11 +1309,11 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FilePath" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
-          <Property Name="MethodName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FilePath" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="MethodName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="Exception" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="SerializedModel" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="7" />
         </EntityType>
         <EntityType Name="Item">
           <Key>
@@ -1303,13 +1321,13 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ParentId" Type="Int32" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="DefaultUOM" Type="Int32" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Type" Type="Int32" />
           <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="IsCartItem" Type="Boolean" Nullable="false" />
+          <Property Name="IsPeripheralItem" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Item1" Relationship="CharityModel.FK_ChildItem_ParentItem" FromRole="Item" ToRole="Item1" />
@@ -1324,26 +1342,28 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="PK" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="TableName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="TableName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SerializedModel" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="ActionBy" Type="Int32" />
-          <Property Name="ActionDate" Type="DateTime" Precision="3" />
+          <Property Name="ActionDate" Type="DateTime" Precision="7" />
         </EntityType>
         <EntityType Name="Organization">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="ParentId" Type="Int32" />
-          <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LogoUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Type" Type="Int32" />
           <Property Name="OwnedBy" Type="Int32" Nullable="false" />
-          <Property Name="IsVerfied" Type="Boolean" Nullable="false" />
+          <Property Name="IsVerified" Type="Boolean" Nullable="false" />
+          <Property Name="IsPeripheralOrganization" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Organization1" Relationship="CharityModel.FK_Organization_Organization" FromRole="Organization" ToRole="Organization1" />
           <NavigationProperty Name="Organization2" Relationship="CharityModel.FK_Organization_Organization" FromRole="Organization1" ToRole="Organization" />
           <NavigationProperty Name="OrganizationItems" Relationship="CharityModel.FK_OrganizationItem_Organization" FromRole="Organization" ToRole="OrganizationItem" />
@@ -1359,6 +1379,7 @@
           <Property Name="ItemId" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="7" />
           <NavigationProperty Name="Item" Relationship="CharityModel.FK_OrganizationItem_Item" FromRole="OrganizationItem" ToRole="Item" />
           <NavigationProperty Name="Organization" Relationship="CharityModel.FK_OrganizationItem_Organization" FromRole="OrganizationItem" ToRole="Organization" />
         </EntityType>
@@ -1371,6 +1392,7 @@
           <Property Name="OrganizationId" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="7" />
           <NavigationProperty Name="Organization" Relationship="CharityModel.FK_OrganizationPeople_Organization" FromRole="OrganizationPeople" ToRole="Organization" />
           <NavigationProperty Name="Person" Relationship="CharityModel.FK_OrganizationPeople_People" FromRole="OrganizationPeople" ToRole="Person" />
         </EntityType>
@@ -1380,26 +1402,17 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="AuthUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="IdentificationNo" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IdentificationNo" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
           <Property Name="Type" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="7" />
           <NavigationProperty Name="AspNetUser" Relationship="CharityModel.FK_People_AspNetUsers" FromRole="Person" ToRole="AspNetUser" />
           <NavigationProperty Name="OrganizationPeoples" Relationship="CharityModel.FK_OrganizationPeople_People" FromRole="Person" ToRole="OrganizationPeople" />
           <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_Beneficiary" FromRole="Person" ToRole="Request" />
           <NavigationProperty Name="RequestVolunteers" Relationship="CharityModel.FK_RequestVolunteer_People" FromRole="Person" ToRole="RequestVolunteer" />
-        </EntityType>
-        <EntityType Name="RefreshToken">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="IssuedTime" Type="DateTime" Precision="3" />
-          <Property Name="ExpiredTime" Type="DateTime" Precision="3" />
-          <Property Name="ProtectedTicket" Type="String" MaxLength="5000" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Request">
           <Key>
@@ -1408,15 +1421,15 @@
           <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="PeopleId" Type="Int32" Nullable="false" />
           <Property Name="Type" Type="Int32" />
-          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="DueDate" Type="DateTime" Precision="3" />
           <Property Name="IsApproved" Type="Boolean" Nullable="false" />
           <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
           <Property Name="IsCollected" Type="Boolean" Nullable="false" />
           <Property Name="CollectionDate" Type="DateTime" Precision="3" />
-          <Property Name="PrefferedCollectionTime" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PrefferedCollectionTime" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="AddressLatLong" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="CountryId" Type="Int32" />
           <Property Name="StateId" Type="Int32" />
@@ -1473,9 +1486,9 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="RequestId" Type="Guid" Nullable="false" />
           <Property Name="Status" Type="Int32" Nullable="false" />
-          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="Type" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
@@ -1490,6 +1503,7 @@
           <Property Name="VolunteerId" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="7" />
           <NavigationProperty Name="Person" Relationship="CharityModel.FK_RequestVolunteer_People" FromRole="RequestVolunteer" ToRole="Person" />
           <NavigationProperty Name="Request" Relationship="CharityModel.FK_RequestVolunteer_RequestVolunteer" FromRole="RequestVolunteer" ToRole="Request" />
         </EntityType>
@@ -1498,8 +1512,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="CountryId" Type="Int32" Nullable="false" />
           <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
@@ -1515,8 +1529,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="DistrictId" Type="Int32" Nullable="false" />
           <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
@@ -1532,8 +1546,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="TehsilId" Type="Int32" Nullable="false" />
           <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
@@ -1548,9 +1562,9 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="NativeName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="Abbreviation" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Abbreviation" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="NoOfBaseUnit" Type="Double" Nullable="false" />
           <Property Name="ParentId" Type="Int32" />
           <Property Name="Type" Type="Int32" Nullable="false" />
@@ -1559,6 +1573,17 @@
           <NavigationProperty Name="Items" Relationship="CharityModel.FK_Item_UOM" FromRole="UOM" ToRole="Item" />
           <NavigationProperty Name="RequestItems" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="UOM" ToRole="RequestItem" />
           <NavigationProperty Name="RequestItems1" Relationship="CharityModel.FK_RequestItem_UOM1" FromRole="UOM" ToRole="RequestItem" />
+        </EntityType>
+        <EntityType Name="RefreshToken">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="IssuedTime" Type="DateTime" Precision="3" />
+          <Property Name="ExpiredTime" Type="DateTime" Precision="3" />
+          <Property Name="ProtectedTicket" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="7" />
         </EntityType>
         <Association Name="FK_Address_Address">
           <End Type="CharityModel.Address" Role="Address" Multiplicity="1" />
@@ -2124,7 +2149,7 @@
               <MappingFragment StoreEntitySet="Item">
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsCartItem" ColumnName="IsCartItem" />
+                <ScalarProperty Name="IsPeripheralItem" ColumnName="IsPeripheralItem" />
                 <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -2151,15 +2176,17 @@
           <EntitySetMapping Name="Organizations">
             <EntityTypeMapping TypeName="CharityModel.Organization">
               <MappingFragment StoreEntitySet="Organization">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsVerfied" ColumnName="IsVerfied" />
+                <ScalarProperty Name="IsPeripheralOrganization" ColumnName="IsPeripheralOrganization" />
+                <ScalarProperty Name="IsVerified" ColumnName="IsVerified" />
                 <ScalarProperty Name="OwnedBy" ColumnName="OwnedBy" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="LogoUrl" ColumnName="LogoUrl" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
@@ -2168,6 +2195,7 @@
           <EntitySetMapping Name="OrganizationItems">
             <EntityTypeMapping TypeName="CharityModel.OrganizationItem">
               <MappingFragment StoreEntitySet="OrganizationItem">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="ItemId" ColumnName="ItemId" />
@@ -2179,6 +2207,7 @@
           <EntitySetMapping Name="OrganizationPeoples">
             <EntityTypeMapping TypeName="CharityModel.OrganizationPeople">
               <MappingFragment StoreEntitySet="OrganizationPeople">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
@@ -2190,6 +2219,7 @@
           <EntitySetMapping Name="People">
             <EntityTypeMapping TypeName="CharityModel.Person">
               <MappingFragment StoreEntitySet="People">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
@@ -2197,17 +2227,6 @@
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="AuthUserId" ColumnName="AuthUserId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RefreshTokens">
-            <EntityTypeMapping TypeName="CharityModel.RefreshToken">
-              <MappingFragment StoreEntitySet="RefreshToken">
-                <ScalarProperty Name="ProtectedTicket" ColumnName="ProtectedTicket" />
-                <ScalarProperty Name="ExpiredTime" ColumnName="ExpiredTime" />
-                <ScalarProperty Name="IssuedTime" ColumnName="IssuedTime" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2282,6 +2301,7 @@
           <EntitySetMapping Name="RequestVolunteers">
             <EntityTypeMapping TypeName="CharityModel.RequestVolunteer">
               <MappingFragment StoreEntitySet="RequestVolunteer">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="VolunteerId" ColumnName="VolunteerId" />
@@ -2343,6 +2363,18 @@
                 <ScalarProperty Name="Abbreviation" ColumnName="Abbreviation" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RefreshTokens">
+            <EntityTypeMapping TypeName="CharityModel.RefreshToken">
+              <MappingFragment StoreEntitySet="RefreshToken">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ProtectedTicket" ColumnName="ProtectedTicket" />
+                <ScalarProperty Name="ExpiredTime" ColumnName="ExpiredTime" />
+                <ScalarProperty Name="IssuedTime" ColumnName="IssuedTime" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

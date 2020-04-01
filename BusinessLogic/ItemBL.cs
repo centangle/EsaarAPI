@@ -58,8 +58,4 @@ namespace BusinessLogic
             return await DA.DeleteItem(id);
         }
     }
-
-    public class DataStructureCatalog
-    {
-    }
 }

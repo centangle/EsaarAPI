@@ -42,7 +42,6 @@ namespace DataProvider
         public virtual DbSet<OrganizationItem> OrganizationItems { get; set; }
         public virtual DbSet<OrganizationPeople> OrganizationPeoples { get; set; }
         public virtual DbSet<Person> People { get; set; }
-        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<Request> Requests { get; set; }
         public virtual DbSet<RequestItem> RequestItems { get; set; }
         public virtual DbSet<RequestOrganization> RequestOrganizations { get; set; }
@@ -52,6 +51,7 @@ namespace DataProvider
         public virtual DbSet<Tehsil> Tehsils { get; set; }
         public virtual DbSet<UnionCouncil> UnionCouncils { get; set; }
         public virtual DbSet<UOM> UOMs { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
     
         public virtual ObjectResult<spGetItemWithChildren_Result> spGetItemWithChildren(Nullable<int> id)
         {

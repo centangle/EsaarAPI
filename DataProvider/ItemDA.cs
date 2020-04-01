@@ -58,7 +58,7 @@ namespace DataProvider
                 {
                     try
                     {
-                        var dbModel = AddTreeItem<Item, ItemModel>(model, true);
+                        var dbModel = AddTreeNode<Item, ItemModel>(model, true);
                         context.Items.Add(dbModel);
                         await context.SaveChangesAsync();
                         model.Id = dbModel.Id;
@@ -85,7 +85,7 @@ namespace DataProvider
                     {
                         try
                         {
-                            UpdateTreeItem(context, root, model);
+                            UpdateTreeNode(context, root, model);
                             await context.SaveChangesAsync();
                             transaction.Commit();
                             return true;
@@ -110,7 +110,7 @@ namespace DataProvider
                     {
                         foreach (var item in items)
                         {
-                            var dbModel = AddTreeItem<Item, ItemModel>(item, true);
+                            var dbModel = AddTreeNode<Item, ItemModel>(item, true);
                             context.Items.Add(dbModel);
                             await context.SaveChangesAsync();
                             item.Id = dbModel.Id;
@@ -140,7 +140,7 @@ namespace DataProvider
                             var itemToUpdate = context.Items.Where(x => x.Id == item.Id && x.IsDeleted == false).FirstOrDefault();
                             if (itemToUpdate != null)
                             {
-                                UpdateTreeItem(context, root, item);
+                                UpdateTreeNode(context, root, item);
                                 await context.SaveChangesAsync();
                             }
                         }
@@ -163,7 +163,7 @@ namespace DataProvider
                 if (dbModel != null)
                 {
                     var root = (await GetSingleItemTree<Item, Item>(context, dbModel.Id, false)).First();
-                    DeleteItemTree(root);
+                    DeleteItemNode(root);
                     return await context.SaveChangesAsync() > 0;
                 }
                 return false;
@@ -178,7 +178,7 @@ namespace DataProvider
             else
                 dbModel.DefaultUOM = model.DefaultUOM.Id;
             dbModel.Description = model.Description;
-            dbModel.IsCartItem = model.IsCartItem;
+            dbModel.IsPeripheralItem = model.IsPeripheralItem;
             dbModel.IsActive = model.IsActive;
             if (isNew)
                 dbModel.IsDeleted = false;
@@ -194,7 +194,7 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 return await (from i in context.Items
-                              join pi in context.UOMs on i.ParentId equals pi.Id into tpi
+                              join pi in context.Items on i.ParentId equals pi.Id into tpi
                               from pi in tpi.DefaultIfEmpty()
                               join uom in context.UOMs on i.DefaultUOM equals uom.Id into tuom
                               from uom in tuom.DefaultIfEmpty()
@@ -221,7 +221,7 @@ namespace DataProvider
                                   Description = i.Description,
                                   Type = (ItemTypeCatalog)(i.Type ?? 0),
                                   ImageUrl = i.ImageUrl,
-                                  IsCartItem = i.IsCartItem,
+                                  IsPeripheralItem = i.IsPeripheralItem,
                                   IsActive = i.IsActive,
                               }).FirstOrDefaultAsync();
             }
@@ -232,11 +232,11 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 return await (from i in context.Items
-                              join pi in context.UOMs on i.ParentId equals pi.Id into tpi
+                              join pi in context.Items on i.ParentId equals pi.Id into tpi
                               from pi in tpi.DefaultIfEmpty()
                               join uom in context.UOMs on i.DefaultUOM equals uom.Id into tuom
                               from uom in tuom.DefaultIfEmpty()
-                              where i.IsCartItem == true
+                              where i.IsPeripheralItem == true
                               && i.IsDeleted == false
                               select new ItemModel
                               {
@@ -259,7 +259,7 @@ namespace DataProvider
                                   Description = i.Description,
                                   Type = (ItemTypeCatalog)(i.Type ?? 0),
                                   ImageUrl = i.ImageUrl,
-                                  IsCartItem = i.IsCartItem,
+                                  IsPeripheralItem = i.IsPeripheralItem,
                                   IsActive = i.IsActive,
                               }).ToListAsync();
             }
@@ -270,7 +270,7 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 return await (from i in context.Items
-                              join pi in context.UOMs on i.ParentId equals pi.Id into tpi
+                              join pi in context.Items on i.ParentId equals pi.Id into tpi
                               from pi in tpi.DefaultIfEmpty()
                               join uom in context.UOMs on i.DefaultUOM equals uom.Id into tuom
                               from uom in tuom.DefaultIfEmpty()
@@ -297,7 +297,7 @@ namespace DataProvider
                                   Description = i.Description,
                                   Type = (ItemTypeCatalog)(i.Type ?? 0),
                                   ImageUrl = i.ImageUrl,
-                                  IsCartItem = i.IsCartItem,
+                                  IsPeripheralItem = i.IsPeripheralItem,
                                   IsActive = i.IsActive,
                               }).ToListAsync();
             }
@@ -379,7 +379,7 @@ namespace DataProvider
                input => input.MapFrom(i => new BriefModel { Id = i.DefaultUOM ?? 0 }))
                .ForMember(dest => dest.Parent,
                input => input.MapFrom(i => new BriefModel { Id = i.ParentId ?? 0 }))
-               .ForMember(s => s.Childrens, m => m.Ignore())
+               .ForMember(s => s.Children, m => m.Ignore())
                );
 
         }

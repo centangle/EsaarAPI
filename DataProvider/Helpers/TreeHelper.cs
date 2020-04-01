@@ -57,13 +57,13 @@ namespace DataProvider.Helpers
                 if (returnViewModel)
                 {
                     var item = GetMappedItem<D, M>(childItem, mapperConfig);
-                    rootNode.Childrens.Add(item);
+                    rootNode.Children.Add(item);
                     GenerateTree(item, dbList, returnViewModel, mapperConfig);
                 }
                 else
                 {
                     var item = childItem as M;
-                    rootNode.Childrens.Add(item);
+                    rootNode.Children.Add(item);
                     GenerateTree(item, dbList, returnViewModel, mapperConfig);
                 }
 

@@ -21,7 +21,7 @@ namespace DataProvider
         public string Description { get; set; }
         public Nullable<int> Type { get; set; }
         public string ImageUrl { get; set; }
-        public Nullable<bool> IsCartItem { get; set; }
+        public Nullable<bool> IsPeripheralItem { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public Nullable<bool> IsDeleted { get; set; }
     }

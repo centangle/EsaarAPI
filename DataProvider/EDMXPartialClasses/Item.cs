@@ -7,7 +7,7 @@ namespace DataProvider
 {
     public partial class Item : ITree<Item>, IBase
     {
-        public ICollection<Item> Childrens
+        public ICollection<Item> Children
         {
             get
             {
@@ -18,6 +18,5 @@ namespace DataProvider
                 Item1 = value;
             }
         }
-        public BriefModel Parent { get; set; }
     }
 }
