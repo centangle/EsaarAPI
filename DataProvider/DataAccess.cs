@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataProvider
+﻿namespace DataProvider
 {
     public partial class DataAccess
     {
         #region[Private Properties]
-        public string CurrentUserId { get; set; }
+        int _currentPersonId;
         #endregion
         public DataAccess()
         {
         }
-        public DataAccess(string UserId)
+        public DataAccess(int currentPersonId)
         {
-            CurrentUserId = UserId;
+            _currentPersonId = currentPersonId;
         }
     }
 }

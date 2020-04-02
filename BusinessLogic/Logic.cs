@@ -4,20 +4,19 @@ namespace BusinessLogic
 {
     public partial class Logic
     {
-        private DataAccess DA;
-        #region[Private Properties]
-        private string CurrentUserId { get; set; }
-        #endregion
-
+        DataAccess _dataAccess;
+        int _currentPersonId;
         public Logic()
         {
-            DA = new DataAccess();
+            _dataAccess = new DataAccess();
         }
 
-        public Logic(string UserId)
+        public Logic(int currentPersonId) : this()
         {
-            CurrentUserId = UserId;
-            DA = new DataAccess(CurrentUserId);
+            _currentPersonId = currentPersonId;
+
         }
+
+
     }
 }

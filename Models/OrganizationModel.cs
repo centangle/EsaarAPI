@@ -12,7 +12,7 @@ namespace Models
     {
         public OrganizationModel()
         {
-            Children = new List<OrganizationModel>();
+            children = new List<OrganizationModel>();
         }
         [Required]
         public string Name { get; set; }
@@ -46,7 +46,6 @@ namespace Models
         public BriefModel OwnedBy { get; set; }
         public bool IsPeripheralOrganization { get; set; }
         public bool IsVerified { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public ICollection<OrganizationModel> Children { get; set; }
+        public ICollection<OrganizationModel> children { get; set; }
     }
 }

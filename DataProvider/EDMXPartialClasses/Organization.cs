@@ -5,7 +5,7 @@ namespace DataProvider
 {
     public partial class Organization : ITree<Organization>, IBase
     {
-        public ICollection<Organization> Children
+        public ICollection<Organization> children
         {
             get
             {

@@ -25,8 +25,12 @@ namespace DataProvider
                         dbModel.Abbreviation = model.Abbreviation;
                         dbModel.NoOfBaseUnit = model.NoOfBaseUnit;
                         dbModel.Type = (int)model.Type;
-                        dbModel.IsDeleted = false;
                         dbModel.IsActive = model.IsActive;
+                        dbModel.IsDeleted = false;
+                        dbModel.CreatedBy = model.CreatedBy;
+                        dbModel.CreatedDate = model.CreatedDate;
+                        dbModel.UpdatedBy = model.UpdatedBy;
+                        dbModel.UpdatedDate = model.UpdatedDate;
                         context.UOMs.Add(dbModel);
                         bool result = await context.SaveChangesAsync() > 0;
                         if (result)
@@ -64,6 +68,8 @@ namespace DataProvider
                             dbModel.Type = (int)model.Type;
                             dbModel.IsDeleted = model.IsDeleted;
                             dbModel.IsActive = model.IsActive;
+                            dbModel.UpdatedBy = model.UpdatedBy;
+                            dbModel.UpdatedDate = model.UpdatedDate;
                             var childModified = await ModifyChildItems(context, model);
                             bool result = (await context.SaveChangesAsync() > 0 && childModified);
                             transaction.Commit();
@@ -115,16 +121,16 @@ namespace DataProvider
                 List<UOMModel> UOMList = await UOMsQueryable.OrderBy(x => x.Name).Skip((filters.CurrentPage - 1) * filters.RecordsPerPage).Take(filters.RecordsPerPage).ToListAsync();
                 foreach (var uom in UOMList)
                 {
-                    uom.Children = await (from u in context.UOMs
-                                           where u.ParentId == uom.Id
-                                           select new UOMModel
-                                           {
-                                               Id = u.Id,
-                                               Name = u.Name,
-                                               Abbreviation = u.Abbreviation,
-                                               NoOfBaseUnit = u.NoOfBaseUnit,
-                                               ParentId = u.ParentId,
-                                           }).ToListAsync();
+                    uom.children = await (from u in context.UOMs
+                                          where u.ParentId == uom.Id
+                                          select new UOMModel
+                                          {
+                                              Id = u.Id,
+                                              Name = u.Name,
+                                              Abbreviation = u.Abbreviation,
+                                              NoOfBaseUnit = u.NoOfBaseUnit,
+                                              ParentId = u.ParentId,
+                                          }).ToListAsync();
                 }
                 searchResult.Items = UOMList ?? new List<UOMModel>();
                 if (filters.CalculateTotal)
@@ -179,17 +185,17 @@ namespace DataProvider
         private async Task<bool> ModifyChildItems(CharityEntities context, UOMModel model)
         {
             var masterList = await context.UOMs.Where(x => x.ParentId == model.Id).ToListAsync();
-            var newItems = UpdatedListItem.NewItems(model.Children);
-            var updatedItems = UpdatedListItem.UpdatedItems(masterList, model.Children);
-            var deletedItems = UpdatedListItem.DeletedItems(masterList, model.Children);
+            var newItems = UpdatedListItem.NewItems(model.children);
+            var updatedItems = UpdatedListItem.UpdatedItems(masterList, model.children);
+            var deletedItems = UpdatedListItem.DeletedItems(masterList, model.children);
             AddChildUOM(context, model);
-            UpdateChildUOM(updatedItems, model.Children);
+            UpdateChildUOM(updatedItems, model.children);
             DeleteChildUOM(deletedItems);
             return await context.SaveChangesAsync() > 0;
         }
         private void AddChildUOM(CharityEntities context, UOMModel model)
         {
-            foreach (var item in model.Children)
+            foreach (var item in model.children)
             {
                 UOM dbModel = new UOM();
                 dbModel.Name = item.Name;

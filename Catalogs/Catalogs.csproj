@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressTypeCatalog.cs" />
     <Compile Include="DataStructureCatalog.cs" />
+    <Compile Include="EntityTypeCatalog.cs" />
     <Compile Include="ItemTypeCatalog.cs" />
     <Compile Include="OrganizationTypeCatalog.cs" />
     <Compile Include="UnitTypeCatalog.cs" />

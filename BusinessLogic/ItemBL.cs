@@ -8,54 +8,54 @@ namespace BusinessLogic
     {
         public async Task<int> CreateItem(ItemModel model)
         {
-            return await DA.CreateItem(model);
+            return await _dataAccess.CreateItem(model);
         }
         public async Task<bool> UpdateItem(ItemModel model)
         {
-            return await DA.UpdateItem(model);
+            return await _dataAccess.UpdateItem(model);
         }
         public async Task<int> CreateSingleItemWithChildrens(ItemModel model)
         {
-            return await DA.CreateSingleItemWithChildrens(model);
+            return await _dataAccess.CreateSingleItemWithChildrens(model);
         }
 
         public async Task<bool> UpdateSingleItemWithChildren(ItemModel model)
         {
-            return await DA.UpdateSingleItemWithChildren(model);
+            return await _dataAccess.UpdateSingleItemWithChildren(model);
         }
         public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
         {
-            return await DA.CreateMultipleItemsWithChildrens(items);
+            return await _dataAccess.CreateMultipleItemsWithChildrens(items);
         }
 
         public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
         {
-            return await DA.UpdateMultipleItemsWithChildrens(items);
+            return await _dataAccess.UpdateMultipleItemsWithChildrens(items);
         }
 
         public async Task<ItemModel> GetItem(int id)
         {
-            return await DA.GetItem(id);
+            return await _dataAccess.GetItem(id);
         }
         public async Task<IEnumerable<ItemModel>> GetSingleItemHierarchy(int id, bool getHierarchicalData)
         {
-            return await DA.GetSingleTreeItem(id, getHierarchicalData);
+            return await _dataAccess.GetSingleTreeItem(id, getHierarchicalData);
         }
         public async Task<IEnumerable<ItemModel>> GetPeripheralItems()
         {
-            return await DA.GetPeripheralItems();
+            return await _dataAccess.GetPeripheralItems();
         }
         public async Task<IEnumerable<ItemModel>> GetRootItems()
         {
-            return await DA.GetRootItems();
+            return await _dataAccess.GetRootItems();
         }
         public async Task<IEnumerable<ItemModel>> GetAllItems(bool getHierarchicalData)
         {
-            return await DA.GetAllItems(getHierarchicalData);
+            return await _dataAccess.GetAllItems(getHierarchicalData);
         }
         public async Task<bool> DeleteItem(int id)
         {
-            return await DA.DeleteItem(id);
+            return await _dataAccess.DeleteItem(id);
         }
     }
 }

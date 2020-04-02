@@ -1,78 +1,92 @@
-﻿using Catalogs;
+﻿using BusinessLogic;
+using Catalogs;
 using Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web.Mvc;
+using System.Web.Http;
+
 
 namespace DataManager.Controllers
 {
-    public class OrganizationController : BaseController
-    {
+    public class OrganizationController:BaseController
+    { 
         [HttpGet]
         public async Task<OrganizationModel> Get(int id)
         {
-            return await logic.GetOrganization(id);
+            var _logic = new Logic(CurrentPersonId);
+            return await _logic.GetOrganization(id);
         }
         [HttpGet]
         public async Task<IEnumerable<OrganizationModel>> GetSingleOrganizationTree(int id, DataStructureCatalog dataStructure)
         {
+            var _logic = new Logic(CurrentPersonId);
             bool getHierarichalData = (dataStructure == DataStructureCatalog.List ? false : true);
-            return await logic.GetSingleOrganizationHierarchy(id, getHierarichalData);
+            return await _logic.GetSingleOrganizationHierarchy(id, getHierarichalData);
         }
 
         [HttpGet]
         public async Task<IEnumerable<OrganizationModel>> GetPeripheralOrganizations()
         {
-            return await logic.GetPeripheralOrganizations();
+            var _logic = new Logic(CurrentPersonId);
+            return await _logic.GetPeripheralOrganizations();
         }
 
         [HttpGet]
         public async Task<IEnumerable<OrganizationModel>> GetRootOrganizations()
         {
-            return await logic.GetRootOrganizations();
+            var _logic = new Logic(CurrentPersonId);
+            return await _logic.GetRootOrganizations();
         }
 
         [HttpGet]
         public async Task<IEnumerable<OrganizationModel>> GetAllOrganizations(DataStructureCatalog dataStructure)
         {
+            var _logic = new Logic(CurrentPersonId);
             bool getHierarichalData = (dataStructure == DataStructureCatalog.List ? false : true);
-            return await logic.GetAllOrganizations(getHierarichalData);
+            return await _logic.GetAllOrganizations(getHierarichalData);
         }
         [HttpPost]
         public async Task<int> Create(OrganizationModel model)
         {
-            return await logic.CreateOrganization(model);
+            var _logic = new Logic(CurrentPersonId);
+            return await _logic.CreateOrganization(model);
         }
         [HttpPut]
         public async Task<bool> Update(OrganizationModel model)
         {
-            return await logic.UpdateOrganization(model);
+            var _logic = new Logic(CurrentPersonId);
+            return await _logic.UpdateOrganization(model);
         }
         [HttpPost]
         public async Task<int> CreateSingleOrganizationWithChildrens(OrganizationModel model)
         {
-            return await logic.CreateSingleOrganizationWithChildrens(model);
+            var _logic = new Logic(CurrentPersonId);
+            return await _logic.CreateSingleOrganizationWithChildrens(model);
         }
         [HttpPut]
         public async Task<bool> UpdateSingleOrganizationWithChildren(OrganizationModel model)
         {
-            return await logic.UpdateSingleOrganizationWithChildren(model);
+            var _logic = new Logic(CurrentPersonId);
+            return await _logic.UpdateSingleOrganizationWithChildren(model);
         }
         [HttpPost]
         public async Task<bool> CreateMultipleOrganizationsWithChildrens(List<OrganizationModel> Organizations)
         {
-            return await logic.CreateMultipleOrganizationsWithChildrens(Organizations);
+            var _logic = new Logic(CurrentPersonId);
+            return await _logic.CreateMultipleOrganizationsWithChildrens(Organizations);
         }
         [HttpPut]
         public async Task<bool> UpdateMultipleOrganizationsWithChildrens(List<OrganizationModel> Organizations)
         {
-            return await logic.UpdateMultipleOrganizationsWithChildrens(Organizations);
+            var _logic = new Logic(CurrentPersonId);
+            return await _logic.UpdateMultipleOrganizationsWithChildrens(Organizations);
         }
 
         [HttpDelete]
         public async Task<bool> DeleteOrganizationWithChildren(int id)
         {
-            return await logic.DeleteOrganization(id);
+            var _logic = new Logic(CurrentPersonId);
+            return await _logic.DeleteOrganization(id);
         }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using DataManager.Models;
+using BusinessLogic;
 
 namespace DataManager.Providers
 {
@@ -33,18 +34,30 @@ namespace DataManager.Providers
 
             ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
 
+
             if (user == null)
             {
                 context.SetError("invalid_grant", "The user name or password is incorrect.");
                 return;
             }
+            var person = new Logic().GetPersonByAuthId(user.Id);
+            int personId = 0;
+            if (person != null)
+                personId = person.Id;
+            var claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.Sid, user.Id.ToString()),
+                        new Claim("PersonId",personId.ToString()),
+                        new Claim(ClaimTypes.Email, user.UserName)
+                    };
+            ClaimsIdentity oAuthIdentity = new ClaimsIdentity(claims, context.Options.AuthenticationType);
 
-            ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
-               OAuthDefaults.AuthenticationType);
+            //ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
+            //   OAuthDefaults.AuthenticationType);
             ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
                 CookieAuthenticationDefaults.AuthenticationType);
 
-            AuthenticationProperties properties = CreateProperties(user.UserName, user.Id);
+            AuthenticationProperties properties = CreateProperties(user.UserName, user.Id, personId);
             AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
             context.Validated(ticket);
             context.Request.Context.Authentication.SignIn(cookiesIdentity);
@@ -86,12 +99,13 @@ namespace DataManager.Providers
             return Task.FromResult<object>(null);
         }
 
-        public static AuthenticationProperties CreateProperties(string userName, string userId)
+        public static AuthenticationProperties CreateProperties(string userName, string userId, int personId)
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
                 { "userName", userName },
-                {"userId",userId }
+                {"userId",userId },
+                {"personId",personId.ToString() }
             };
             return new AuthenticationProperties(data);
         }

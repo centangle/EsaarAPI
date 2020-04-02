@@ -10,6 +10,7 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using DataManager.Providers;
 using DataManager.Models;
+using System.Web.Http.Cors;
 
 namespace DataManager
 {

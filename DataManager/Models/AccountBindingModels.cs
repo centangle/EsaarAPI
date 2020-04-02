@@ -35,6 +35,13 @@ namespace DataManager.Models
     public class RegisterBindingModel
     {
         [Required]
+        public string Name { get; set; }
+
+        public string NativeName { get; set; }
+        [Required]
+        public string MobileNo { get; set; }
+
+        [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }
 

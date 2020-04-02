@@ -12,7 +12,7 @@ namespace Models
         public UOMModel()
         {
             NoOfBaseUnit = 1;
-            Children = new List<UOMModel>();
+            children = new List<UOMModel>();
             Type = UnitTypeCatalog.Item;
         }
         public int? ParentId { get; set; }
@@ -22,7 +22,7 @@ namespace Models
         public string NativeName { get; set; }
         public string Abbreviation { get; set; }
         public double NoOfBaseUnit { get; set; }
-        public ICollection<UOMModel> Children { get; set; }
+        public ICollection<UOMModel> children { get; set; }
         [IgnoreDataMember]
         public UnitTypeCatalog Type { get; set; }
     }

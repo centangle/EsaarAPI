@@ -11,7 +11,7 @@ namespace Models
     {
         public ItemModel()
         {
-            Children = new List<ItemModel>();
+            children = new List<ItemModel>();
         }
         [Required]
         public string Name { get; set; }
@@ -44,6 +44,6 @@ namespace Models
         public string ImageInBase64 { get; set; }
         public bool IsPeripheralItem { get; set; }
 
-        public ICollection<ItemModel> Children { get; set; }
+        public ICollection<ItemModel> children { get; set; }
     }
 }

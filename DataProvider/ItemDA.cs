@@ -85,7 +85,8 @@ namespace DataProvider
                     {
                         try
                         {
-                            UpdateTreeNode(context, root, model);
+                            Dictionary<int, int> updatedParents = new Dictionary<int, int>();
+                            UpdateTreeNode(context, root, model, updatedParents);
                             await context.SaveChangesAsync();
                             transaction.Commit();
                             return true;
@@ -128,22 +129,48 @@ namespace DataProvider
         }
         public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
         {
+            var currentRootItems = await GetRootItems();
             using (CharityEntities context = new CharityEntities())
             {
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        foreach (var item in items)
+                        Dictionary<int, int> updatedParents = new Dictionary<int, int>();
+                        var rootItemsToAdd = items.Where(x => x.Id == 0).ToList();
+                        var rootItemsToUpdate = items.Where(x => x.Id > 0).ToList();
+                        var rootItemsToDelete = currentRootItems.Where(c => items.Any(i => c.Id != i.Id && i.Id != 0)).ToList();
+                        foreach (var item in rootItemsToAdd)
+                        {
+                            var dbModel = AddTreeNode<Item, ItemModel>(item, true);
+                            context.Items.Add(dbModel);
+                            await context.SaveChangesAsync();
+                        }
+                        foreach (var item in rootItemsToUpdate)
                         {
                             var root = (await GetSingleItemTree<Item, Item>(context, item.Id, false)).First();
                             var itemToUpdate = context.Items.Where(x => x.Id == item.Id && x.IsDeleted == false).FirstOrDefault();
                             if (itemToUpdate != null)
                             {
-                                UpdateTreeNode(context, root, item);
+                                root.ParentId = null;
+                                UpdateTreeNode(context, root, item, updatedParents);
                                 await context.SaveChangesAsync();
                             }
                         }
+                        foreach (var item in rootItemsToDelete)
+                        {
+                            if (updatedParents.Where(x => item.Id == x.Value).Count() == 0)
+                                item.IsDeleted = true;
+                        }
+                        foreach (var item in updatedParents)
+                        {
+                            var dbItem = await context.Items.Where(x => x.Id == item.Value).FirstOrDefaultAsync();
+                            if (dbItem != null)
+                            {
+                                dbItem.ParentId = item.Key;
+                            }
+                        }
+                        await context.SaveChangesAsync();
                         transaction.Commit();
                         return true;
                     }
@@ -163,7 +190,7 @@ namespace DataProvider
                 if (dbModel != null)
                 {
                     var root = (await GetSingleItemTree<Item, Item>(context, dbModel.Id, false)).First();
-                    DeleteItemNode(root);
+                    DeleteTreeNode(root);
                     return await context.SaveChangesAsync() > 0;
                 }
                 return false;
@@ -173,7 +200,7 @@ namespace DataProvider
         {
             dbModel.Name = model.Name;
             dbModel.NativeName = model.NativeName;
-            if (model.DefaultUOM == null)
+            if (model.DefaultUOM == null || model.DefaultUOM.Id == 0)
                 dbModel.DefaultUOM = null;
             else
                 dbModel.DefaultUOM = model.DefaultUOM.Id;
@@ -181,9 +208,17 @@ namespace DataProvider
             dbModel.IsPeripheralItem = model.IsPeripheralItem;
             dbModel.IsActive = model.IsActive;
             if (isNew)
+            {
                 dbModel.IsDeleted = false;
+                dbModel.CreatedBy = model.CreatedBy;
+                dbModel.CreatedDate = model.CreatedDate;
+            }
             else
+            {
                 dbModel.IsDeleted = model.IsDeleted;
+                dbModel.CreatedBy = model.CreatedBy;
+                dbModel.CreatedDate = model.CreatedDate;
+            }
             ImageHelper.Save(model);
             dbModel.ImageUrl = model.ImageUrl;
             return dbModel;
@@ -379,7 +414,7 @@ namespace DataProvider
                input => input.MapFrom(i => new BriefModel { Id = i.DefaultUOM ?? 0 }))
                .ForMember(dest => dest.Parent,
                input => input.MapFrom(i => new BriefModel { Id = i.ParentId ?? 0 }))
-               .ForMember(s => s.Children, m => m.Ignore())
+               .ForMember(s => s.children, m => m.Ignore())
                );
 
         }

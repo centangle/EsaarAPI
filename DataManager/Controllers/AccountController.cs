@@ -15,6 +15,8 @@ using Microsoft.Owin.Security.OAuth;
 using DataManager.Models;
 using DataManager.Providers;
 using DataManager.Results;
+using Models;
+using BusinessLogic;
 
 namespace DataManager.Controllers
 {
@@ -22,11 +24,16 @@ namespace DataManager.Controllers
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
+        private Logic _logic;
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
 
         public AccountController()
         {
+        }
+        public AccountController(Logic logic)
+        {
+            _logic = logic;
         }
 
         public AccountController(ApplicationUserManager userManager,
@@ -263,7 +270,7 @@ namespace DataManager.Controllers
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
-                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName, user.Id);
+                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName, user.Id, 0);
                 Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
             }
             else
@@ -330,6 +337,14 @@ namespace DataManager.Controllers
             var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+            PersonModel personModel = new PersonModel();
+            personModel.AuthUserId = user.Id;
+            personModel.Name = model.Name;
+            personModel.NativeName = model.NativeName;
+            personModel.Address.MobileNo = model.MobileNo;
+            personModel.Address.Email = model.Email;
+            personModel.Address.Type = Catalogs.AddressTypeCatalog.Default;
+            await _logic.AddPerson(personModel);
 
             if (!result.Succeeded)
             {

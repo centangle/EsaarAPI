@@ -65,6 +65,7 @@
     <Compile Include="Address.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="AddressDA.cs" />
     <Compile Include="AspNetRole.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -129,6 +130,7 @@
     <Compile Include="OrganizationPeople.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="PersonDA.cs" />
     <Compile Include="Person.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -210,9 +212,7 @@
       <LastGenOutput>Charity.cs</LastGenOutput>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -78,7 +78,7 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var root = (await GetSingleItemTree<Organization, Organization>(context, model.Id, false)).First();
+                var root = (await GetSingleOrganizationTree<Organization, Organization>(context, model.Id, false)).First();
                 var OrganizationToUpdate = context.Organizations.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefault();
                 if (OrganizationToUpdate != null)
                 {
@@ -86,7 +86,8 @@ namespace DataProvider
                     {
                         try
                         {
-                            UpdateTreeNode(context, root, model);
+                            Dictionary<int, int> updatedParents = new Dictionary<int, int>();
+                            UpdateTreeNode(context, root, model, updatedParents);
                             await context.SaveChangesAsync();
                             transaction.Commit();
                             return true;
@@ -127,22 +128,47 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> UpdateMultipleOrganizationsWithChildrens(List<OrganizationModel> Organizations)
+        public async Task<bool> UpdateMultipleOrganizationsWithChildrens(List<OrganizationModel> organizations)
         {
+            var currentRootOrganizations = await GetRootOrganizations();
+            Dictionary<int, int> updatedParents = new Dictionary<int, int>();
             using (CharityEntities context = new CharityEntities())
             {
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        foreach (var Organization in Organizations)
+                        var rootorganizationsToAdd = organizations.Where(x => x.Id == 0).ToList();
+                        var rootOrganizationsToUpdate = organizations.Where(x => x.Id > 0).ToList();
+                        var rootOrganizationsToDelete = currentRootOrganizations.Where(c => organizations.Any(i => c.Id != i.Id && i.Id != 0)).ToList();
+                        foreach (var organization in rootorganizationsToAdd)
                         {
-                            var root = (await GetSingleOrganizationTree<Organization, Organization>(context, Organization.Id, false)).First();
-                            var OrganizationToUpdate = context.Organizations.Where(x => x.Id == Organization.Id && x.IsDeleted == false).FirstOrDefault();
-                            if (OrganizationToUpdate != null)
+                            var dbModel = AddTreeNode<Organization, OrganizationModel>(organization, true);
+                            context.Organizations.Add(dbModel);
+                            await context.SaveChangesAsync();
+                        }
+                        foreach (var organization in rootOrganizationsToUpdate)
+                        {
+                            var root = (await GetSingleOrganizationTree<Organization, OrganizationModel>(context, organization.Id, false)).First();
+                            var organizationToUpdate = context.Organizations.Where(x => x.Id == organization.Id && x.IsDeleted == false).FirstOrDefault();
+                            if (organizationToUpdate != null)
                             {
-                                UpdateTreeNode(context, root, Organization);
+                                root.ParentId = null;
+                                UpdateTreeNode(context, root, organization, updatedParents);
                                 await context.SaveChangesAsync();
+                            }
+                        }
+                        foreach (var organization in rootOrganizationsToDelete)
+                        {
+                            if (updatedParents.Where(x => organization.Id == x.Value).Count() == 0)
+                                organization.IsDeleted = true;
+                        }
+                        foreach (var organization in updatedParents)
+                        {
+                            var dbOrganization = await context.Organizations.Where(x => x.Id == organization.Value).FirstOrDefaultAsync();
+                            if (dbOrganization != null)
+                            {
+                                dbOrganization.ParentId = organization.Key;
                             }
                         }
                         transaction.Commit();
@@ -164,7 +190,7 @@ namespace DataProvider
                 if (dbModel != null)
                 {
                     var root = (await GetSingleOrganizationTree<Organization, Organization>(context, dbModel.Id, false)).First();
-                    DeleteItemNode(root);
+                    DeleteTreeNode(root);
                     return await context.SaveChangesAsync() > 0;
                 }
                 return false;
@@ -384,7 +410,7 @@ namespace DataProvider
             return new MapperConfiguration(cfg => cfg.CreateMap<Organization, OrganizationModel>()
                .ForMember(dest => dest.Parent,
                input => input.MapFrom(i => new BriefModel { Id = i.ParentId ?? 0 }))
-               .ForMember(s => s.Children, m => m.Ignore())
+               .ForMember(s => s.children, m => m.Ignore())
                );
 
         }

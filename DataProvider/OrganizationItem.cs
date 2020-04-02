@@ -19,7 +19,10 @@ namespace DataProvider
         public int ItemId { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
-        public Nullable<System.DateTime> CreatedDate { get; set; }
+        public int CreatedBy { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public int UpdatedBy { get; set; }
+        public System.DateTime UpdatedDate { get; set; }
     
         public virtual Item Item { get; set; }
         public virtual Organization Organization { get; set; }

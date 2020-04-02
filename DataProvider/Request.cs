@@ -43,6 +43,10 @@ namespace DataProvider
         public Nullable<int> UnionCouncilId { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
+        public int CreatedBy { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public int UpdatedBy { get; set; }
+        public System.DateTime UpdatedDate { get; set; }
     
         public virtual Country Country { get; set; }
         public virtual District District { get; set; }

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressModel.cs" />
     <Compile Include="Base\BaseModel.cs" />
     <Compile Include="Base\BaseSearchModel.cs" />
     <Compile Include="BriefModel.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="OrganizationModel.cs" />
     <Compile Include="ItemModel.cs" />
     <Compile Include="PaginatedResultModel.cs" />
+    <Compile Include="PersonModel.cs" />
     <Compile Include="UOMModel.cs" />
     <Compile Include="UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

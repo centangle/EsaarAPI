@@ -7,15 +7,15 @@ namespace BusinessLogic
     {
         public Task<bool> UpdateRefreshToken(RefreshTokenModel model)
         {
-            return DA.UpdateRefreshToken(model);
+            return _dataAccess.UpdateRefreshToken(model);
         }
         public Task<RefreshTokenModel> FindRefreshToken(string hashedToken)
         {
-            return DA.FindRefreshToken(hashedToken);
+            return _dataAccess.FindRefreshToken(hashedToken);
         }
         public Task<bool> RemoveRefreshToken(RefreshTokenModel model)
         {
-            return DA.RemoveRefreshToken(model);
+            return _dataAccess.RemoveRefreshToken(model);
         }
     }
 }

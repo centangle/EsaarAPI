@@ -11,27 +11,27 @@ namespace BusinessLogic
     {
         public async Task<int> AddUOM(UOMModel model)
         {
-            return await DA.AddUOM(model);
+            return await _dataAccess.AddUOM(model);
         }
 
         public async Task<bool> UpdateUOM(UOMModel model)
         {
-            return await DA.UpdateUOM(model);
+            return await _dataAccess.UpdateUOM(model);
         }
 
         public async Task<bool> DeleteUOM(int Id)
         {
-            return await DA.DeleteUOM(Id);
+            return await _dataAccess.DeleteUOM(Id);
         }
 
         public async Task<PaginatedResultModel<UOMModel>> GetUOM(UOMSearchModel filters)
         {
-            return await DA.GetUOM(filters);
+            return await _dataAccess.GetUOM(filters);
         }
 
         public async Task<PaginatedResultModel<UOMModel>> GetUOMForDD(UOMSearchModel filters)
         {
-            return await DA.GetUOMForDD(filters);
+            return await _dataAccess.GetUOMForDD(filters);
         }
 
     }

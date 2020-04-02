@@ -7,7 +7,7 @@ namespace DataProvider
 {
     public partial class Item : ITree<Item>, IBase
     {
-        public ICollection<Item> Children
+        public ICollection<Item> children
         {
             get
             {

@@ -18,6 +18,7 @@ namespace DataProvider
         public string Name { get; set; }
         public string NativeName { get; set; }
         public Nullable<int> EntityId { get; set; }
+        public Nullable<int> EntityType { get; set; }
         public Nullable<int> Type { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
@@ -30,9 +31,12 @@ namespace DataProvider
         public Nullable<int> DistrictId { get; set; }
         public Nullable<int> TehsilId { get; set; }
         public Nullable<int> UnionCouncilId { get; set; }
-        public bool IsPermanentAddress { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
+        public int CreatedBy { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public int UpdatedBy { get; set; }
+        public System.DateTime UpdatedDate { get; set; }
     
         public virtual Address Address1 { get; set; }
         public virtual Address Address2 { get; set; }

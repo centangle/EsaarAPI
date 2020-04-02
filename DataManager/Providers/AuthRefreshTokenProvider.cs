@@ -5,11 +5,15 @@ using System;
 using System.Threading.Tasks;
 using Helpers;
 
-
 namespace DataManager.Providers
 {
     public class AuthRefreshTokenProvider : IAuthenticationTokenProvider
     {
+        private Logic _logic;
+        public AuthRefreshTokenProvider()
+        {
+            _logic = new Logic();
+        }
         public async Task CreateAsync(AuthenticationTokenCreateContext context)
         {
             var refreshTokenLifeTime = "262800";//6 months
@@ -29,7 +33,7 @@ namespace DataManager.Providers
             context.Ticket.Properties.ExpiresUtc = token.ExpiredTime;
 
             token.ProtectedTicket = context.SerializeTicket();// Contains all the claims of user
-            var result = await new Logic().UpdateRefreshToken(token);
+            var result = await _logic.UpdateRefreshToken(token);
 
             if (result)
             {
@@ -39,13 +43,12 @@ namespace DataManager.Providers
         public async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
             string hashedTokenId = Encryption.GetHash(context.Token);
-            var logic = new Logic();
-            var refreshToken = await logic.FindRefreshToken(hashedTokenId);
+            var refreshToken = await _logic.FindRefreshToken(hashedTokenId);
             if (refreshToken != null)
             {
                 //Get protectedTicket from refreshToken class
                 context.DeserializeTicket(refreshToken.ProtectedTicket);
-                await logic.RemoveRefreshToken(refreshToken);
+                await _logic.RemoveRefreshToken(refreshToken);
             }
         }
         public void Create(AuthenticationTokenCreateContext context)
