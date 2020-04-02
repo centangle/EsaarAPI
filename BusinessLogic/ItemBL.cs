@@ -14,7 +14,7 @@ namespace BusinessLogic
         {
             return await _dataAccess.UpdateItem(model);
         }
-        public async Task<int> CreateSingleItemWithChildrens(ItemModel model)
+        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model)
         {
             return await _dataAccess.CreateSingleItemWithChildrens(model);
         }

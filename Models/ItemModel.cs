@@ -29,7 +29,9 @@ namespace Models
             set { }
         }
         public BriefModel Parent { get; set; }
+        [IgnoreDataMember]//
         public BriefModel DefaultUOM { get; set; }
+        [IgnoreDataMember]
         public ItemTypeCatalog Type { get; set; }
         [IgnoreDataMember]
         public string BaseFolder
@@ -39,9 +41,13 @@ namespace Models
                 return "Items";
             }
         }
+        [IgnoreDataMember]//
         public string Description { get; set; }
+        [IgnoreDataMember]//
         public string ImageUrl { get; set; }
+        [IgnoreDataMember]//
         public string ImageInBase64 { get; set; }
+        [IgnoreDataMember]//
         public bool IsPeripheralItem { get; set; }
 
         public ICollection<ItemModel> children { get; set; }

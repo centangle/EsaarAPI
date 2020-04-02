@@ -1,5 +1,6 @@
 ﻿using Models;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -77,15 +78,30 @@ namespace DataProvider
             dbModel.IsDeleted = model.IsDeleted;
             if (dbModel.Id == 0)
             {
-                dbModel.CreatedBy = model.CreatedBy;
+                dbModel.CreatedBy = _currentPersonId;
                 dbModel.CreatedDate = model.CreatedDate;
                 dbModel.IsDeleted = false;
                 dbModel.AuthUserId = model.AuthUserId;
 
             }
-            dbModel.UpdatedBy = model.UpdatedBy;
+            dbModel.UpdatedBy = _currentPersonId;
             dbModel.UpdatedDate = model.UpdatedDate;
             return dbModel;
+        }
+
+        public async Task<List<BriefModel>> GetPersonForDD(string name)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                return await (from p in context.People
+                              where p.Name.Contains(name) || p.NativeName.Contains(name)
+                              select new BriefModel()
+                              {
+                                  Id = p.Id,
+                                  Name = p.Name,
+                                  NativeName = p.NativeName
+                              }).ToListAsync();
+            }
         }
     }
 }

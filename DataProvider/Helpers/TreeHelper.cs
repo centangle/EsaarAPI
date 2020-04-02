@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -74,6 +75,35 @@ namespace DataProvider.Helpers
         {
             IMapper iMapper = mapperConfig.CreateMapper();
             return iMapper.Map<D, M>(dbItem);
+        }
+
+        public static List<TreeTraversal<T>> TreeToList<T>(List<T> treeNodes) where T : ITree<T>, new()
+        {
+            List<TreeTraversal<T>> singleNodes = new List<TreeTraversal<T>>();
+            foreach (var node in treeNodes)
+            {
+                var traversalNode = new TreeTraversal<T>();
+                traversalNode.Id = Guid.NewGuid();
+                traversalNode.ParentId = null;
+                traversalNode.Node = node;
+                singleNodes.Add(traversalNode);
+                SingleTreeNodeToList(node, singleNodes, traversalNode.Id);
+            }
+            return singleNodes;
+        }
+        public static void SingleTreeNodeToList<T>(T treeNodes, List<TreeTraversal<T>> singleNodes, Guid ParentId) where T : ITree<T>, new()
+        {
+
+            foreach (var node in treeNodes.children)
+            {
+                var traversalNode = new TreeTraversal<T>();
+                traversalNode.Id = Guid.NewGuid();
+                traversalNode.ParentId = ParentId;
+                traversalNode.Node = node;
+                singleNodes.Add(traversalNode);
+                SingleTreeNodeToList(node, singleNodes, traversalNode.Id);
+            }
+
         }
 
 

@@ -58,7 +58,7 @@ namespace DataManager.Controllers
             return await _logic.UpdateItem(model);
         }
         [HttpPost]
-        public async Task<int> CreateSingleItemWithChildrens(ItemModel model)
+        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model)
         {
             var _logic = new Logic(CurrentPersonId);
             return await _logic.CreateSingleItemWithChildrens(model);

@@ -112,6 +112,7 @@
     <Compile Include="Helper.cs" />
     <Compile Include="Helpers\ImageHelperDA.cs" />
     <Compile Include="Helpers\TreeHelper.cs" />
+    <Compile Include="Helpers\TreeTraversal.cs" />
     <Compile Include="Helpers\UpdatedListItem.cs" />
     <Compile Include="Item.cs">
       <DependentUpon>Charity.tt</DependentUpon>

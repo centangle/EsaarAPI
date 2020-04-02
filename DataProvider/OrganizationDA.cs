@@ -51,25 +51,24 @@ namespace DataProvider
             }
 
         }
-        public async Task<int> CreateSingleOrganizationWithChildrens(OrganizationModel model)
+        public async Task<bool> CreateSingleOrganizationWithChildrens(OrganizationModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
+                var currentDbNodes = new List<Organization>();
+                var allNodes = TreeHelper.TreeToList(new List<OrganizationModel> { model });
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        var dbModel = AddTreeNode<Organization, OrganizationModel>(model, true);
-                        context.Organizations.Add(dbModel);
-                        await context.SaveChangesAsync();
-                        model.Id = dbModel.Id;
+                        await ModifyTreeNodes(context, context.Organizations, currentDbNodes, allNodes);
                         transaction.Commit();
-                        return model.Id;
+                        return true;
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        return 0;
+                        return false;
                     }
                 }
             }
@@ -78,45 +77,37 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var root = (await GetSingleOrganizationTree<Organization, Organization>(context, model.Id, false)).First();
-                var OrganizationToUpdate = context.Organizations.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefault();
-                if (OrganizationToUpdate != null)
-                {
-                    using (var transaction = context.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            Dictionary<int, int> updatedParents = new Dictionary<int, int>();
-                            UpdateTreeNode(context, root, model, updatedParents);
-                            await context.SaveChangesAsync();
-                            transaction.Commit();
-                            return true;
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            return false;
-                        }
-                    }
-                }
-                return false;
-            }
-        }
-        public async Task<bool> CreateMultipleOrganizationsWithChildrens(List<OrganizationModel> Organizations)
-        {
-            using (CharityEntities context = new CharityEntities())
-            {
+                var allNodes = TreeHelper.TreeToList(new List<OrganizationModel> { model });
+                var currentRootNode = allNodes.Where(x => x.Node.ParentId == null || x.Node.ParentId == 0).Select(x => x.Node.Id).FirstOrDefault();
+                var currentDbNodes = (await GetSingleOrganizationTree<Organization, Organization>(context, currentRootNode, false, false)).ToList();
+
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        foreach (var Organization in Organizations)
-                        {
-                            var dbModel = AddTreeNode<Organization, OrganizationModel>(Organization, true);
-                            context.Organizations.Add(dbModel);
-                            await context.SaveChangesAsync();
-                            Organization.Id = dbModel.Id;
-                        }
+                        await ModifyTreeNodes(context, context.Organizations, currentDbNodes, allNodes);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+        public async Task<bool> CreateMultipleOrganizationsWithChildrens(List<OrganizationModel> organizations)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var currentDbNodes = new List<Organization>();
+                var allNodes = TreeHelper.TreeToList(organizations);
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        await ModifyTreeNodes(context, context.Organizations, currentDbNodes, allNodes);
                         transaction.Commit();
                         return true;
                     }
@@ -130,47 +121,15 @@ namespace DataProvider
         }
         public async Task<bool> UpdateMultipleOrganizationsWithChildrens(List<OrganizationModel> organizations)
         {
-            var currentRootOrganizations = await GetRootOrganizations();
-            Dictionary<int, int> updatedParents = new Dictionary<int, int>();
             using (CharityEntities context = new CharityEntities())
             {
+                var currentDbNodes = (await GetAllOrganizations<Organization, Organization>(context, false, false)).ToList();
+                var allNodes = TreeHelper.TreeToList(organizations);
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        var rootorganizationsToAdd = organizations.Where(x => x.Id == 0).ToList();
-                        var rootOrganizationsToUpdate = organizations.Where(x => x.Id > 0).ToList();
-                        var rootOrganizationsToDelete = currentRootOrganizations.Where(c => organizations.Any(i => c.Id != i.Id && i.Id != 0)).ToList();
-                        foreach (var organization in rootorganizationsToAdd)
-                        {
-                            var dbModel = AddTreeNode<Organization, OrganizationModel>(organization, true);
-                            context.Organizations.Add(dbModel);
-                            await context.SaveChangesAsync();
-                        }
-                        foreach (var organization in rootOrganizationsToUpdate)
-                        {
-                            var root = (await GetSingleOrganizationTree<Organization, OrganizationModel>(context, organization.Id, false)).First();
-                            var organizationToUpdate = context.Organizations.Where(x => x.Id == organization.Id && x.IsDeleted == false).FirstOrDefault();
-                            if (organizationToUpdate != null)
-                            {
-                                root.ParentId = null;
-                                UpdateTreeNode(context, root, organization, updatedParents);
-                                await context.SaveChangesAsync();
-                            }
-                        }
-                        foreach (var organization in rootOrganizationsToDelete)
-                        {
-                            if (updatedParents.Where(x => organization.Id == x.Value).Count() == 0)
-                                organization.IsDeleted = true;
-                        }
-                        foreach (var organization in updatedParents)
-                        {
-                            var dbOrganization = await context.Organizations.Where(x => x.Id == organization.Value).FirstOrDefaultAsync();
-                            if (dbOrganization != null)
-                            {
-                                dbOrganization.ParentId = organization.Key;
-                            }
-                        }
+                        await ModifyTreeNodes(context, context.Organizations, currentDbNodes, allNodes);
                         transaction.Commit();
                         return true;
                     }
@@ -215,10 +174,13 @@ namespace DataProvider
             if (isNew)
             {
                 dbModel.IsDeleted = false;
-                dbModel.CreatedDate = DateTime.UtcNow;
+                dbModel.CreatedBy = _currentPersonId;
+                dbModel.CreatedDate = model.CreatedDate;
             }
             else
                 dbModel.IsDeleted = model.IsDeleted;
+            dbModel.UpdatedBy = _currentPersonId;
+            dbModel.UpdatedDate = model.UpdatedDate;
             return dbModel;
 
         }
@@ -340,10 +302,17 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var OrganizationsDBList = await context.Organizations.SqlQuery(GetAllOrganizationsTreeQuery()).AsNoTracking().ToListAsync();
-                MapperConfiguration mapperConfig = GetOrganizationMapperConfig();
-                return GetAllNodes<OrganizationModel, Organization, OrganizationModel>(mapperConfig, OrganizationsDBList, true, getHierarchicalData);
+                context.Configuration.AutoDetectChangesEnabled = false;
+                return await GetAllOrganizations<OrganizationModel, OrganizationModel>(context, true, getHierarchicalData);
             }
+        }
+        private async Task<IEnumerable<T>> GetAllOrganizations<T, M>(CharityEntities context, bool returnViewModel, bool getHierarchicalData)
+            where T : class, IBase
+            where M : class, ITree<M>
+        {
+            var organizationsDBList = await context.Organizations.SqlQuery(GetAllOrganizationsTreeQuery()).ToListAsync();
+            MapperConfiguration mapperConfig = GetOrganizationMapperConfig();
+            return GetAllNodes<T, Organization, M>(mapperConfig, organizationsDBList, returnViewModel, getHierarchicalData);
 
         }
         public async Task<IEnumerable<OrganizationModel>> GetSingleTreeOrganization(int id, bool getHierarchicalData)

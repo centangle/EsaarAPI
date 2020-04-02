@@ -3,74 +3,14 @@ using DataProvider.Helpers;
 using Models;
 using Models.Interfaces;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DataProvider
 {
     public partial class DataAccess
     {
-        private D AddTreeNode<D, M>(M model, bool isNew)
-            where M : class, ITree<M>
-            where D : class, ITree<D>, new()
-        {
-            var dbModel = SetTreeNode(new D(), model, isNew);
-            if (model.children != null && model.children.Count > 0)
-            {
-                foreach (var item in model.children)
-                {
-                    if (item != null)
-                    {
-                        if (item.children != null && item.children.Count > 0)
-                        {
-                            dbModel.children.Add(AddTreeNode<D, M>(item as M, isNew));
-                        }
-                        else
-                        {
-                            D addedItem = SetTreeNode(new D(), item, isNew);
-                            if (addedItem != null)
-                            {
-                                dbModel.children.Add(addedItem);
-                            }
-                        }
-                    }
-                }
-            }
-            return dbModel;
-        }
-        private void UpdateTreeNode<D, M>(CharityEntities context, D dbModel, M model, Dictionary<int, int> updatedParents)
-            where M : class, ITree<M>
-            where D : class, ITree<D>, new()
-        {
-            SetTreeNode(dbModel, model, false);
-            var masterList = dbModel.children;
-            var newItems = UpdatedListItem.NewItems(model.children);
-            var newAddedChild = UpdatedListItem.NodeNewChilds(model.Id, model.children);
-            var updatedItems = UpdatedListItem.UpdatedItems(masterList, model.children);
-            var deletedItems = UpdatedListItem.DeletedItems(masterList, model.children);
-            foreach (var item in newItems)
-            {
-                dbModel.children.Add(AddTreeNode<D, M>(item, true));
-            }
-            foreach (var item in newAddedChild)
-            {
-                updatedParents.Add(dbModel.Id, item.Id);
-            }
-            foreach (var dbItem in updatedItems)
-            {
-                var item = model.children.Where(x => x.Id == dbItem.Id).FirstOrDefault();
-                SetTreeNode(dbItem, item, false);
-                // Update Hierarchy
-                foreach (var dbChildItem in dbItem.children)
-                {
-                    var childItem = item.children.Where(x => x.Id == dbChildItem.Id).FirstOrDefault();
-                    UpdateTreeNode(context, dbChildItem, childItem,updatedParents);
-                }
-            }
-            foreach (var dbItem in deletedItems)
-            {
-                DeleteTreeNode(dbItem);
-            }
-        }
         private D SetTreeNode<D, M>(D dbModel, M model, bool isNew)
             where M : class, ITree<M>
             where D : class
@@ -92,7 +32,48 @@ namespace DataProvider
                 }
             }
         }
+        private async Task ModifyTreeNodes<D, M>(CharityEntities context, DbSet<D> newDbNodes, List<D> currentDbNodes, List<TreeTraversal<M>> allNodes)
+            where M : class, ITree<M>
+            where D : class, ITree<D>, new()
+        {
+            var newNodes = allNodes.Where(x => x.Node.Id == 0);
+            foreach (var newNode in newNodes)
+            {
+                var dbModel = SetTreeNode(new D(), newNode.Node, true);
 
+                newDbNodes.Add(dbModel);
+                currentDbNodes.Add(dbModel);
+                await context.SaveChangesAsync();
+                var currentNode = allNodes.Where(x => x.Id == newNode.Id).FirstOrDefault();
+                newNode.Node.Id = dbModel.Id;
+            }
+            foreach (var dbNode in currentDbNodes)
+            {
+                int? parentId = null;
+                var node = allNodes.Where(x => x.Node.Id == dbNode.Id).FirstOrDefault();
+
+                if (node != null)
+                {
+                    if (node.Node.ParentId != null)
+                        parentId = allNodes.Where(x => x.Id == node.ParentId).Select(x => x.Node.Id).FirstOrDefault();
+                    var dbModel = SetTreeNode(dbNode, node.Node, false);
+                    if (parentId == null || parentId == 0)
+                    {
+                        dbModel.ParentId = null;
+                    }
+                    else
+                    {
+                        dbModel.ParentId = parentId;
+                    }
+                }
+            }
+            var deletedNodes = currentDbNodes.Where(m => !allNodes.Any(s => m.Id == s.Node.Id)).ToList();
+            foreach (var node in deletedNodes)
+            {
+                node.IsDeleted = true;
+            }
+            await context.SaveChangesAsync();
+        }
         private static IEnumerable<T> GetSingleNodeTree<T, D, M>(int id, MapperConfiguration mapperConfig, IEnumerable<D> itemsDBList, bool returnViewModel = true, bool getHierarchicalData = true)
             where T : class, IBase
             where D : class, ITree<D>
@@ -122,5 +103,6 @@ namespace DataProvider
                 return TreeHelper.GetTreeData<T, D, M>(0, mapperConfig, itemsDBList, returnViewModel, getHierarchicalData);
             }
         }
+
     }
 }

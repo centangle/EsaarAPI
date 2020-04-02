@@ -50,25 +50,24 @@ namespace DataProvider
             }
 
         }
-        public async Task<int> CreateSingleItemWithChildrens(ItemModel model)
+        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
+                var currentDbNodes = new List<Item>();
+                var allNodes = TreeHelper.TreeToList(new List<ItemModel> { model });
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        var dbModel = AddTreeNode<Item, ItemModel>(model, true);
-                        context.Items.Add(dbModel);
-                        await context.SaveChangesAsync();
-                        model.Id = dbModel.Id;
+                        await ModifyTreeNodes(context, context.Items, currentDbNodes, allNodes);
                         transaction.Commit();
-                        return model.Id;
+                        return true;
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        return 0;
+                        return false;
                     }
                 }
             }
@@ -77,45 +76,38 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var root = (await GetSingleItemTree<Item, Item>(context, model.Id, false)).First();
-                var itemToUpdate = context.Items.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefault();
-                if (itemToUpdate != null)
+
+                var allNodes = TreeHelper.TreeToList(new List<ItemModel> { model });
+                var currentRootNode = allNodes.Where(x => x.Node.ParentId == null || x.Node.ParentId == 0).Select(x => x.Node.Id).FirstOrDefault();
+                var currentDbNodes = (await GetSingleItemTree<Item, Item>(context, currentRootNode, false, false)).ToList();
+
+                using (var transaction = context.Database.BeginTransaction())
                 {
-                    using (var transaction = context.Database.BeginTransaction())
+                    try
                     {
-                        try
-                        {
-                            Dictionary<int, int> updatedParents = new Dictionary<int, int>();
-                            UpdateTreeNode(context, root, model, updatedParents);
-                            await context.SaveChangesAsync();
-                            transaction.Commit();
-                            return true;
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            return false;
-                        }
+                        await ModifyTreeNodes(context, context.Items, currentDbNodes, allNodes);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        return false;
                     }
                 }
-                return false;
             }
         }
         public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
         {
             using (CharityEntities context = new CharityEntities())
             {
+                var currentDbNodes = new List<Item>();
+                var allNodes = TreeHelper.TreeToList(items);
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        foreach (var item in items)
-                        {
-                            var dbModel = AddTreeNode<Item, ItemModel>(item, true);
-                            context.Items.Add(dbModel);
-                            await context.SaveChangesAsync();
-                            item.Id = dbModel.Id;
-                        }
+                        await ModifyTreeNodes(context, context.Items, currentDbNodes, allNodes);
                         transaction.Commit();
                         return true;
                     }
@@ -129,48 +121,15 @@ namespace DataProvider
         }
         public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
         {
-            var currentRootItems = await GetRootItems();
             using (CharityEntities context = new CharityEntities())
             {
+                var currentDbNodes = (await GetAllItems<Item, Item>(context, false, false)).ToList();
+                var allNodes = TreeHelper.TreeToList(items);
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        Dictionary<int, int> updatedParents = new Dictionary<int, int>();
-                        var rootItemsToAdd = items.Where(x => x.Id == 0).ToList();
-                        var rootItemsToUpdate = items.Where(x => x.Id > 0).ToList();
-                        var rootItemsToDelete = currentRootItems.Where(c => items.Any(i => c.Id != i.Id && i.Id != 0)).ToList();
-                        foreach (var item in rootItemsToAdd)
-                        {
-                            var dbModel = AddTreeNode<Item, ItemModel>(item, true);
-                            context.Items.Add(dbModel);
-                            await context.SaveChangesAsync();
-                        }
-                        foreach (var item in rootItemsToUpdate)
-                        {
-                            var root = (await GetSingleItemTree<Item, Item>(context, item.Id, false)).First();
-                            var itemToUpdate = context.Items.Where(x => x.Id == item.Id && x.IsDeleted == false).FirstOrDefault();
-                            if (itemToUpdate != null)
-                            {
-                                root.ParentId = null;
-                                UpdateTreeNode(context, root, item, updatedParents);
-                                await context.SaveChangesAsync();
-                            }
-                        }
-                        foreach (var item in rootItemsToDelete)
-                        {
-                            if (updatedParents.Where(x => item.Id == x.Value).Count() == 0)
-                                item.IsDeleted = true;
-                        }
-                        foreach (var item in updatedParents)
-                        {
-                            var dbItem = await context.Items.Where(x => x.Id == item.Value).FirstOrDefaultAsync();
-                            if (dbItem != null)
-                            {
-                                dbItem.ParentId = item.Key;
-                            }
-                        }
-                        await context.SaveChangesAsync();
+                        await ModifyTreeNodes(context, context.Items, currentDbNodes, allNodes);
                         transaction.Commit();
                         return true;
                     }
@@ -210,14 +169,14 @@ namespace DataProvider
             if (isNew)
             {
                 dbModel.IsDeleted = false;
-                dbModel.CreatedBy = model.CreatedBy;
+                dbModel.CreatedBy = _currentPersonId;
                 dbModel.CreatedDate = model.CreatedDate;
             }
             else
             {
                 dbModel.IsDeleted = model.IsDeleted;
-                dbModel.CreatedBy = model.CreatedBy;
-                dbModel.CreatedDate = model.CreatedDate;
+                dbModel.UpdatedBy = _currentPersonId;
+                dbModel.UpdatedDate = model.CreatedDate;
             }
             ImageHelper.Save(model);
             dbModel.ImageUrl = model.ImageUrl;
@@ -261,7 +220,6 @@ namespace DataProvider
                               }).FirstOrDefaultAsync();
             }
         }
-
         public async Task<List<ItemModel>> GetPeripheralItems()
         {
             using (CharityEntities context = new CharityEntities())
@@ -299,7 +257,6 @@ namespace DataProvider
                               }).ToListAsync();
             }
         }
-
         public async Task<List<ItemModel>> GetRootItems()
         {
             using (CharityEntities context = new CharityEntities())
@@ -337,15 +294,21 @@ namespace DataProvider
                               }).ToListAsync();
             }
         }
-
         public async Task<IEnumerable<ItemModel>> GetAllItems(bool getHierarchicalData)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var itemsDBList = await context.Items.SqlQuery(GetAllItemsTreeQuery()).AsNoTracking().ToListAsync();
-                MapperConfiguration mapperConfig = GetItemMapperConfig();
-                return GetAllNodes<ItemModel, Item, ItemModel>(mapperConfig, itemsDBList, true, getHierarchicalData);
+                context.Configuration.AutoDetectChangesEnabled = false;
+                return await GetAllItems<ItemModel, ItemModel>(context, true, getHierarchicalData);
             }
+        }
+        private async Task<IEnumerable<T>> GetAllItems<T, M>(CharityEntities context, bool returnViewModel, bool getHierarchicalData)
+            where T : class, IBase
+            where M : class, ITree<M>
+        {
+            var itemsDBList = await context.Items.SqlQuery(GetAllItemsTreeQuery()).ToListAsync();
+            MapperConfiguration mapperConfig = GetItemMapperConfig();
+            return GetAllNodes<T, Item, M>(mapperConfig, itemsDBList, returnViewModel, getHierarchicalData);
 
         }
         public async Task<IEnumerable<ItemModel>> GetSingleTreeItem(int id, bool getHierarchicalData)
@@ -368,7 +331,6 @@ namespace DataProvider
             context.Configuration.AutoDetectChangesEnabled = true;
             return items;
         }
-
         private string GetAllItemsTreeQuery()
         {
             return @"

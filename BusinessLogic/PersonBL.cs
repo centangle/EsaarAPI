@@ -17,5 +17,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.GetPersonByAuthId(AuthId);
         }
+        public async Task<List<BriefModel>> GetPersonForDD(string name)
+        {
+            return await _dataAccess.GetPersonForDD(name);
+        }
     }
 }

@@ -58,7 +58,7 @@ namespace DataManager.Controllers
             return await _logic.UpdateOrganization(model);
         }
         [HttpPost]
-        public async Task<int> CreateSingleOrganizationWithChildrens(OrganizationModel model)
+        public async Task<bool> CreateSingleOrganizationWithChildrens(OrganizationModel model)
         {
             var _logic = new Logic(CurrentPersonId);
             return await _logic.CreateSingleOrganizationWithChildrens(model);

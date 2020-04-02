@@ -14,7 +14,7 @@ namespace BusinessLogic
         {
             return await _dataAccess.UpdateOrganization(model);
         }
-        public async Task<int> CreateSingleOrganizationWithChildrens(OrganizationModel model)
+        public async Task<bool> CreateSingleOrganizationWithChildrens(OrganizationModel model)
         {
             return await _dataAccess.CreateSingleOrganizationWithChildrens(model);
         }

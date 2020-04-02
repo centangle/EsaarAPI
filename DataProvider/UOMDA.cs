@@ -27,9 +27,9 @@ namespace DataProvider
                         dbModel.Type = (int)model.Type;
                         dbModel.IsActive = model.IsActive;
                         dbModel.IsDeleted = false;
-                        dbModel.CreatedBy = model.CreatedBy;
+                        dbModel.CreatedBy = _currentPersonId;
                         dbModel.CreatedDate = model.CreatedDate;
-                        dbModel.UpdatedBy = model.UpdatedBy;
+                        dbModel.UpdatedBy = _currentPersonId;
                         dbModel.UpdatedDate = model.UpdatedDate;
                         context.UOMs.Add(dbModel);
                         bool result = await context.SaveChangesAsync() > 0;
@@ -68,7 +68,7 @@ namespace DataProvider
                             dbModel.Type = (int)model.Type;
                             dbModel.IsDeleted = model.IsDeleted;
                             dbModel.IsActive = model.IsActive;
-                            dbModel.UpdatedBy = model.UpdatedBy;
+                            dbModel.UpdatedBy = _currentPersonId;
                             dbModel.UpdatedDate = model.UpdatedDate;
                             var childModified = await ModifyChildItems(context, model);
                             bool result = (await context.SaveChangesAsync() > 0 && childModified);
