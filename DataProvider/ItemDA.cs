@@ -23,7 +23,7 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var dbModel = SetItem(new Item(), model, true);
+                var dbModel = SetItem(new Item(), model);
                 if (model.ParentId != 0)
                     dbModel.ParentId = model.ParentId;
                 context.Items.Add(dbModel);
@@ -39,7 +39,7 @@ namespace DataProvider
                 Item dbModel = await context.Items.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
-                    SetItem(dbModel, model, false);
+                    SetItem(dbModel, model);
                     if (model.ParentId != 0)
                         dbModel.ParentId = model.ParentId;
                     else
@@ -155,7 +155,7 @@ namespace DataProvider
                 return false;
             }
         }
-        private Item SetItem(Item dbModel, ItemModel model, bool isNew)
+        private Item SetItem(Item dbModel, ItemModel model)
         {
             dbModel.Name = model.Name;
             dbModel.NativeName = model.NativeName;
@@ -166,7 +166,7 @@ namespace DataProvider
             dbModel.Description = model.Description;
             dbModel.IsPeripheralItem = model.IsPeripheralItem;
             dbModel.IsActive = model.IsActive;
-            if (isNew)
+            if (dbModel.Id == 0)
             {
                 dbModel.IsDeleted = false;
                 dbModel.CreatedBy = _currentPersonId;

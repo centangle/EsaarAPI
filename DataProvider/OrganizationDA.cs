@@ -24,7 +24,7 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var dbModel = SetOrganization(new Organization(), model, true);
+                var dbModel = SetOrganization(new Organization(), model);
                 if (model.ParentId != 0)
                     dbModel.ParentId = model.ParentId;
                 context.Organizations.Add(dbModel);
@@ -40,7 +40,7 @@ namespace DataProvider
                 Organization dbModel = await context.Organizations.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
-                    SetOrganization(dbModel, model, false);
+                    SetOrganization(dbModel, model);
                     if (model.ParentId != 0)
                         dbModel.ParentId = model.ParentId;
                     else
@@ -155,23 +155,28 @@ namespace DataProvider
                 return false;
             }
         }
-        private Organization SetOrganization(Organization dbModel, OrganizationModel model, bool isNew)
+        private Organization SetOrganization(Organization dbModel, OrganizationModel model)
         {
             dbModel.Name = model.Name;
             dbModel.NativeName = model.NativeName;
             dbModel.Description = model.Description;
             ImageHelper.Save(model);
             dbModel.LogoUrl = model.ImageUrl;
-            if (model.OwnedBy == null)
+            if (model.OwnedBy == null || model.OwnedBy.Id == 0)
             {
-                throw new KnownException("Organization must have an owner.");
+                if (_currentPersonId == 0)
+                {
+                    throw new KnownException("Organization must have an owner.");
+                }
+                dbModel.OwnedBy = _currentPersonId;
+
             }
             else
                 dbModel.OwnedBy = model.OwnedBy.Id;
             dbModel.IsVerified = model.IsVerified;
             dbModel.IsPeripheralOrganization = model.IsPeripheralOrganization;
             dbModel.IsActive = model.IsActive;
-            if (isNew)
+            if (dbModel.Id == 0)
             {
                 dbModel.IsDeleted = false;
                 dbModel.CreatedBy = _currentPersonId;

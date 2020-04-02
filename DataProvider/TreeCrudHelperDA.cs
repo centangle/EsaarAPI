@@ -11,13 +11,17 @@ namespace DataProvider
 {
     public partial class DataAccess
     {
-        private D SetTreeNode<D, M>(D dbModel, M model, bool isNew)
+        private D SetTreeNode<D, M>(D dbModel, M model)
             where M : class, ITree<M>
             where D : class
         {
             if (typeof(D) == typeof(Item))
             {
-                return (SetItem(dbModel as Item, model as ItemModel, isNew) as D);
+                return (SetItem(dbModel as Item, model as ItemModel) as D);
+            }
+            else if (typeof(D) == typeof(Organization))
+            {
+                return (SetOrganization(dbModel as Organization, model as OrganizationModel) as D);
             }
             return null;
         }
@@ -39,7 +43,7 @@ namespace DataProvider
             var newNodes = allNodes.Where(x => x.Node.Id == 0);
             foreach (var newNode in newNodes)
             {
-                var dbModel = SetTreeNode(new D(), newNode.Node, true);
+                var dbModel = SetTreeNode(new D(), newNode.Node);
 
                 newDbNodes.Add(dbModel);
                 currentDbNodes.Add(dbModel);
@@ -56,7 +60,7 @@ namespace DataProvider
                 {
                     if (node.Node.ParentId != null)
                         parentId = allNodes.Where(x => x.Id == node.ParentId).Select(x => x.Node.Id).FirstOrDefault();
-                    var dbModel = SetTreeNode(dbNode, node.Node, false);
+                    var dbModel = SetTreeNode(dbNode, node.Node);
                     if (parentId == null || parentId == 0)
                     {
                         dbModel.ParentId = null;
