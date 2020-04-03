@@ -1,19 +1,16 @@
 ﻿using AutoMapper;
 using Catalogs;
-using Dapper;
 using DataProvider.Helpers;
 using Models;
+using Models.BriefModel;
 using Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web.UI.HtmlControls;
 
 namespace DataProvider
 {
@@ -165,19 +162,7 @@ namespace DataProvider
                 dbModel.DefaultUOM = model.DefaultUOM.Id;
             dbModel.Description = model.Description;
             dbModel.IsPeripheralItem = model.IsPeripheralItem;
-            dbModel.IsActive = model.IsActive;
-            if (dbModel.Id == 0)
-            {
-                dbModel.IsDeleted = false;
-                dbModel.CreatedBy = _currentPersonId;
-                dbModel.CreatedDate = model.CreatedDate;
-            }
-            else
-            {
-                dbModel.IsDeleted = model.IsDeleted;
-                dbModel.UpdatedBy = _currentPersonId;
-                dbModel.UpdatedDate = model.CreatedDate;
-            }
+            SetBaseProperties(dbModel, model);
             ImageHelper.Save(model);
             dbModel.ImageUrl = model.ImageUrl;
             return dbModel;
@@ -197,7 +182,7 @@ namespace DataProvider
                               select new ItemModel
                               {
                                   Id = i.Id,
-                                  Parent = new BriefModel()
+                                  Parent = new BaseBriefModel()
                                   {
                                       Id = pi == null ? 0 : pi.Id,
                                       Name = pi == null ? "" : pi.Name,
@@ -205,7 +190,7 @@ namespace DataProvider
                                   },
                                   Name = i.Name,
                                   NativeName = i.NativeName,
-                                  DefaultUOM = new BriefModel()
+                                  DefaultUOM = new BaseBriefModel()
                                   {
                                       Id = uom == null ? 0 : uom.Id,
                                       Name = uom == null ? "" : uom.Name,
@@ -234,7 +219,7 @@ namespace DataProvider
                               select new ItemModel
                               {
                                   Id = i.Id,
-                                  Parent = new BriefModel()
+                                  Parent = new BaseBriefModel()
                                   {
                                       Id = pi == null ? 0 : pi.Id,
                                       Name = pi == null ? "" : pi.Name,
@@ -242,7 +227,7 @@ namespace DataProvider
                                   },
                                   Name = i.Name,
                                   NativeName = i.NativeName,
-                                  DefaultUOM = new BriefModel()
+                                  DefaultUOM = new BaseBriefModel()
                                   {
                                       Id = uom == null ? 0 : uom.Id,
                                       Name = uom == null ? "" : uom.Name,
@@ -271,7 +256,7 @@ namespace DataProvider
                               select new ItemModel
                               {
                                   Id = i.Id,
-                                  Parent = new BriefModel()
+                                  Parent = new BaseBriefModel()
                                   {
                                       Id = pi == null ? 0 : pi.Id,
                                       Name = pi == null ? "" : pi.Name,
@@ -279,7 +264,7 @@ namespace DataProvider
                                   },
                                   Name = i.Name,
                                   NativeName = i.NativeName,
-                                  DefaultUOM = new BriefModel()
+                                  DefaultUOM = new BaseBriefModel()
                                   {
                                       Id = uom == null ? 0 : uom.Id,
                                       Name = uom == null ? "" : uom.Name,
@@ -373,9 +358,9 @@ namespace DataProvider
         {
             return new MapperConfiguration(cfg => cfg.CreateMap<Item, ItemModel>()
                .ForMember(dest => dest.DefaultUOM,
-               input => input.MapFrom(i => new BriefModel { Id = i.DefaultUOM ?? 0 }))
+               input => input.MapFrom(i => new BaseBriefModel { Id = i.DefaultUOM ?? 0 }))
                .ForMember(dest => dest.Parent,
-               input => input.MapFrom(i => new BriefModel { Id = i.ParentId ?? 0 }))
+               input => input.MapFrom(i => new BaseBriefModel { Id = i.ParentId ?? 0 }))
                .ForMember(s => s.children, m => m.Ignore())
                );
 

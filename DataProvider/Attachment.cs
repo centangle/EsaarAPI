@@ -12,11 +12,12 @@ namespace DataProvider
     using System;
     using System.Collections.Generic;
     
-    public partial class OrganizationPeople
+    public partial class Attachment
     {
         public int Id { get; set; }
-        public int PersonId { get; set; }
-        public int OrganizationId { get; set; }
+        public int EntityId { get; set; }
+        public int EntityType { get; set; }
+        public string Url { get; set; }
         public int Type { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
@@ -24,8 +25,5 @@ namespace DataProvider
         public System.DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
-    
-        public virtual Organization Organization { get; set; }
-        public virtual Person Person { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Catalogs;
 using Models.Base;
+using Models.BriefModel;
 using Models.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace Models
             }
             set { }
         }
-        public BriefModel Parent { get; set; }
+        public BaseBriefModel Parent { get; set; }
         public OrganizationTypeCatalog Type { get; set; }
         [IgnoreDataMember]
         public string BaseFolder
@@ -42,8 +43,7 @@ namespace Models
         public string Description { get; set; }
         public string ImageUrl { get; set; }
         public string ImageInBase64 { get; set; }
-        [Required]
-        public BriefModel OwnedBy { get; set; }
+        public PersonBriefModel OwnedBy { get; set; }
         public bool IsPeripheralOrganization { get; set; }
         public bool IsVerified { get; set; }
         public ICollection<OrganizationModel> children { get; set; }

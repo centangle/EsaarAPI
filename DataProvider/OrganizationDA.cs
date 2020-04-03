@@ -1,20 +1,17 @@
 ﻿using AutoMapper;
 using Catalogs;
-using Dapper;
 using DataProvider.Helpers;
 using Helpers;
 using Models;
+using Models.BriefModel;
 using Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web.UI.HtmlControls;
 
 namespace DataProvider
 {
@@ -175,17 +172,7 @@ namespace DataProvider
                 dbModel.OwnedBy = model.OwnedBy.Id;
             dbModel.IsVerified = model.IsVerified;
             dbModel.IsPeripheralOrganization = model.IsPeripheralOrganization;
-            dbModel.IsActive = model.IsActive;
-            if (dbModel.Id == 0)
-            {
-                dbModel.IsDeleted = false;
-                dbModel.CreatedBy = _currentPersonId;
-                dbModel.CreatedDate = model.CreatedDate;
-            }
-            else
-                dbModel.IsDeleted = model.IsDeleted;
-            dbModel.UpdatedBy = _currentPersonId;
-            dbModel.UpdatedDate = model.UpdatedDate;
+            SetBaseProperties(dbModel, model);
             return dbModel;
 
         }
@@ -202,7 +189,7 @@ namespace DataProvider
                               select new OrganizationModel
                               {
                                   Id = o.Id,
-                                  Parent = new BriefModel()
+                                  Parent = new BaseBriefModel()
                                   {
                                       Id = po == null ? 0 : po.Id,
                                       Name = po == null ? "" : po.Name,
@@ -213,7 +200,7 @@ namespace DataProvider
                                   Description = o.Description,
                                   ImageUrl = o.LogoUrl,
                                   Type = (OrganizationTypeCatalog)(o.Type ?? 0),
-                                  OwnedBy = new BriefModel()
+                                  OwnedBy = new PersonBriefModel()
                                   {
                                       Id = ob == null ? 0 : ob.Id,
                                       Name = ob == null ? "" : ob.Name,
@@ -240,7 +227,7 @@ namespace DataProvider
                               select new OrganizationModel
                               {
                                   Id = o.Id,
-                                  Parent = new BriefModel()
+                                  Parent = new BaseBriefModel()
                                   {
                                       Id = po == null ? 0 : po.Id,
                                       Name = po == null ? "" : po.Name,
@@ -251,7 +238,7 @@ namespace DataProvider
                                   Description = o.Description,
                                   ImageUrl = o.LogoUrl,
                                   Type = (OrganizationTypeCatalog)(o.Type ?? 0),
-                                  OwnedBy = new BriefModel()
+                                  OwnedBy = new PersonBriefModel()
                                   {
                                       Id = ob == null ? 0 : ob.Id,
                                       Name = ob == null ? "" : ob.Name,
@@ -278,7 +265,7 @@ namespace DataProvider
                               select new OrganizationModel
                               {
                                   Id = o.Id,
-                                  Parent = new BriefModel()
+                                  Parent = new BaseBriefModel()
                                   {
                                       Id = po == null ? 0 : po.Id,
                                       Name = po == null ? "" : po.Name,
@@ -289,7 +276,7 @@ namespace DataProvider
                                   Description = o.Description,
                                   ImageUrl = o.LogoUrl,
                                   Type = (OrganizationTypeCatalog)(o.Type ?? 0),
-                                  OwnedBy = new BriefModel()
+                                  OwnedBy = new PersonBriefModel()
                                   {
                                       Id = ob == null ? 0 : ob.Id,
                                       Name = ob == null ? "" : ob.Name,
@@ -383,7 +370,7 @@ namespace DataProvider
         {
             return new MapperConfiguration(cfg => cfg.CreateMap<Organization, OrganizationModel>()
                .ForMember(dest => dest.Parent,
-               input => input.MapFrom(i => new BriefModel { Id = i.ParentId ?? 0 }))
+               input => input.MapFrom(i => new BaseBriefModel { Id = i.ParentId ?? 0 }))
                .ForMember(s => s.children, m => m.Ignore())
                );
 

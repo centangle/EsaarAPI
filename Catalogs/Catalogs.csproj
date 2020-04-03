@@ -46,6 +46,7 @@
     <Compile Include="EntityTypeCatalog.cs" />
     <Compile Include="ItemTypeCatalog.cs" />
     <Compile Include="OrganizationTypeCatalog.cs" />
+    <Compile Include="PaginationOrderCatalog.cs" />
     <Compile Include="UnitTypeCatalog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

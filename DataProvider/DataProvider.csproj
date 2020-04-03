@@ -78,6 +78,9 @@
     <Compile Include="AspNetUserLogin.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="Attachment.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
     <Compile Include="Charity.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -96,6 +99,7 @@
     <Compile Include="Country.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="CRUDHelper.cs" />
     <Compile Include="C__MigrationHistory.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -105,12 +109,13 @@
     </Compile>
     <Compile Include="EDMXPartialClasses\Item.cs" />
     <Compile Include="EDMXPartialClasses\Organization.cs" />
-    <Compile Include="EDMXPartialClasses\UOM.cs" />
+    <Compile Include="EDMXPartialClasses\IBaseClasses.cs" />
     <Compile Include="ExceptionLog.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
-    <Compile Include="Helper.cs" />
+    <Compile Include="DapperHelper.cs" />
     <Compile Include="Helpers\ImageHelperDA.cs" />
+    <Compile Include="Helpers\PaginationExtension.cs" />
     <Compile Include="Helpers\TreeHelper.cs" />
     <Compile Include="Helpers\TreeTraversal.cs" />
     <Compile Include="Helpers\UpdatedListItem.cs" />
@@ -121,6 +126,9 @@
     <Compile Include="Log.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="MessageThread.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
     <Compile Include="Organization.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -128,7 +136,14 @@
     <Compile Include="OrganizationItem.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="OrganizationItemDA.cs" />
     <Compile Include="OrganizationPeople.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OrganizationRequest.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OrganizationVerification.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="PersonDA.cs" />

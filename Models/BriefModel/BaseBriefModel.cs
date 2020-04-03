@@ -1,6 +1,6 @@
-﻿namespace Models
+﻿namespace Models.BriefModel
 {
-    public class BriefModel
+    public class BaseBriefModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

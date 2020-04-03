@@ -11,7 +11,7 @@ namespace DataProvider
     {
         public async Task<bool> UpdateRefreshToken(RefreshTokenModel model)
         {
-            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(Helper.ConnectionStringValue()))
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(DapperHelper.ConnectionStringValue()))
             {
                 string sql = "SELECT * FROM dbo.RefreshToken WHERE UserId = @UserId;";
                 var queryParameters = new DynamicParameters();
@@ -26,7 +26,7 @@ namespace DataProvider
         }
         public async Task<bool> RemoveRefreshToken(RefreshTokenModel model)
         {
-            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(Helper.ConnectionStringValue()))
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(DapperHelper.ConnectionStringValue()))
             {
                 string sql = "Delete FROM dbo.RefreshToken WHERE Id = @Id;";
                 var queryParameters = new DynamicParameters();
@@ -36,7 +36,7 @@ namespace DataProvider
         }
         public async Task<RefreshTokenModel> FindRefreshToken(string hashedToken)
         {
-            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(Helper.ConnectionStringValue()))
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(DapperHelper.ConnectionStringValue()))
             {
                 string sql = "SELECT * FROM dbo.RefreshToken WHERE Id = @Id;";
                 var queryParameters = new DynamicParameters();
@@ -46,7 +46,7 @@ namespace DataProvider
         }
         public async Task<List<RefreshTokenModel>> GetAllRefreshTokens()
         {
-            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(Helper.ConnectionStringValue()))
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(DapperHelper.ConnectionStringValue()))
             {
                 string sql = "SELECT * FROM dbo.RefreshToken";
                 return (await connection.QueryAsync<RefreshTokenModel>(sql)).ToList();

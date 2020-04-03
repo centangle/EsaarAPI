@@ -1,8 +1,6 @@
 ﻿using Models;
-using System;
+using Models.BriefModel;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogic
@@ -17,9 +15,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.GetPersonByAuthId(AuthId);
         }
-        public async Task<List<BriefModel>> GetPersonForDD(string name)
+        public async Task<List<PersonBriefModel>> GetPersonForDD(string filter)
         {
-            return await _dataAccess.GetPersonForDD(name);
+            return await _dataAccess.GetPersonForDD(filter);
         }
     }
 }

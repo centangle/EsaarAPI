@@ -1,6 +1,6 @@
 ﻿using Catalogs;
 using Models.Base;
-using System;
+using Models.BriefModel;
 
 namespace Models
 {
@@ -8,16 +8,16 @@ namespace Models
     {
         public AddressModel()
         {
-            Entity = new BriefModel();
-            Country = new BriefModel();
-            State = new BriefModel();
-            District = new BriefModel();
-            Tehsil = new BriefModel();
-            UnionCouncil = new BriefModel();
+            Entity = new BaseBriefModel();
+            Country = new BaseBriefModel();
+            State = new BaseBriefModel();
+            District = new BaseBriefModel();
+            Tehsil = new BaseBriefModel();
+            UnionCouncil = new BaseBriefModel();
         }
         public string Name { get; set; }
         public string NativeName { get; set; }
-        public BriefModel Entity { get; set; }
+        public BaseBriefModel Entity { get; set; }
         public EntityTypeCatalog EntityType { get; set; }
         public AddressTypeCatalog Type { get; set; }
         public string AddressLine1 { get; set; }
@@ -26,11 +26,11 @@ namespace Models
         public string PhoneNo { get; set; }
         public string MobileNo { get; set; }
         public string Email { get; set; }
-        public BriefModel Country { get; set; }
-        public BriefModel State { get; set; }
-        public BriefModel District { get; set; }
-        public BriefModel Tehsil { get; set; }
-        public BriefModel UnionCouncil { get; set; }
+        public BaseBriefModel Country { get; set; }
+        public BaseBriefModel State { get; set; }
+        public BaseBriefModel District { get; set; }
+        public BaseBriefModel Tehsil { get; set; }
+        public BaseBriefModel UnionCouncil { get; set; }
         
     }
 }

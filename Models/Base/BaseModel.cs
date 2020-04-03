@@ -9,7 +9,6 @@ namespace Models.Base
         public int Id { get; set; }
         [IgnoreDataMember]
         public bool IsDeleted { get; set; }
-        [IgnoreDataMember]//
         public bool IsActive { get; set; }
         [IgnoreDataMember]
         public int CreatedBy { get; set; }

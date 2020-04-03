@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Catalogs;
+using Models.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -32,6 +34,16 @@ namespace DataManager.Controllers
                 }
             }
         }
-
+        protected void SetPaginationProperties(BaseSearchModel searchModel, int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, string orderByColumn, bool disablePagination, bool calculateTotal)
+        {
+            searchModel.RecordsPerPage = recordsPerPage;
+            searchModel.CurrentPage = currentPage;
+            searchModel.OrderDir = orderDir;
+            if (!string.IsNullOrEmpty(orderByColumn))
+                searchModel.OrderByColumn = orderByColumn;
+            searchModel.DisablePagination = disablePagination;
+            searchModel.CalculateTotal = calculateTotal;
+        }
     }
+
 }

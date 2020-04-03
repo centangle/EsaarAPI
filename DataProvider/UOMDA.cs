@@ -19,18 +19,7 @@ namespace DataProvider
                 {
                     try
                     {
-                        UOM dbModel = new UOM();
-                        dbModel.Name = model.Name;
-                        dbModel.NativeName = model.NativeName;
-                        dbModel.Abbreviation = model.Abbreviation;
-                        dbModel.NoOfBaseUnit = model.NoOfBaseUnit;
-                        dbModel.Type = (int)model.Type;
-                        dbModel.IsActive = model.IsActive;
-                        dbModel.IsDeleted = false;
-                        dbModel.CreatedBy = _currentPersonId;
-                        dbModel.CreatedDate = model.CreatedDate;
-                        dbModel.UpdatedBy = _currentPersonId;
-                        dbModel.UpdatedDate = model.UpdatedDate;
+                        var dbModel = SetUOM(new UOM(), model, null);
                         context.UOMs.Add(dbModel);
                         bool result = await context.SaveChangesAsync() > 0;
                         if (result)
@@ -62,14 +51,7 @@ namespace DataProvider
                         UOM dbModel = await context.UOMs.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
                         if (dbModel != null)
                         {
-                            dbModel.Name = model.Name;
-                            dbModel.NativeName = model.NativeName;
-                            dbModel.Abbreviation = model.Abbreviation;
-                            dbModel.Type = (int)model.Type;
-                            dbModel.IsDeleted = model.IsDeleted;
-                            dbModel.IsActive = model.IsActive;
-                            dbModel.UpdatedBy = _currentPersonId;
-                            dbModel.UpdatedDate = model.UpdatedDate;
+                            SetUOM(dbModel, model, null);
                             var childModified = await ModifyChildItems(context, model);
                             bool result = (await context.SaveChangesAsync() > 0 && childModified);
                             transaction.Commit();
@@ -197,14 +179,7 @@ namespace DataProvider
         {
             foreach (var item in model.children)
             {
-                UOM dbModel = new UOM();
-                dbModel.Name = item.Name;
-                dbModel.NativeName = item.NativeName;
-                dbModel.Abbreviation = item.Abbreviation;
-                dbModel.NoOfBaseUnit = item.NoOfBaseUnit;
-                dbModel.IsActive = item.IsActive;
-                dbModel.IsDeleted = item.IsDeleted;
-                dbModel.ParentId = model.Id;
+                var dbModel = SetUOM(new UOM(), item, model.Id);
                 context.UOMs.Add(dbModel);
             }
         }
@@ -214,13 +189,7 @@ namespace DataProvider
             foreach (var cuom in modifiedItems)
             {
                 UOM dbModel = masterItems.Where(x => x.Id == cuom.Id).FirstOrDefault();
-                dbModel.Name = cuom.Name;
-                dbModel.NativeName = cuom.NativeName;
-                dbModel.Abbreviation = cuom.Abbreviation;
-                dbModel.NoOfBaseUnit = cuom.NoOfBaseUnit;
-                dbModel.IsActive = cuom.IsActive;
-                dbModel.IsDeleted = cuom.IsDeleted;
-                dbModel.ParentId = cuom.ParentId;
+                SetUOM(dbModel, cuom, cuom.ParentId);
             }
         }
 
@@ -230,6 +199,18 @@ namespace DataProvider
             {
                 item.IsDeleted = true;
             }
+        }
+
+        private UOM SetUOM(UOM dbModel, UOMModel model, int? parentId)
+        {
+            dbModel.Name = model.Name;
+            dbModel.NativeName = model.NativeName;
+            dbModel.Abbreviation = model.Abbreviation;
+            dbModel.NoOfBaseUnit = model.NoOfBaseUnit;
+            dbModel.Type = (int)model.Type;
+            dbModel.ParentId = parentId;
+            SetBaseProperties(dbModel, model);
+            return dbModel;
         }
     }
 }

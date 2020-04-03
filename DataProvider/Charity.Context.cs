@@ -33,14 +33,18 @@ namespace DataProvider
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<Attachment> Attachments { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<District> Districts { get; set; }
         public virtual DbSet<ExceptionLog> ExceptionLogs { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
+        public virtual DbSet<MessageThread> MessageThreads { get; set; }
         public virtual DbSet<Organization> Organizations { get; set; }
         public virtual DbSet<OrganizationItem> OrganizationItems { get; set; }
         public virtual DbSet<OrganizationPeople> OrganizationPeoples { get; set; }
+        public virtual DbSet<OrganizationRequest> OrganizationRequests { get; set; }
+        public virtual DbSet<OrganizationVerification> OrganizationVerifications { get; set; }
         public virtual DbSet<Person> People { get; set; }
         public virtual DbSet<Request> Requests { get; set; }
         public virtual DbSet<RequestItem> RequestItems { get; set; }

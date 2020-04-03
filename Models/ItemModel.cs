@@ -1,5 +1,6 @@
 ﻿using Catalogs;
 using Models.Base;
+using Models.BriefModel;
 using Models.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -28,9 +29,8 @@ namespace Models
             }
             set { }
         }
-        public BriefModel Parent { get; set; }
-        [IgnoreDataMember]//
-        public BriefModel DefaultUOM { get; set; }
+        public BaseBriefModel Parent { get; set; }
+        public BaseBriefModel DefaultUOM { get; set; }
         [IgnoreDataMember]
         public ItemTypeCatalog Type { get; set; }
         [IgnoreDataMember]
@@ -41,13 +41,9 @@ namespace Models
                 return "Items";
             }
         }
-        [IgnoreDataMember]//
         public string Description { get; set; }
-        [IgnoreDataMember]//
         public string ImageUrl { get; set; }
-        [IgnoreDataMember]//
         public string ImageInBase64 { get; set; }
-        [IgnoreDataMember]//
         public bool IsPeripheralItem { get; set; }
 
         public ICollection<ItemModel> children { get; set; }

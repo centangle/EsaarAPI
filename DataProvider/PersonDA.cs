@@ -1,4 +1,6 @@
-﻿using Models;
+﻿using Catalogs;
+using Models;
+using Models.BriefModel;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -74,32 +76,33 @@ namespace DataProvider
             dbModel.NativeName = model.NativeName;
             dbModel.Type = 0;
             dbModel.IdentificationNo = model.IdentificationNo;
-            dbModel.IsActive = model.IsActive;
-            dbModel.IsDeleted = model.IsDeleted;
+            SetBaseProperties(dbModel, model);
             if (dbModel.Id == 0)
             {
-                dbModel.CreatedBy = _currentPersonId;
-                dbModel.CreatedDate = model.CreatedDate;
-                dbModel.IsDeleted = false;
                 dbModel.AuthUserId = model.AuthUserId;
-
             }
-            dbModel.UpdatedBy = _currentPersonId;
-            dbModel.UpdatedDate = model.UpdatedDate;
             return dbModel;
         }
 
-        public async Task<List<BriefModel>> GetPersonForDD(string name)
+        public async Task<List<PersonBriefModel>> GetPersonForDD(string filter)
         {
             using (CharityEntities context = new CharityEntities())
             {
                 return await (from p in context.People
-                              where p.Name.Contains(name) || p.NativeName.Contains(name)
-                              select new BriefModel()
+                              join a in context.Addresses on p.Id equals a.EntityId
+                              where
+                              (p.Name.Contains(filter) || p.NativeName.Contains(filter)
+                              || p.IdentificationNo.Contains(filter) || a.MobileNo.Contains(filter)
+                              )
+                              && a.Type == (int)AddressTypeCatalog.Default
+                              && a.EntityType == (int)EntityTypeCatalog.Person
+                              select new PersonBriefModel()
                               {
                                   Id = p.Id,
                                   Name = p.Name,
-                                  NativeName = p.NativeName
+                                  NativeName = p.NativeName,
+                                  IdentificationNo = p.IdentificationNo,
+                                  MobileNo = a.MobileNo,
                               }).ToListAsync();
             }
         }

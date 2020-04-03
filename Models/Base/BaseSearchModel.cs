@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Catalogs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,8 @@ namespace Models.Base
         public int RecordsPerPage { get; set; } = 15;
         public bool CalculateTotal { get; set; } = true;
         public int CurrentPage { get; set; } = 1;
-        public bool Pagination { get; set; } = true;
+        public bool DisablePagination { get; set; } = true;
         public string OrderByColumn { get; set; } = "Name";
-        public string OrderDir { get; set; } = "asc";
+        public PaginationOrderCatalog OrderDir { get; set; } = PaginationOrderCatalog.Asc;
     }
 }

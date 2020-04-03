@@ -2,7 +2,7 @@
 
 namespace DataProvider
 {
-    public static class Helper
+    public static class DapperHelper
     {
         public static string ConnectionStringValue()
         {

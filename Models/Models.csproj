@@ -46,10 +46,12 @@
     <Compile Include="AddressModel.cs" />
     <Compile Include="Base\BaseModel.cs" />
     <Compile Include="Base\BaseSearchModel.cs" />
-    <Compile Include="BriefModel.cs" />
+    <Compile Include="BriefModel\BaseBriefModel.cs" />
+    <Compile Include="BriefModel\PersonBriefModel.cs" />
     <Compile Include="Interfaces\IBase.cs" />
     <Compile Include="Interfaces\IImage.cs" />
     <Compile Include="Interfaces\ITree.cs" />
+    <Compile Include="OrganizationItemModel.cs" />
     <Compile Include="OrganizationModel.cs" />
     <Compile Include="ItemModel.cs" />
     <Compile Include="PaginatedResultModel.cs" />

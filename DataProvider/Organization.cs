@@ -20,6 +20,7 @@ namespace DataProvider
             this.Organization1 = new HashSet<Organization>();
             this.OrganizationItems = new HashSet<OrganizationItem>();
             this.OrganizationPeoples = new HashSet<OrganizationPeople>();
+            this.OrganizationRequests = new HashSet<OrganizationRequest>();
             this.RequestOrganizations = new HashSet<RequestOrganization>();
         }
     
@@ -47,6 +48,9 @@ namespace DataProvider
         public virtual ICollection<OrganizationItem> OrganizationItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrganizationPeople> OrganizationPeoples { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrganizationRequest> OrganizationRequests { get; set; }
+        public virtual OrganizationVerification OrganizationVerification { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RequestOrganization> RequestOrganizations { get; set; }
     }

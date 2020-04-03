@@ -8,13 +8,18 @@ namespace BusinessLogic
         int _currentPersonId;
         public Logic()
         {
-            _dataAccess = new DataAccess();
+            SetDataAccess();
         }
 
-        public Logic(int currentPersonId) : this()
+        public Logic(int currentPersonId)
         {
             _currentPersonId = currentPersonId;
+            SetDataAccess();
 
+        }
+        private void SetDataAccess()
+        {
+            _dataAccess = new DataAccess(_currentPersonId);
         }
 
 
