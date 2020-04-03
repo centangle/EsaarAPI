@@ -371,6 +371,8 @@ namespace DataProvider
             return new MapperConfiguration(cfg => cfg.CreateMap<Organization, OrganizationModel>()
                .ForMember(dest => dest.Parent,
                input => input.MapFrom(i => new BaseBriefModel { Id = i.ParentId ?? 0 }))
+               .ForMember(dest => dest.OwnedBy,
+               input => input.MapFrom(i => new PersonBriefModel { Id = i.OwnedBy }))
                .ForMember(s => s.children, m => m.Ignore())
                );
 
