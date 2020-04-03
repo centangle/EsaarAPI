@@ -15,11 +15,11 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                return await (from p in context.Members
-                              where p.AuthUserId == AuthId
+                return await (from m in context.Members
+                              where m.AuthUserId == AuthId
                               select new MemberModel()
                               {
-                                  Id = p.Id
+                                  Id = m.Id
                               }).FirstOrDefaultAsync();
             }
         }
@@ -95,7 +95,7 @@ namespace DataProvider
                               || m.IdentificationNo.Contains(filter) || a.MobileNo.Contains(filter)
                               )
                               && a.Type == (int)AddressTypeCatalog.Default
-                              && a.EntityType == (int)EntityTypeCatalog.Member
+                              && a.EntityType == (int)MemberTypeCatalog.Member
                               select new MemberBriefModel()
                               {
                                   Id = m.Id,

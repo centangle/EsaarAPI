@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Catalogs
 {
-    public enum PaginationOrderCatalog:int
+    public enum MemberTypeCatalog:int
     {
-        Asc=0,
-        Desc=1,
+        Member
     }
 }

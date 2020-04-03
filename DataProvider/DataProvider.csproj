@@ -129,9 +129,6 @@
     <Compile Include="Member.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
-    <Compile Include="MessageThread.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
     <Compile Include="OrganizationMember.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -148,6 +145,7 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="MemberDA.cs" />
+    <Compile Include="OrganizationRequestDA.cs" />
     <Compile Include="RefreshToken.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -162,9 +160,10 @@
     <Compile Include="RequestOrganization.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
-    <Compile Include="RequestStatu.cs">
+    <Compile Include="RequestThread.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="RequestThreadDA.cs" />
     <Compile Include="RequestVolunteer.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>

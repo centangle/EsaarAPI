@@ -19,7 +19,6 @@ namespace DataProvider
         {
             this.RequestItems = new HashSet<RequestItem>();
             this.RequestOrganizations = new HashSet<RequestOrganization>();
-            this.RequestStatus = new HashSet<RequestStatu>();
             this.RequestVolunteers = new HashSet<RequestVolunteer>();
         }
     
@@ -58,8 +57,6 @@ namespace DataProvider
         public virtual ICollection<RequestItem> RequestItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RequestOrganization> RequestOrganizations { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RequestStatu> RequestStatus { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RequestVolunteer> RequestVolunteers { get; set; }
     }

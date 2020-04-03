@@ -52,11 +52,13 @@
     <Compile Include="Interfaces\IImage.cs" />
     <Compile Include="Interfaces\ITree.cs" />
     <Compile Include="OrganizationItemModel.cs" />
+    <Compile Include="OrganizationRequestModel.cs" />
     <Compile Include="OrganizationMembershipModel.cs" />
     <Compile Include="OrganizationModel.cs" />
     <Compile Include="ItemModel.cs" />
     <Compile Include="PaginatedResultModel.cs" />
     <Compile Include="MemberModel.cs" />
+    <Compile Include="RequestThreadModel.cs" />
     <Compile Include="UOMModel.cs" />
     <Compile Include="UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -12,7 +12,7 @@ namespace DataProvider
     using System;
     using System.Collections.Generic;
     
-    public partial class MessageThread
+    public partial class RequestThread
     {
         public int Id { get; set; }
         public int EntityId { get; set; }

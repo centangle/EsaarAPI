@@ -40,7 +40,7 @@ namespace DataManager.Providers
                 context.SetError("invalid_grant", "The user name or password is incorrect.");
                 return;
             }
-            var member = new Logic().GetMemberByAuthId(user.Id);
+            var member = await new Logic().GetMemberByAuthId(user.Id);
             int memberId = 0;
             if (member != null)
                 memberId = member.Id;

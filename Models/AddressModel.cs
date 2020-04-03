@@ -18,7 +18,7 @@ namespace Models
         public string Name { get; set; }
         public string NativeName { get; set; }
         public BaseBriefModel Entity { get; set; }
-        public EntityTypeCatalog EntityType { get; set; }
+        public MemberTypeCatalog EntityType { get; set; }
         public AddressTypeCatalog Type { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }

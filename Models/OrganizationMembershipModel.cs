@@ -13,6 +13,7 @@ namespace Models
         }
         public BaseBriefModel Organization { get; set; }
         public BaseBriefModel Member { get; set; }
+
         public OrganizationMemberTypeCatalog Type { get; set; }
     }
 }

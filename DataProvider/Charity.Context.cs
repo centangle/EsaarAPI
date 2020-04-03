@@ -40,7 +40,6 @@ namespace DataProvider
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
         public virtual DbSet<Member> Members { get; set; }
-        public virtual DbSet<MessageThread> MessageThreads { get; set; }
         public virtual DbSet<Organization> Organizations { get; set; }
         public virtual DbSet<OrganizationItem> OrganizationItems { get; set; }
         public virtual DbSet<OrganizationMember> OrganizationMembers { get; set; }
@@ -48,7 +47,7 @@ namespace DataProvider
         public virtual DbSet<Request> Requests { get; set; }
         public virtual DbSet<RequestItem> RequestItems { get; set; }
         public virtual DbSet<RequestOrganization> RequestOrganizations { get; set; }
-        public virtual DbSet<RequestStatu> RequestStatus { get; set; }
+        public virtual DbSet<RequestThread> RequestThreads { get; set; }
         public virtual DbSet<RequestVolunteer> RequestVolunteers { get; set; }
         public virtual DbSet<State> States { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }

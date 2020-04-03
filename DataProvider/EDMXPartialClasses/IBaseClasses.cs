@@ -6,4 +6,6 @@ namespace DataProvider
     public partial class Member : IBase { }
     public partial class OrganizationItem : IBase { }
     public partial class OrganizationMember : IBase { }
+    public partial class OrganizationRequest : IBase { }
+    public partial class RequestThread : IBase { }
 }

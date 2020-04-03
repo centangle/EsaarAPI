@@ -242,6 +242,7 @@
     <Compile Include="Controllers\ItemController.cs" />
     <Compile Include="Controllers\OrganizationItemController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
+    <Compile Include="Controllers\OrganizationMembershipController.cs" />
     <Compile Include="Controllers\UOMController.cs" />
     <Compile Include="Providers\AuthRefreshTokenProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />

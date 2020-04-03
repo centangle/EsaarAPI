@@ -41,14 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddressTypeCatalog.cs" />
-    <Compile Include="DataStructureCatalog.cs" />
-    <Compile Include="EntityTypeCatalog.cs" />
-    <Compile Include="ItemTypeCatalog.cs" />
-    <Compile Include="OrganizationMemberTypeCatalog.cs" />
-    <Compile Include="OrganizationTypeCatalog.cs" />
-    <Compile Include="PaginationOrderCatalog.cs" />
-    <Compile Include="UnitTypeCatalog.cs" />
+    <Compile Include="GeneralCatalogs.cs" />
+    <Compile Include="MemberCatalogs.cs" />
+    <Compile Include="ItemCatalogs.cs" />
+    <Compile Include="OrganizationCatalogs.cs" />
+    <Compile Include="PaginationCatalogs.cs" />
+    <Compile Include="RequestThreadCatalogs.cs" />
+    <Compile Include="UOMCatalogs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
