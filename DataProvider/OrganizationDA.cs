@@ -161,11 +161,11 @@ namespace DataProvider
             dbModel.LogoUrl = model.ImageUrl;
             if (model.OwnedBy == null || model.OwnedBy.Id == 0)
             {
-                if (_currentPersonId == 0)
+                if (_loggedInMemberId == 0)
                 {
                     throw new KnownException("Organization must have an owner.");
                 }
-                dbModel.OwnedBy = _currentPersonId;
+                dbModel.OwnedBy = _loggedInMemberId;
 
             }
             else
@@ -181,7 +181,7 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 return await (from o in context.Organizations
-                              join ob in context.People on o.OwnedBy equals ob.Id
+                              join ob in context.Members on o.OwnedBy equals ob.Id
                               join po in context.Organizations on o.ParentId equals po.Id into tpo
                               from po in tpo.DefaultIfEmpty()
                               where o.Id == id
@@ -200,7 +200,7 @@ namespace DataProvider
                                   Description = o.Description,
                                   ImageUrl = o.LogoUrl,
                                   Type = (OrganizationTypeCatalog)(o.Type ?? 0),
-                                  OwnedBy = new PersonBriefModel()
+                                  OwnedBy = new MemberBriefModel()
                                   {
                                       Id = ob == null ? 0 : ob.Id,
                                       Name = ob == null ? "" : ob.Name,
@@ -219,7 +219,7 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 return await (from o in context.Organizations
-                              join ob in context.People on o.OwnedBy equals ob.Id
+                              join ob in context.Members on o.OwnedBy equals ob.Id
                               join po in context.Organizations on o.ParentId equals po.Id into tpo
                               from po in tpo.DefaultIfEmpty()
                               where o.IsPeripheralOrganization == true
@@ -238,7 +238,7 @@ namespace DataProvider
                                   Description = o.Description,
                                   ImageUrl = o.LogoUrl,
                                   Type = (OrganizationTypeCatalog)(o.Type ?? 0),
-                                  OwnedBy = new PersonBriefModel()
+                                  OwnedBy = new MemberBriefModel()
                                   {
                                       Id = ob == null ? 0 : ob.Id,
                                       Name = ob == null ? "" : ob.Name,
@@ -257,7 +257,7 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 return await (from o in context.Organizations
-                              join ob in context.People on o.OwnedBy equals ob.Id
+                              join ob in context.Members on o.OwnedBy equals ob.Id
                               join po in context.Organizations on o.ParentId equals po.Id into tpo
                               from po in tpo.DefaultIfEmpty()
                               where o.ParentId == null
@@ -276,7 +276,7 @@ namespace DataProvider
                                   Description = o.Description,
                                   ImageUrl = o.LogoUrl,
                                   Type = (OrganizationTypeCatalog)(o.Type ?? 0),
-                                  OwnedBy = new PersonBriefModel()
+                                  OwnedBy = new MemberBriefModel()
                                   {
                                       Id = ob == null ? 0 : ob.Id,
                                       Name = ob == null ? "" : ob.Name,
@@ -372,7 +372,7 @@ namespace DataProvider
                .ForMember(dest => dest.Parent,
                input => input.MapFrom(i => new BaseBriefModel { Id = i.ParentId ?? 0 }))
                .ForMember(dest => dest.OwnedBy,
-               input => input.MapFrom(i => new PersonBriefModel { Id = i.OwnedBy }))
+               input => input.MapFrom(i => new MemberBriefModel { Id = i.OwnedBy }))
                .ForMember(s => s.children, m => m.Ignore())
                );
 

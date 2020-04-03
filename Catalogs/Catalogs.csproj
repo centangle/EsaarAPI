@@ -45,6 +45,7 @@
     <Compile Include="DataStructureCatalog.cs" />
     <Compile Include="EntityTypeCatalog.cs" />
     <Compile Include="ItemTypeCatalog.cs" />
+    <Compile Include="OrganizationMemberTypeCatalog.cs" />
     <Compile Include="OrganizationTypeCatalog.cs" />
     <Compile Include="PaginationOrderCatalog.cs" />
     <Compile Include="UnitTypeCatalog.cs" />

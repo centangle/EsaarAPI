@@ -17,14 +17,14 @@ namespace DataProvider
             if (dbModel.Id == 0)
             {
                 dbModel.IsDeleted = false;
-                dbModel.CreatedBy = _currentPersonId;
+                dbModel.CreatedBy = _loggedInMemberId;
                 dbModel.CreatedDate = model.CreatedDate;
             }
             else
             {
                 dbModel.IsDeleted = model.IsDeleted;
             }
-            dbModel.UpdatedBy = _currentPersonId;
+            dbModel.UpdatedBy = _loggedInMemberId;
             dbModel.UpdatedDate = model.UpdatedDate;
         }
     }

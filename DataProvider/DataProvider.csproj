@@ -126,9 +126,16 @@
     <Compile Include="Log.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="Member.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
     <Compile Include="MessageThread.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="OrganizationMember.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OrganizationMembershipDA.cs" />
     <Compile Include="Organization.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -137,19 +144,10 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="OrganizationItemDA.cs" />
-    <Compile Include="OrganizationPeople.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
     <Compile Include="OrganizationRequest.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
-    <Compile Include="OrganizationVerification.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PersonDA.cs" />
-    <Compile Include="Person.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
+    <Compile Include="MemberDA.cs" />
     <Compile Include="RefreshToken.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -174,6 +172,9 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="State.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sysdiagram.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="Tehsil.cs">

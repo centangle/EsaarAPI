@@ -11,19 +11,19 @@ namespace DataProvider
 {
     public partial class DataAccess
     {
-        public async Task<PersonModel> GetPersonByAuthId(string AuthId)
+        public async Task<MemberModel> GetMemberByAuthId(string AuthId)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                return await (from p in context.People
+                return await (from p in context.Members
                               where p.AuthUserId == AuthId
-                              select new PersonModel()
+                              select new MemberModel()
                               {
                                   Id = p.Id
                               }).FirstOrDefaultAsync();
             }
         }
-        public async Task<bool> AddPerson(PersonModel model)
+        public async Task<bool> AddMember(MemberModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -31,9 +31,9 @@ namespace DataProvider
                 {
                     try
                     {
-                        Person dbModel = new Person();
-                        SetPerson(dbModel, model);
-                        context.People.Add(dbModel);
+                        Member dbModel = new Member();
+                        SetMember(dbModel, model);
+                        context.Members.Add(dbModel);
                         bool result = await context.SaveChangesAsync() > 0;
                         model.Id = dbModel.Id;
                         model.Address.Entity.Id = model.Id;
@@ -49,16 +49,16 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> UpdatePerson(PersonModel model)
+        public async Task<bool> UpdateMember(MemberModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
                 try
                 {
-                    Person dbModel = await context.People.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+                    Member dbModel = await context.Members.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
                     if (dbModel != null)
                     {
-                        SetPerson(dbModel, model);
+                        SetMember(dbModel, model);
                         return await context.SaveChangesAsync() > 0;
                     }
                     return false;
@@ -69,7 +69,7 @@ namespace DataProvider
                 }
             }
         }
-        private Person SetPerson(Person dbModel, PersonModel model)
+        private Member SetMember(Member dbModel, MemberModel model)
         {
 
             dbModel.Name = model.Name;
@@ -84,24 +84,24 @@ namespace DataProvider
             return dbModel;
         }
 
-        public async Task<List<PersonBriefModel>> GetPersonForDD(string filter)
+        public async Task<List<MemberBriefModel>> GetMemberForDD(string filter)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                return await (from p in context.People
-                              join a in context.Addresses on p.Id equals a.EntityId
+                return await (from m in context.Members
+                              join a in context.Addresses on m.Id equals a.EntityId
                               where
-                              (p.Name.Contains(filter) || p.NativeName.Contains(filter)
-                              || p.IdentificationNo.Contains(filter) || a.MobileNo.Contains(filter)
+                              (m.Name.Contains(filter) || m.NativeName.Contains(filter)
+                              || m.IdentificationNo.Contains(filter) || a.MobileNo.Contains(filter)
                               )
                               && a.Type == (int)AddressTypeCatalog.Default
-                              && a.EntityType == (int)EntityTypeCatalog.Person
-                              select new PersonBriefModel()
+                              && a.EntityType == (int)EntityTypeCatalog.Member
+                              select new MemberBriefModel()
                               {
-                                  Id = p.Id,
-                                  Name = p.Name,
-                                  NativeName = p.NativeName,
-                                  IdentificationNo = p.IdentificationNo,
+                                  Id = m.Id,
+                                  Name = m.Name,
+                                  NativeName = m.NativeName,
+                                  IdentificationNo = m.IdentificationNo,
                                   MobileNo = a.MobileNo,
                               }).ToListAsync();
             }

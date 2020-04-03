@@ -24,7 +24,7 @@ namespace DataProvider
         }
     
         public System.Guid Id { get; set; }
-        public int PeopleId { get; set; }
+        public int MemberId { get; set; }
         public Nullable<int> Type { get; set; }
         public string Note { get; set; }
         public System.DateTime Date { get; set; }
@@ -50,7 +50,7 @@ namespace DataProvider
     
         public virtual Country Country { get; set; }
         public virtual District District { get; set; }
-        public virtual Person Person { get; set; }
+        public virtual Member Member { get; set; }
         public virtual State State { get; set; }
         public virtual Tehsil Tehsil { get; set; }
         public virtual UnionCouncil UnionCouncil { get; set; }

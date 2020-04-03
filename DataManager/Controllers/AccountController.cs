@@ -337,14 +337,14 @@ namespace DataManager.Controllers
             var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-            PersonModel personModel = new PersonModel();
-            personModel.AuthUserId = user.Id;
-            personModel.Name = model.Name;
-            personModel.NativeName = model.NativeName;
-            personModel.Address.MobileNo = model.MobileNo;
-            personModel.Address.Email = model.Email;
-            personModel.Address.Type = Catalogs.AddressTypeCatalog.Default;
-            await _logic.AddPerson(personModel);
+            MemberModel memberModel = new MemberModel();
+            memberModel.AuthUserId = user.Id;
+            memberModel.Name = model.Name;
+            memberModel.NativeName = model.NativeName;
+            memberModel.Address.MobileNo = model.MobileNo;
+            memberModel.Address.Email = model.Email;
+            memberModel.Address.Type = Catalogs.AddressTypeCatalog.Default;
+            await _logic.AddMember(memberModel);
 
             if (!result.Succeeded)
             {

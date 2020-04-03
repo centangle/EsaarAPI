@@ -56,7 +56,7 @@
     <Compile Include="ItemBL.cs" />
     <Compile Include="Logic.cs" />
     <Compile Include="OrganizationItemBL.cs" />
-    <Compile Include="PersonBL.cs" />
+    <Compile Include="MemberBL.cs" />
     <Compile Include="RefreshTokenBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UOMBL.cs" />

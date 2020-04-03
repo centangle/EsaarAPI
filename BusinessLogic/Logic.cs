@@ -5,21 +5,21 @@ namespace BusinessLogic
     public partial class Logic
     {
         DataAccess _dataAccess;
-        int _currentPersonId;
+        int _loggedInMemberId;
         public Logic()
         {
             SetDataAccess();
         }
 
-        public Logic(int currentPersonId)
+        public Logic(int loggedInMemberId)
         {
-            _currentPersonId = currentPersonId;
+            _loggedInMemberId = loggedInMemberId;
             SetDataAccess();
 
         }
         private void SetDataAccess()
         {
-            _dataAccess = new DataAccess(_currentPersonId);
+            _dataAccess = new DataAccess(_loggedInMemberId);
         }
 
 

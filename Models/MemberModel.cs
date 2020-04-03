@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class PersonModel : BaseModel
+    public class MemberModel : BaseModel
     {
-        public PersonModel()
+        public MemberModel()
         {
             Address = new AddressModel();
         }

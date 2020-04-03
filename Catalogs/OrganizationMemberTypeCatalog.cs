@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Catalogs
 {
-    public enum EntityTypeCatalog:int
+    public enum OrganizationMemberTypeCatalog : int
     {
-        Member
+        Member,
+        Volunteer,
+        Moderator
     }
 }

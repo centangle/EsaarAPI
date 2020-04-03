@@ -2,10 +2,10 @@
 {
     public partial class DataAccess
     {
-        int _currentPersonId;
-        public DataAccess(int currentPersonId)
+        int _loggedInMemberId;
+        public DataAccess(int loggedInMemberId)
         {
-            _currentPersonId = currentPersonId;
+            _loggedInMemberId = loggedInMemberId;
         }
     }
 }

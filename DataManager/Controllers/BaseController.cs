@@ -12,16 +12,16 @@ namespace DataManager.Controllers
 {
     public class BaseController : ApiController
     {
-        protected int CurrentPersonId
+        protected int LoggedInMemberId
         {
             get
             {
                 try
                 {
-                    var currentPersonId = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == "PersonId").FirstOrDefault();
-                    if (currentPersonId != null)
+                    var loggedInMemberId = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == "MemberId").FirstOrDefault();
+                    if (loggedInMemberId != null)
                     {
-                        return int.Parse(currentPersonId.Value);
+                        return int.Parse(loggedInMemberId.Value);
                     }
                     else
                     {

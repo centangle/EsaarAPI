@@ -40,14 +40,14 @@ namespace DataManager.Providers
                 context.SetError("invalid_grant", "The user name or password is incorrect.");
                 return;
             }
-            var person = new Logic().GetPersonByAuthId(user.Id);
-            int personId = 0;
-            if (person != null)
-                personId = person.Id;
+            var member = new Logic().GetMemberByAuthId(user.Id);
+            int memberId = 0;
+            if (member != null)
+                memberId = member.Id;
             var claims = new List<Claim>()
                     {
                         new Claim(ClaimTypes.Sid, user.Id.ToString()),
-                        new Claim("PersonId",personId.ToString()),
+                        new Claim("MemberId",memberId.ToString()),
                         new Claim(ClaimTypes.Email, user.UserName)
                     };
             ClaimsIdentity oAuthIdentity = new ClaimsIdentity(claims, context.Options.AuthenticationType);
@@ -57,7 +57,7 @@ namespace DataManager.Providers
             ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
                 CookieAuthenticationDefaults.AuthenticationType);
 
-            AuthenticationProperties properties = CreateProperties(user.UserName, user.Id, personId);
+            AuthenticationProperties properties = CreateProperties(user.UserName, user.Id, memberId);
             AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
             context.Validated(ticket);
             context.Request.Context.Authentication.SignIn(cookiesIdentity);
@@ -99,13 +99,13 @@ namespace DataManager.Providers
             return Task.FromResult<object>(null);
         }
 
-        public static AuthenticationProperties CreateProperties(string userName, string userId, int personId)
+        public static AuthenticationProperties CreateProperties(string userName, string userId, int memberId)
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
                 { "userName", userName },
                 {"userId",userId },
-                {"personId",personId.ToString() }
+                {"memberId",memberId.ToString() }
             };
             return new AuthenticationProperties(data);
         }

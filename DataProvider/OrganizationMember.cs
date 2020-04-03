@@ -12,10 +12,10 @@ namespace DataProvider
     using System;
     using System.Collections.Generic;
     
-    public partial class OrganizationPeople
+    public partial class OrganizationMember
     {
         public int Id { get; set; }
-        public int PersonId { get; set; }
+        public int MemberId { get; set; }
         public int OrganizationId { get; set; }
         public int Type { get; set; }
         public bool IsActive { get; set; }
@@ -25,7 +25,7 @@ namespace DataProvider
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
     
+        public virtual Member Member { get; set; }
         public virtual Organization Organization { get; set; }
-        public virtual Person Person { get; set; }
     }
 }

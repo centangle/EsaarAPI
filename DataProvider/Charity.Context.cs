@@ -39,19 +39,19 @@ namespace DataProvider
         public virtual DbSet<ExceptionLog> ExceptionLogs { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
+        public virtual DbSet<Member> Members { get; set; }
         public virtual DbSet<MessageThread> MessageThreads { get; set; }
         public virtual DbSet<Organization> Organizations { get; set; }
         public virtual DbSet<OrganizationItem> OrganizationItems { get; set; }
-        public virtual DbSet<OrganizationPeople> OrganizationPeoples { get; set; }
+        public virtual DbSet<OrganizationMember> OrganizationMembers { get; set; }
         public virtual DbSet<OrganizationRequest> OrganizationRequests { get; set; }
-        public virtual DbSet<OrganizationVerification> OrganizationVerifications { get; set; }
-        public virtual DbSet<Person> People { get; set; }
         public virtual DbSet<Request> Requests { get; set; }
         public virtual DbSet<RequestItem> RequestItems { get; set; }
         public virtual DbSet<RequestOrganization> RequestOrganizations { get; set; }
         public virtual DbSet<RequestStatu> RequestStatus { get; set; }
         public virtual DbSet<RequestVolunteer> RequestVolunteers { get; set; }
         public virtual DbSet<State> States { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Tehsil> Tehsils { get; set; }
         public virtual DbSet<UnionCouncil> UnionCouncils { get; set; }
         public virtual DbSet<UOM> UOMs { get; set; }

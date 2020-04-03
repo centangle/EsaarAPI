@@ -24,7 +24,7 @@ namespace DataProvider
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
     
-        public virtual Person Person { get; set; }
+        public virtual Member Member { get; set; }
         public virtual Request Request { get; set; }
     }
 }

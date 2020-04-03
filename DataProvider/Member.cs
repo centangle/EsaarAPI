@@ -12,12 +12,12 @@ namespace DataProvider
     using System;
     using System.Collections.Generic;
     
-    public partial class Person
+    public partial class Member
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Person()
+        public Member()
         {
-            this.OrganizationPeoples = new HashSet<OrganizationPeople>();
+            this.OrganizationMembers = new HashSet<OrganizationMember>();
             this.Requests = new HashSet<Request>();
             this.RequestVolunteers = new HashSet<RequestVolunteer>();
         }
@@ -37,7 +37,7 @@ namespace DataProvider
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrganizationPeople> OrganizationPeoples { get; set; }
+        public virtual ICollection<OrganizationMember> OrganizationMembers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Request> Requests { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

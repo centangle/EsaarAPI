@@ -43,7 +43,7 @@ namespace Models
         public string Description { get; set; }
         public string ImageUrl { get; set; }
         public string ImageInBase64 { get; set; }
-        public PersonBriefModel OwnedBy { get; set; }
+        public MemberBriefModel OwnedBy { get; set; }
         public bool IsPeripheralOrganization { get; set; }
         public bool IsVerified { get; set; }
         public ICollection<OrganizationModel> children { get; set; }

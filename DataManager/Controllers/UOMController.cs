@@ -10,7 +10,7 @@ namespace DataManager.Controllers
     { 
         public async Task<PaginatedResultModel<UOMModel>> Get(string name = null, bool forDropDown = false)
         {
-            var _logic = new Logic(CurrentPersonId);
+            var _logic = new Logic(LoggedInMemberId);
             if (forDropDown)
                 return await _logic.GetUOMForDD(new UOMSearchModel { Name = name });
             else
@@ -19,19 +19,19 @@ namespace DataManager.Controllers
 
         public async Task<int> Post(UOMModel model)
         {
-            var _logic = new Logic(CurrentPersonId);
+            var _logic = new Logic(LoggedInMemberId);
             return await _logic.AddUOM(model);
         }
 
         public async Task<bool> Put(UOMModel model)
         {
-            var _logic = new Logic(CurrentPersonId);
+            var _logic = new Logic(LoggedInMemberId);
             return await _logic.UpdateUOM(model);
         }
 
         public async Task<bool> Delete(int id)
         {
-            var _logic = new Logic(CurrentPersonId);
+            var _logic = new Logic(LoggedInMemberId);
             return await _logic.DeleteUOM(id);
         }
     }
