@@ -27,8 +27,7 @@ namespace DataManager.Controllers
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
             }
             var ctx = HttpContext.Current;
-            var root = ctx.Server.MapPath("~");
-            var subDirectory = @"Attachments";
+            var root = ctx.Server.MapPath("~/Attachments");
             Directory.CreateDirectory(root);
             var provider = new MultipartFormDataStreamProvider(root);
             try
@@ -43,14 +42,12 @@ namespace DataManager.Controllers
                     var fileExtension = name.Split('.').Last();
                     var fileName = Path.GetFileNameWithoutExtension(name);
                     var originalFileName = fileName;
-                    var systemFileName = DateTime.UtcNow.Ticks.ToString();
-                    var localFileName = file.LocalFileName;
-                    var dbPath = Path.Combine(subDirectory, systemFileName);
-                    var filePath = Path.Combine(root, dbPath);
-                    File.Move(localFileName, filePath);
+                    var systemFileName = Guid.NewGuid().ToString();
+                    var filePath = Path.Combine(root, systemFileName);
+                    File.Move(file.LocalFileName, filePath);
                     var attachment = new AttachmentModel()
                     {
-                        Url = @"\" + dbPath,
+                        Url = @"\Attachments\" + systemFileName,
                         SystemFileName = systemFileName,
                         OriginalFileName = originalFileName,
                         FileExtension = fileExtension,
@@ -62,7 +59,6 @@ namespace DataManager.Controllers
             }
             catch (Exception ex)
             {
-                
             }
             return "";
         }

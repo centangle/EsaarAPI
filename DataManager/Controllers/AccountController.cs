@@ -30,11 +30,9 @@ namespace DataManager.Controllers
 
         public AccountController()
         {
+            _logic = new Logic();
         }
-        public AccountController(Logic logic)
-        {
-            _logic = logic;
-        }
+       
 
         public AccountController(ApplicationUserManager userManager,
             ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
