@@ -2,7 +2,7 @@ using System.Web.Http;
 using WebActivatorEx;
 using DataManager;
 using Swashbuckle.Application;
-using DataManager.App_Start;
+using DataManager.SwaggerFilters;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -19,6 +19,7 @@ namespace DataManager
                     {
                         c.DocumentFilter<AuthTokenOperation>();
                         c.OperationFilter<AuthorizationOpertationFilter>();
+                        c.OperationFilter<FileOperationFilter>();
                         // By default, the service root url is inferred from the request used to access the docs.
                         // However, there may be situations (e.g. proxy and load-balanced environments) where this does not
                         // resolve correctly. You can workaround this by providing your own code to determine the root URL.
@@ -64,7 +65,7 @@ namespace DataManager
                         //c.BasicAuth("basic")
                         //    .Description("Basic HTTP Authentication");
                         //
-						// NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
+                        // NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
                         //c.ApiKey("apiKey")
                         //    .Description("API Key Authentication")
                         //    .Name("apiKey")

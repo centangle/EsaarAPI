@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttachmentCatalog.cs" />
     <Compile Include="GeneralCatalogs.cs" />
     <Compile Include="MemberCatalogs.cs" />
     <Compile Include="ItemCatalogs.cs" />

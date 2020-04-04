@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressModel.cs" />
+    <Compile Include="AttachmentModel.cs" />
     <Compile Include="Base\BaseModel.cs" />
     <Compile Include="Base\BaseSearchModel.cs" />
     <Compile Include="BriefModel\BaseBriefModel.cs" />

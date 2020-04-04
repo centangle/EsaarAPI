@@ -1,5 +1,4 @@
-﻿using DataManager.App_Start;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Owin;
 

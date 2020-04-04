@@ -103,6 +103,10 @@
           <Property Name="EntityType" Type="int" Nullable="false" />
           <Property Name="Url" Type="varchar" MaxLength="500" Nullable="false" />
           <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Note" Type="text" />
+          <Property Name="OriginalFileName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="SystemFileName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="FileExtension" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -241,7 +245,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="MemberId" Type="int" Nullable="false" />
           <Property Name="OrganizationId" Type="int" Nullable="false" />
           <Property Name="Type" Type="int" Nullable="false" />
@@ -358,6 +362,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="UpdatedBy" Type="int" Nullable="false" />
           <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="IsSystemGenerated" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="RequestVolunteer">
           <Key>
@@ -1396,6 +1401,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="EntityType" Type="Int32" Nullable="false" />
           <Property Name="Url" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="OriginalFileName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="SystemFileName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FileExtension" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -1558,7 +1567,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="MemberId" Type="Int32" Nullable="false" />
           <Property Name="OrganizationId" Type="Int32" Nullable="false" />
           <Property Name="Type" Type="Int32" Nullable="false" />
@@ -1680,6 +1689,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="IsSystemGenerated" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="RequestVolunteer">
           <Key>
@@ -2334,6 +2344,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="FileExtension" ColumnName="FileExtension" />
+                <ScalarProperty Name="SystemFileName" ColumnName="SystemFileName" />
+                <ScalarProperty Name="OriginalFileName" ColumnName="OriginalFileName" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Url" ColumnName="Url" />
                 <ScalarProperty Name="EntityType" ColumnName="EntityType" />
@@ -2577,6 +2591,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySetMapping Name="RequestThreads">
             <EntityTypeMapping TypeName="CharityModel.RequestThread">
               <MappingFragment StoreEntitySet="RequestThread">
+                <ScalarProperty Name="IsSystemGenerated" ColumnName="IsSystemGenerated" />
                 <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
                 <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />

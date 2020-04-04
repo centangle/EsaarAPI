@@ -26,5 +26,6 @@ namespace DataProvider
         public System.DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
+        public bool IsSystemGenerated { get; set; }
     }
 }

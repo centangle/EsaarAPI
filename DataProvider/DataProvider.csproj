@@ -81,6 +81,7 @@
     <Compile Include="Attachment.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="AttachmentDA.cs" />
     <Compile Include="Charity.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

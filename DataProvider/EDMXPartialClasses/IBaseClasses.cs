@@ -8,4 +8,5 @@ namespace DataProvider
     public partial class OrganizationMember : IBase { }
     public partial class OrganizationRequest : IBase { }
     public partial class RequestThread : IBase { }
+    public partial class Attachment : IBase { }
 }
