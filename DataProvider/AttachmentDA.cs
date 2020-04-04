@@ -1,4 +1,5 @@
-﻿using Helpers;
+﻿using Catalogs;
+using Helpers;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -60,13 +61,55 @@ namespace DataProvider
                 dbModel.EntityId = 0;
                 dbModel.EntityType = 0;
             }
-            
+
             model.Note = dbModel.Note;
             dbModel.Url = model.Url;
             dbModel.SystemFileName = model.SystemFileName;
             dbModel.OriginalFileName = model.OriginalFileName;
             dbModel.FileExtension = model.FileExtension;
             return dbModel;
+        }
+
+        private async Task AssignAttachments(CharityEntities context, List<AttachmentModel> attachments, int entityId, bool isNew)
+        {
+            if (attachments != null)
+            {
+                if (isNew)
+                {
+
+                    if (attachments != null)
+                    {
+                        foreach (var newAttachment in attachments)
+                        {
+                            var attachment = await context.Attachments.Where(x => x.Url == newAttachment.Url).FirstOrDefaultAsync();
+                            if (attachment != null)
+                            {
+                                attachment.EntityId = entityId;
+                                attachment.EntityType = (int)AttachmentEntityTypeCatalog.Request;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var currentAttachments = await context.Attachments.Where(x => x.EntityId == entityId && x.IsDeleted == false).ToListAsync();
+                    var deletedAttachments = currentAttachments.Where(ca => !attachments.Any(na => na.Url == ca.Url));
+                    var newAtatchments = attachments.Where(ca => !currentAttachments.Any(na => na.Url == ca.Url));
+                    foreach (var newAttachment in newAtatchments)
+                    {
+                        var attachment = await context.Attachments.Where(x => x.Url == newAttachment.Url && x.IsDeleted == false).FirstOrDefaultAsync();
+                        if (attachment != null)
+                        {
+                            attachment.EntityId = entityId;
+                            attachment.EntityType = (int)AttachmentEntityTypeCatalog.Request;
+                        }
+                    }
+                    foreach (var attachment in deletedAttachments)
+                    {
+                        attachment.IsDeleted = true;
+                    }
+                }
+            }
         }
     }
 }

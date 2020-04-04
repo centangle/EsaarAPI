@@ -8,6 +8,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.UI.HtmlControls;
 
 namespace DataProvider
 {
@@ -22,16 +23,8 @@ namespace DataProvider
                     try
                     {
                         var modelId = await AddRequestThread(context, model);
-
-                        foreach (var newAttachment in model.Attachments)
-                        {
-                            var attachment = await context.Attachments.Where(x => x.Url == newAttachment.Url).FirstOrDefaultAsync();
-                            if (attachment != null)
-                            {
-                                attachment.EntityId = model.Id;
-                                attachment.EntityType = (int)AttachmentEntityTypeCatalog.Request;
-                            }
-                        }
+                        await AssignAttachments(context, model.Attachments, modelId, true);
+                        await CheckStatusUpdation(context, null, model);
                         await context.SaveChangesAsync();
                         transaction.Commit();
                         return modelId;
@@ -63,23 +56,10 @@ namespace DataProvider
                         RequestThread dbModel = await context.RequestThreads.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
                         if (dbModel != null)
                         {
+                            var currentStatus = dbModel.Status;
                             SetRequestThread(dbModel, model);
-                            var currentAttachments = await context.Attachments.Where(x => x.EntityId == model.Id && x.IsDeleted == false).ToListAsync();
-                            var deletedAttachments = currentAttachments.Where(ca => !model.Attachments.Any(na => na.Url == ca.Url));
-                            var newAtatchments = model.Attachments.Where(ca => !currentAttachments.Any(na => na.Url == ca.Url));
-                            foreach (var newAttachment in newAtatchments)
-                            {
-                                var attachment = await context.Attachments.Where(x => x.Url == newAttachment.Url && x.IsDeleted == false).FirstOrDefaultAsync();
-                                if (attachment != null)
-                                {
-                                    attachment.EntityId = model.Id;
-                                    attachment.EntityType = (int)AttachmentEntityTypeCatalog.Request;
-                                }
-                            }
-                            foreach (var attachment in deletedAttachments)
-                            {
-                                attachment.IsDeleted = true;
-                            }
+                            await AssignAttachments(context, model.Attachments, dbModel.Id, false);
+                            await CheckStatusUpdation(context, currentStatus, model);
                             await context.SaveChangesAsync();
                         }
                         transaction.Commit();
@@ -235,6 +215,22 @@ namespace DataProvider
                 return await orgItemQueryable.Paginate(filters);
             }
 
+        }
+        private async Task CheckStatusUpdation(CharityEntities context, int? currentStatus, RequestThreadModel model)
+        {
+            if (model.Status != null && currentStatus != (int)model.Status && model.Status == RequestThreadStatusCatalog.Approved)
+            {
+                await AddRequestApprovalEntry(context, model);
+            }
+        }
+        private async Task AddRequestApprovalEntry(CharityEntities context, RequestThreadModel model)
+        {
+            switch (model.EntityType)
+            {
+                case RequestThreadEntityTypeCatalog.Organization:
+                    await AddOrganizationMemberForRequest(context, model);
+                    break;
+            }
         }
     }
 }

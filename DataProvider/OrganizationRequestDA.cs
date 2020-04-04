@@ -10,31 +10,28 @@ namespace DataProvider
 {
     public partial class DataAccess
     {
-        private async Task<int> AddOrganizationRequest(OrganizationRequestModel model)
+        private async Task<int> AddOrganizationRequest(CharityEntities context, OrganizationRequestModel model)
         {
-
-            using (CharityEntities context = new CharityEntities())
+            using (var transaction = context.Database.BeginTransaction())
             {
-                using (var transaction = context.Database.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        var dbModel = SetOrganizationRequest(new OrganizationRequest(), model);
-                        context.OrganizationRequests.Add(dbModel);
-                        await context.SaveChangesAsync();
-                        model.Id = dbModel.Id;
-                        var requestThreadModel = GetRequestThreadModel(model);
-                        await AddRequestThread(context, requestThreadModel);
-                        transaction.Commit();
-                        return model.Id;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        throw ex;
-                    }
+                    var dbModel = SetOrganizationRequest(new OrganizationRequest(), model);
+                    context.OrganizationRequests.Add(dbModel);
+                    await context.SaveChangesAsync();
+                    model.Id = dbModel.Id;
+                    var requestThreadModel = GetRequestThreadModel(model);
+                    await AddRequestThread(context, requestThreadModel);
+                    transaction.Commit();
+                    return model.Id;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
                 }
             }
+
         }
         private OrganizationRequest SetOrganizationRequest(OrganizationRequest dbModel, OrganizationRequestModel model)
         {

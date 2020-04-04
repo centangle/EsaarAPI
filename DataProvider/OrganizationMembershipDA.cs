@@ -1,6 +1,8 @@
 ﻿using Catalogs;
 using Helpers;
 using Models;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataProvider
@@ -9,26 +11,28 @@ namespace DataProvider
     {
         public async Task<int> RequestOrganizationMembership(OrganizationRequestModel model)
         {
-            if (model.Type == OrganizationRequestTypeCatalog.Member)
-            {
-                var memberModel = GetOrganizationMembershipModel(model);
-                return await AddMemberToOrganization(memberModel);
-            }
-            else
-            {
-                return await AddOrganizationRequest(model);
-            }
-        }
-        private async Task<int> AddMemberToOrganization(OrganizationMembershipModel model)
-        {
             using (CharityEntities context = new CharityEntities())
             {
-                var dbModel = SetOrganizationMember(new OrganizationMember(), model);
-                context.OrganizationMembers.Add(dbModel);
-                await context.SaveChangesAsync();
-                model.Id = dbModel.Id;
-                return model.Id;
+                if (model.Type == OrganizationRequestTypeCatalog.Member)
+                {
+                    var memberModel = GetOrganizationMembershipModel(model);
+                    var dbModel = AddMemberToOrganization(context, memberModel);
+                    await context.SaveChangesAsync();
+                    model.Id = dbModel.Id;
+                    return model.Id;
+                }
+                else
+                {
+                    return await AddOrganizationRequest(context, model);
+                }
             }
+        }
+        private OrganizationMember AddMemberToOrganization(CharityEntities context, OrganizationMembershipModel model)
+        {
+            var dbModel = SetOrganizationMember(new OrganizationMember(), model);
+            context.OrganizationMembers.Add(dbModel);
+            return dbModel;
+
         }
         private OrganizationMember SetOrganizationMember(OrganizationMember dbModel, OrganizationMembershipModel model)
         {
@@ -48,6 +52,7 @@ namespace DataProvider
             }
             dbModel.OrganizationId = model.Organization.Id;
             dbModel.MemberId = model.Member.Id;
+            dbModel.Type = (int)model.Type;
             SetBaseProperties(dbModel, model);
             return dbModel;
         }
@@ -70,5 +75,20 @@ namespace DataProvider
             }
             return membershipModel;
         }
+
+        private async Task AddOrganizationMemberForRequest(CharityEntities context, RequestThreadModel requestModel)
+        {
+            var requestDB = await context.OrganizationRequests.Where(x => x.Id == requestModel.Entity.Id).FirstOrDefaultAsync();
+            if (requestDB != null)
+            {
+                OrganizationRequestModel model = new OrganizationRequestModel();
+                model.Organization.Id = requestDB.OrganizationId;
+                model.Entity.Id = requestDB.EntityId;
+                model.Type = (OrganizationRequestTypeCatalog)requestDB.Type;
+                var memberModel = GetOrganizationMembershipModel(model);
+                AddMemberToOrganization(context, memberModel);
+            }
+        }
+
     }
 }
