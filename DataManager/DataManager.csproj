@@ -200,6 +200,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\RequestThreadController.cs" />
     <Compile Include="SwaggerFilters\AuthorizationOpertationFilter.cs" />
     <Compile Include="SwaggerFilters\AuthTokenOperation.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />

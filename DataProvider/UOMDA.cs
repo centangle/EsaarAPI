@@ -48,7 +48,7 @@ namespace DataProvider
                 {
                     try
                     {
-                        UOM dbModel = await context.UOMs.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+                        UOM dbModel = await context.UOMs.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
                         if (dbModel != null)
                         {
                             SetUOM(dbModel, model, null);
@@ -73,7 +73,7 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                UOM dbModel = await context.UOMs.Where(x => x.Id == Id).FirstOrDefaultAsync();
+                UOM dbModel = await context.UOMs.Where(x => x.Id == Id && x.IsDeleted == false).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
                     dbModel.IsDeleted = true;

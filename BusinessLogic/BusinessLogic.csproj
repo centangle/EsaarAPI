@@ -61,6 +61,7 @@
     <Compile Include="OrganizationMembershipBL.cs" />
     <Compile Include="RefreshTokenBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestThreadBL.cs" />
     <Compile Include="UOMBL.cs" />
   </ItemGroup>
   <ItemGroup>

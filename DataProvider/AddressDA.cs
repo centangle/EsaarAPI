@@ -28,7 +28,7 @@ namespace DataProvider
             {
                 try
                 {
-                    Address dbModel = await context.Addresses.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+                    Address dbModel = await context.Addresses.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
                     if (dbModel != null)
                     {
                         SetAddress(dbModel, model);

@@ -20,7 +20,7 @@ namespace DataManager.Controllers
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetOrganizationItem(id);
         }
-        public async Task<PaginatedResultModel<OrganizationItemPaginationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string orderByColumn = null, bool calculateTotal = true, string itemName = null)
+        public async Task<PaginatedResultModel<OrganizationItemPaginationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string itemName = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
             OrganizationItemSearchModel filters = new OrganizationItemSearchModel();

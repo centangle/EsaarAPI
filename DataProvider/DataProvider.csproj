@@ -115,6 +115,7 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="DapperHelper.cs" />
+    <Compile Include="Helpers\EntityHelper.cs" />
     <Compile Include="Helpers\ImageHelperDA.cs" />
     <Compile Include="Helpers\PaginationExtension.cs" />
     <Compile Include="Helpers\TreeHelper.cs" />

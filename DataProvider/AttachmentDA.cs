@@ -29,7 +29,7 @@ namespace DataProvider
             {
                 try
                 {
-                    Attachment dbModel = await context.Attachments.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+                    Attachment dbModel = await context.Attachments.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
                     if (dbModel != null)
                     {
                         SetAttachment(dbModel, model);
@@ -45,7 +45,6 @@ namespace DataProvider
         }
         private Attachment SetAttachment(Attachment dbModel, AttachmentModel model)
         {
-
             SetBaseProperties(dbModel, model);
             if (dbModel.Id != 0)
             {

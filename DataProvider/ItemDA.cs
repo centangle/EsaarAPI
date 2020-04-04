@@ -33,7 +33,7 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                Item dbModel = await context.Items.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+                Item dbModel = await context.Items.Where(x => x.Id == model.Id && x.IsDeleted==false).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
                     SetItem(dbModel, model);
@@ -142,7 +142,7 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                Item dbModel = await context.Items.Where(x => x.Id == Id).FirstOrDefaultAsync();
+                Item dbModel = await context.Items.Where(x => x.Id == Id && x.IsDeleted == false).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
                     var root = (await GetSingleItemTree<Item, Item>(context, dbModel.Id, false)).First();

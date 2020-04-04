@@ -27,7 +27,7 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+                OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
                     SetOrganizationItem(dbModel, model);
@@ -73,7 +73,7 @@ namespace DataProvider
                     {
                         foreach (var item in organizationItems)
                         {
-                            OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == item.Id).FirstOrDefaultAsync();
+                            OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == item.Id && x.IsDeleted == false).FirstOrDefaultAsync();
                             SetOrganizationItem(dbModel, item);
                         }
                         await context.SaveChangesAsync();
@@ -115,7 +115,7 @@ namespace DataProvider
                     {
                         foreach (var id in ids)
                         {
-                            OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == id).FirstOrDefaultAsync();
+                            OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == id && x.IsDeleted == false).FirstOrDefaultAsync();
                             dbModel.IsDeleted = true;
                         }
                         await context.SaveChangesAsync();

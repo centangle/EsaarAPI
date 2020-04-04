@@ -55,7 +55,7 @@ namespace DataProvider
             {
                 try
                 {
-                    Member dbModel = await context.Members.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+                    Member dbModel = await context.Members.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
                     if (dbModel != null)
                     {
                         SetMember(dbModel, model);
@@ -83,7 +83,6 @@ namespace DataProvider
             }
             return dbModel;
         }
-
         public async Task<List<MemberBriefModel>> GetMemberForDD(string filter)
         {
             using (CharityEntities context = new CharityEntities())
