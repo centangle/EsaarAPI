@@ -16,6 +16,7 @@ using System.Web.Http;
 
 namespace DataManager.Controllers
 {
+    [Authorize]
     public class AttachmentController : BaseController
     {
         [HttpPost]

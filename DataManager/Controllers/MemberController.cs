@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace DataManager.Controllers
 {
+    [Authorize]
     public class MemberController : BaseController
     {
         public async Task<List<MemberBriefModel>> GetMemberForDD(string filter)

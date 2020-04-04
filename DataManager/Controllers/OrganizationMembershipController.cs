@@ -5,6 +5,7 @@ using System.Web.Http;
 
 namespace DataManager.Controllers
 {
+    [Authorize]
     public class OrganizationMembershipController : BaseController
     {
         [HttpPost]
