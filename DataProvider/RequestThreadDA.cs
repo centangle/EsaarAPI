@@ -127,7 +127,7 @@ namespace DataProvider
             RequestThreadModel requestThreadModel = new RequestThreadModel();
             requestThreadModel.Entity.Id = model.Id;
             requestThreadModel.EntityType = RequestThreadEntityTypeCatalog.Organization;
-            requestThreadModel.Status = RequestThreadStatusCatalog.Initiated;
+            requestThreadModel.Status = StatusCatalog.Initiated;
             requestThreadModel.Note = model.Note;
             requestThreadModel.Type = RequestThreadTypeCatalog.General;
             requestThreadModel.IsSystemGenerated = true;
@@ -155,7 +155,7 @@ namespace DataProvider
                                                    Id = rt.EntityId,
                                                },
                                                EntityType = (RequestThreadEntityTypeCatalog)rt.EntityType,
-                                               Status = (RequestThreadStatusCatalog)rt.Status,
+                                               Status = (StatusCatalog)rt.Status,
                                                Note = rt.Note,
                                                Type = (RequestThreadTypeCatalog)rt.Type,
                                                IsSystemGenerated = rt.IsSystemGenerated,
@@ -229,7 +229,7 @@ namespace DataProvider
                                                       NativeName = "",
                                                   },
                                                   EntityType = (RequestThreadEntityTypeCatalog)rt.EntityType,
-                                                  Status = (RequestThreadStatusCatalog)rt.Status,
+                                                  Status = (StatusCatalog)rt.Status,
                                                   Note = rt.Note,
                                                   Type = (RequestThreadTypeCatalog)rt.Type,
                                                   IsSystemGenerated = rt.IsSystemGenerated,
@@ -240,9 +240,13 @@ namespace DataProvider
         }
         private async Task CheckStatusUpdation(CharityEntities context, int? currentStatus, RequestThreadModel model)
         {
-            if (model.Status != null && currentStatus != (int)model.Status && model.Status == RequestThreadStatusCatalog.Approved)
+            if (model.Status != null && currentStatus != (int)model.Status)
             {
-                await AddRequestApprovalEntry(context, model);
+                if (model.Status == StatusCatalog.Approved)
+                {
+                    await AddRequestApprovalEntry(context, model);
+                }
+                await ChangeRequestEntityStatus(context, model);
             }
         }
         private async Task AddRequestApprovalEntry(CharityEntities context, RequestThreadModel model)
@@ -251,6 +255,15 @@ namespace DataProvider
             {
                 case RequestThreadEntityTypeCatalog.Organization:
                     await AddOrganizationMemberForRequest(context, model);
+                    break;
+            }
+        }
+        private async Task ChangeRequestEntityStatus(CharityEntities context, RequestThreadModel model)
+        {
+            switch (model.EntityType)
+            {
+                case RequestThreadEntityTypeCatalog.Organization:
+                    await ChangeOrganizationRequestStatus(context, model);
                     break;
             }
         }

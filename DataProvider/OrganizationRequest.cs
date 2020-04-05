@@ -19,6 +19,7 @@ namespace DataProvider
         public int EntityId { get; set; }
         public int EntityType { get; set; }
         public Nullable<int> AssignedTo { get; set; }
+        public int Status { get; set; }
         public int Type { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }

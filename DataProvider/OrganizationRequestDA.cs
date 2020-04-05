@@ -5,6 +5,7 @@ using Models;
 using Models.BriefModel;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,8 +57,18 @@ namespace DataProvider
             dbModel.EntityId = model.Entity.Id;
             dbModel.EntityType = (int)model.EntityType;
             dbModel.Type = (int)model.Type;
+            if (dbModel.Id == 0)
+                dbModel.Status = (int)StatusCatalog.Initiated;
             SetBaseProperties(dbModel, model);
             return dbModel;
+        }
+        private async Task ChangeOrganizationRequestStatus(CharityEntities context, RequestThreadModel model)
+        {
+            var organizationRequest = await context.OrganizationRequests.Where(x => x.Id == model.Entity.Id).FirstOrDefaultAsync();
+            if (organizationRequest != null)
+            {
+                organizationRequest.Status = (int)model.Status;
+            }
         }
         public async Task<PaginatedResultModel<OrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
         {
@@ -107,6 +118,7 @@ namespace DataProvider
                                             },
                                             EntityType = (OrganizationRequestEntityTypeCatalog)ort.EntityType,
                                             Type = (OrganizationRequestTypeCatalog)ort.Type,
+                                            Status = (StatusCatalog)ort.Status,
                                             CreatedDate = ort.CreatedDate
                                         }).AsQueryable();
 

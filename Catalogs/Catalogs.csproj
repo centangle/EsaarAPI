@@ -48,6 +48,7 @@
     <Compile Include="OrganizationCatalogs.cs" />
     <Compile Include="PaginationCatalogs.cs" />
     <Compile Include="RequestThreadCatalogs.cs" />
+    <Compile Include="StatusCatalogs.cs" />
     <Compile Include="UOMCatalogs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

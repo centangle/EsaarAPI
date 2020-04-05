@@ -11,12 +11,4 @@
         Complain,
 
     }
-
-    public enum RequestThreadStatusCatalog : int
-    {
-        Initiated,
-        InProcess,
-        Approved,
-        Rejected
-    }
 }
