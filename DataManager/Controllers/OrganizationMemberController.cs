@@ -6,7 +6,7 @@ using System.Web.Http;
 namespace DataManager.Controllers
 {
     [Authorize]
-    public class OrganizationMembershipController : BaseController
+    public class OrganizationMemberController : BaseController
     {
         [HttpPost]
         public async Task<int> RequestMembership(OrganizationRequestModel model)

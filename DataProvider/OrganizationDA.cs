@@ -21,13 +21,36 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var dbModel = SetOrganization(new Organization(), model);
-                if (model.ParentId != 0)
-                    dbModel.ParentId = model.ParentId;
-                context.Organizations.Add(dbModel);
-                await context.SaveChangesAsync();
-                model.Id = dbModel.Id;
-                return model.Id;
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var dbModel = SetOrganization(new Organization(), model);
+                        if (model.ParentId != 0)
+                            dbModel.ParentId = model.ParentId;
+                        context.Organizations.Add(dbModel);
+                        await context.SaveChangesAsync();
+                        model.Id = dbModel.Id;
+                        OrganizationMembershipModel membershipModel = new OrganizationMembershipModel
+                        {
+                            Organization = new BaseBriefModel
+                            {
+                                Id = model.Id,
+                            },
+                            Type = OrganizationMemberTypeCatalog.Owner
+                        };
+
+                        AddMemberToOrganization(context, membershipModel);
+                        await context.SaveChangesAsync();
+                        transaction.Commit();
+                        return model.Id;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                }
             }
         }
         public async Task<bool> UpdateOrganization(OrganizationModel model)

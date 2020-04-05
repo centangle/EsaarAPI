@@ -15,13 +15,13 @@ namespace DataManager.Controllers
     public class RequestThreadController : BaseController
     {
         [HttpGet]
-        public async Task<RequestThreadModel> GetRequestThread(int id)
+        public async Task<RequestThreadModel> Get(int id)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetRequestThread(id);
         }
         [HttpGet]
-        public async Task<PaginatedResultModel<RequestThreadModel>> GetRequestThreads(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int entityId, RequestThreadEntityTypeCatalog entityType, RequestThreadTypeCatalog type, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<RequestThreadModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int entityId, RequestThreadEntityTypeCatalog entityType, RequestThreadTypeCatalog type, string orderByColumn = null, bool calculateTotal = true)
         {
             RequestThreadSearchModel filters = new RequestThreadSearchModel();
             filters.EntityId = entityId;

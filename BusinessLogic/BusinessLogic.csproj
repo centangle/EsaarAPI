@@ -59,6 +59,7 @@
     <Compile Include="OrganizationItemBL.cs" />
     <Compile Include="MemberBL.cs" />
     <Compile Include="OrganizationMembershipBL.cs" />
+    <Compile Include="OrganizationRequestBL.cs" />
     <Compile Include="RefreshTokenBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestThreadBL.cs" />

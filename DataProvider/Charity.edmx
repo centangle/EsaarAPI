@@ -264,6 +264,7 @@
           <Property Name="OrganizationId" Type="int" Nullable="false" />
           <Property Name="EntityId" Type="int" Nullable="false" />
           <Property Name="EntityType" Type="int" Nullable="false" />
+          <Property Name="AssignedTo" Type="int" />
           <Property Name="Type" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
@@ -1588,6 +1589,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="OrganizationId" Type="Int32" Nullable="false" />
           <Property Name="EntityId" Type="Int32" Nullable="false" />
           <Property Name="EntityType" Type="Int32" Nullable="false" />
+          <Property Name="AssignedTo" Type="Int32" />
           <Property Name="Type" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
@@ -2517,6 +2519,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="AssignedTo" ColumnName="AssignedTo" />
                 <ScalarProperty Name="EntityType" ColumnName="EntityType" />
                 <ScalarProperty Name="EntityId" ColumnName="EntityId" />
                 <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />

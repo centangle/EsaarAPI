@@ -186,35 +186,57 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var orgItemQueryable = (from rt in context.RequestThreads
-                                        join m in context.Members on rt.CreatedBy equals m.Id
-                                        where rt.EntityId == filters.EntityId
-                                        && rt.EntityType == (int)filters.EntityType
-                                        && rt.Type == (int)filters.Type
-                                        && rt.IsDeleted == false
-                                        select new RequestThreadModel
-                                        {
-                                            Id = rt.Id,
-                                            Creator = new BaseBriefModel()
-                                            {
-                                                Id = m.Id,
-                                                Name = m.Name,
-                                                NativeName = m.NativeName,
-                                            },
-                                            Entity = new BaseBriefModel()
-                                            {
-                                                Id = rt.EntityId,
-                                            },
-                                            EntityType = (RequestThreadEntityTypeCatalog)rt.EntityType,
-                                            Status = (RequestThreadStatusCatalog)rt.Status,
-                                            Note = rt.Note,
-                                            Type = (RequestThreadTypeCatalog)rt.Type,
-                                            IsSystemGenerated = rt.IsSystemGenerated,
-                                            CreatedDate = rt.CreatedDate
-                                        }).AsQueryable();
-                return await orgItemQueryable.Paginate(filters);
+                var requestQueryable = (from rt in context.RequestThreads select rt).AsQueryable();
+                if (filters.EntityType == RequestThreadEntityTypeCatalog.Organization)
+                {
+                    requestQueryable = (from rt in requestQueryable
+                                        join ort in context.OrganizationRequests on rt.EntityId equals ort.Id
+                                        join om in context.OrganizationMembers on _loggedInMemberId equals om.MemberId into tom
+                                        from om in tom.DefaultIfEmpty()
+                                        join o in context.Organizations on ort.OrganizationId equals o.Id
+                                        where
+                                         (
+                                              ort.AssignedTo == _loggedInMemberId
+                                             && om.Type == (int)OrganizationMemberTypeCatalog.Moderator
+                                         )// Assigned to Logged In Member and he/she is a moderator
+                                         ||
+                                         (
+                                              om.Type == (int)OrganizationMemberTypeCatalog.Owner
+                                         )
+                                        || ort.CreatedBy == _loggedInMemberId
+                                        || o.OwnedBy == _loggedInMemberId
+                                        select rt).AsQueryable();
+                }
+                var requestThreadQueryable = (from rt in requestQueryable
+                                              join m in context.Members on rt.CreatedBy equals m.Id
+                                              where rt.EntityId == filters.EntityId
+                                              && rt.EntityType == (int)filters.EntityType
+                                              && rt.Type == (int)filters.Type
+                                              && rt.IsDeleted == false
+                                              select new RequestThreadModel
+                                              {
+                                                  Id = rt.Id,
+                                                  Creator = new BaseBriefModel()
+                                                  {
+                                                      Id = m.Id,
+                                                      Name = m.Name,
+                                                      NativeName = m.NativeName,
+                                                  },
+                                                  Entity = new BaseBriefModel()
+                                                  {
+                                                      Id = rt.EntityId,
+                                                      Name = "",
+                                                      NativeName = "",
+                                                  },
+                                                  EntityType = (RequestThreadEntityTypeCatalog)rt.EntityType,
+                                                  Status = (RequestThreadStatusCatalog)rt.Status,
+                                                  Note = rt.Note,
+                                                  Type = (RequestThreadTypeCatalog)rt.Type,
+                                                  IsSystemGenerated = rt.IsSystemGenerated,
+                                                  CreatedDate = rt.CreatedDate
+                                              }).AsQueryable();
+                return await requestThreadQueryable.Paginate(filters);
             }
-
         }
         private async Task CheckStatusUpdation(CharityEntities context, int? currentStatus, RequestThreadModel model)
         {

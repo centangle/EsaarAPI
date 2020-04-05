@@ -1,5 +1,8 @@
-﻿using Helpers;
+﻿using Catalogs;
+using DataProvider.Helpers;
+using Helpers;
 using Models;
+using Models.BriefModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +58,60 @@ namespace DataProvider
             dbModel.Type = (int)model.Type;
             SetBaseProperties(dbModel, model);
             return dbModel;
+        }
+        public async Task<PaginatedResultModel<OrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var requestQueryable = (from ort in context.OrganizationRequests
+                                        join om in context.OrganizationMembers on _loggedInMemberId equals om.MemberId into tom
+                                        from om in tom.DefaultIfEmpty()
+                                        join o in context.Organizations on ort.OrganizationId equals o.Id
+                                        join m in context.Members on ort.CreatedBy equals m.Id
+                                        join am in context.Members on ort.AssignedTo equals am.Id into tam
+                                        from am in tam.DefaultIfEmpty()
+                                        where
+                                        ort.OrganizationId == filters.OrganizationId
+                                        && (filters.Type == null || ort.Type == (int)filters.Type.Value)
+                                        && ort.IsDeleted == false
+                                        &&
+                                        (
+                                             om.Type == (int)OrganizationMemberTypeCatalog.Moderator
+                                             ||
+                                             om.Type == (int)OrganizationMemberTypeCatalog.Owner
+                                             ||
+                                             ort.CreatedBy == _loggedInMemberId
+                                             ||
+                                             o.OwnedBy == _loggedInMemberId
+                                        )
+                                        select new OrganizationRequestModel
+                                        {
+                                            Id = ort.Id,
+                                            Organization = new BaseBriefModel()
+                                            {
+                                                Id = o.Id,
+                                                Name = o.Name,
+                                                NativeName = o.NativeName,
+                                            },
+                                            Entity = new BaseBriefModel()
+                                            {
+                                                Id = m.Id,
+                                                Name = m.Name,
+                                                NativeName = m.NativeName,
+                                            },
+                                            AssignedTo = new BaseBriefModel()
+                                            {
+                                                Id = am == null ? 0 : am.Id,
+                                                Name = am == null ? "" : am.Name,
+                                                NativeName = am == null ? "" : am.NativeName,
+                                            },
+                                            EntityType = (OrganizationRequestEntityTypeCatalog)ort.EntityType,
+                                            Type = (OrganizationRequestTypeCatalog)ort.Type,
+                                            CreatedDate = ort.CreatedDate
+                                        }).AsQueryable();
+
+                return await requestQueryable.Paginate(filters);
+            }
         }
     }
 }

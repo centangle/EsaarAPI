@@ -200,6 +200,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\OrganizationRequestController.cs" />
     <Compile Include="Controllers\RequestThreadController.cs" />
     <Compile Include="SwaggerFilters\AuthorizationOpertationFilter.cs" />
     <Compile Include="SwaggerFilters\AuthTokenOperation.cs" />
@@ -244,7 +245,7 @@
     <Compile Include="Controllers\ItemController.cs" />
     <Compile Include="Controllers\OrganizationItemController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
-    <Compile Include="Controllers\OrganizationMembershipController.cs" />
+    <Compile Include="Controllers\OrganizationMemberController.cs" />
     <Compile Include="Controllers\UOMController.cs" />
     <Compile Include="Providers\AuthRefreshTokenProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
