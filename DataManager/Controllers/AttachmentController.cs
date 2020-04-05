@@ -42,12 +42,12 @@ namespace DataManager.Controllers
                     var fileExtension = name.Split('.').Last();
                     var fileName = Path.GetFileNameWithoutExtension(name);
                     var originalFileName = fileName;
-                    var systemFileName = Guid.NewGuid().ToString();
+                    var systemFileName = Guid.NewGuid().ToString() + "." + fileExtension;
                     var filePath = Path.Combine(root, systemFileName);
                     File.Move(file.LocalFileName, filePath);
                     var attachment = new AttachmentModel()
                     {
-                        Url = @"\Attachments\" + systemFileName,
+                        Url = @"/Attachments/" + systemFileName,
                         SystemFileName = systemFileName,
                         OriginalFileName = originalFileName,
                         FileExtension = fileExtension,
@@ -61,6 +61,30 @@ namespace DataManager.Controllers
             {
             }
             return "";
+        }
+
+        public async Task<bool> Delete(string url)
+        {
+            try
+            {
+                var ctx = HttpContext.Current;
+                var root = ctx.Server.MapPath("~");
+                var fileDirectory = url.Replace("/", @"\");
+                string filePath = Path.GetFullPath(Path.Combine(root + fileDirectory));
+                var _logic = new Logic(LoggedInMemberId);
+                if (await _logic.DeleteAttachment(url))
+                {
+                    File.Delete(filePath);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return false;
+
+
         }
 
         //public async Task<HttpResponseMessage> Upload()

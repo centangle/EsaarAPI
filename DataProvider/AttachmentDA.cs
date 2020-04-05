@@ -44,6 +44,20 @@ namespace DataProvider
                 }
             }
         }
+
+        public async Task<bool> DeleteAttachment(string url)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var attachment = await context.Attachments.Where(x => x.Url == url).FirstOrDefaultAsync();
+                if (attachment != null)
+                {
+                    attachment.IsDeleted = true;
+                    return await context.SaveChangesAsync() > 0;
+                }
+                return false;
+            }
+        }
         private Attachment SetAttachment(Attachment dbModel, AttachmentModel model)
         {
             SetBaseProperties(dbModel, model);

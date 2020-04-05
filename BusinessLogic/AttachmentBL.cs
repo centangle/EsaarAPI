@@ -13,5 +13,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.CreateAttachment(model);
         }
+        public async Task<bool> DeleteAttachment(string url)
+        {
+            return await _dataAccess.DeleteAttachment(url);
+        }
     }
 }
