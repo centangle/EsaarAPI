@@ -62,7 +62,7 @@ namespace DataManager.Controllers
             }
             return "";
         }
-
+        [HttpDelete]
         public async Task<bool> Delete(string url)
         {
             try
