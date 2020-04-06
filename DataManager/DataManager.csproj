@@ -202,6 +202,7 @@
   <ItemGroup>
     <Compile Include="Controllers\OrganizationRequestController.cs" />
     <Compile Include="Controllers\RequestThreadController.cs" />
+    <Compile Include="GlobalFaultExceptionHandler\ApiExceptionHandelling.cs" />
     <Compile Include="SwaggerFilters\AuthorizationOpertationFilter.cs" />
     <Compile Include="SwaggerFilters\AuthTokenOperation.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />

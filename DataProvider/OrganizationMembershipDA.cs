@@ -195,7 +195,5 @@ namespace DataProvider
             throw new KnownException("Request has been deleted");
         }
 
-
-
     }
 }
