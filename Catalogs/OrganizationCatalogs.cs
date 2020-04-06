@@ -1,6 +1,6 @@
 ﻿namespace Catalogs
 {
-    public enum OrganizationMemberTypeCatalog : int
+    public enum OrganizationMemberRolesCatalog : int
     {
         Owner,
         Member,
@@ -15,6 +15,7 @@
     }
     public enum OrganizationRequestTypeCatalog : int
     {
+        Owner,
         Member,
         Volunteer,
         Moderator,

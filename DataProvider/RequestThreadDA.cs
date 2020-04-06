@@ -18,22 +18,34 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                using (var transaction = context.Database.BeginTransaction())
+                try
                 {
-                    try
+                    var accessGranted = await IsRequesThreadAccessible(context, model);
+                    if (accessGranted)
                     {
-                        var modelId = await AddRequestThread(context, model);
-                        await AssignAttachments(context, model.Attachments, modelId, true);
-                        await CheckStatusUpdation(context, null, model);
-                        await context.SaveChangesAsync();
-                        transaction.Commit();
-                        return modelId;
+                        using (var transaction = context.Database.BeginTransaction())
+                        {
+                            try
+                            {
+                                var modelId = await AddRequestThread(context, model);
+                                await AssignAttachments(context, model.Attachments, modelId, true);
+                                bool statusUpdated = await CheckStatusUpdation(context, null, model);
+                                await context.SaveChangesAsync();
+                                transaction.Commit();
+                                return modelId;
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction.Rollback();
+                                throw ex;
+                            }
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        throw ex;
-                    }
+                    return 0;
+                }
+                catch(Exception ex)
+                {
+                    throw ex;
                 }
             }
         }
@@ -49,28 +61,33 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                using (var transaction = context.Database.BeginTransaction())
+                var accessGranted = await IsRequesThreadAccessible(context, model);
+                if (accessGranted)
                 {
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        RequestThread dbModel = await context.RequestThreads.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
-                        if (dbModel != null)
+                        try
                         {
-                            var currentStatus = dbModel.Status;
-                            SetRequestThread(dbModel, model);
-                            await AssignAttachments(context, model.Attachments, dbModel.Id, false);
-                            await CheckStatusUpdation(context, currentStatus, model);
-                            await context.SaveChangesAsync();
+                            RequestThread dbModel = await context.RequestThreads.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
+                            if (dbModel != null)
+                            {
+                                var currentStatus = dbModel.Status;
+                                SetRequestThread(dbModel, model);
+                                await AssignAttachments(context, model.Attachments, dbModel.Id, false);
+                                bool statusUpdated = await CheckStatusUpdation(context, currentStatus, model);
+                                await context.SaveChangesAsync();
+                            }
+                            transaction.Commit();
+                            return true;
                         }
-                        transaction.Commit();
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        throw ex;
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
                     }
                 }
+                return false;
             }
         }
         public async Task<bool> DeleteRequestThread(int id)
@@ -197,11 +214,11 @@ namespace DataProvider
                                         where
                                          (
                                               ort.AssignedTo == _loggedInMemberId
-                                             && om.Type == (int)OrganizationMemberTypeCatalog.Moderator
+                                             && om.Type == (int)OrganizationMemberRolesCatalog.Moderator
                                          )// Assigned to Logged In Member and he/she is a moderator
                                          ||
                                          (
-                                              om.Type == (int)OrganizationMemberTypeCatalog.Owner
+                                              om.Type == (int)OrganizationMemberRolesCatalog.Owner
                                          )
                                         || ort.CreatedBy == _loggedInMemberId
                                         || o.OwnedBy == _loggedInMemberId
@@ -238,16 +255,19 @@ namespace DataProvider
                 return await requestThreadQueryable.Paginate(filters);
             }
         }
-        private async Task CheckStatusUpdation(CharityEntities context, int? currentStatus, RequestThreadModel model)
+        private async Task<bool> CheckStatusUpdation(CharityEntities context, int? currentStatus, RequestThreadModel model)
         {
+            bool result = false;
             if (model.Status != null && currentStatus != (int)model.Status)
             {
-                if (model.Status == StatusCatalog.Approved)
+                result = await ChangeRequestEntityStatus(context, model);
+                if (result && model.Status == StatusCatalog.Approved)
                 {
                     await AddRequestApprovalEntry(context, model);
                 }
-                await ChangeRequestEntityStatus(context, model);
+
             }
+            return result;
         }
         private async Task AddRequestApprovalEntry(CharityEntities context, RequestThreadModel model)
         {
@@ -258,14 +278,27 @@ namespace DataProvider
                     break;
             }
         }
-        private async Task ChangeRequestEntityStatus(CharityEntities context, RequestThreadModel model)
+        private async Task<bool> ChangeRequestEntityStatus(CharityEntities context, RequestThreadModel model)
         {
+            bool result = false;
             switch (model.EntityType)
             {
                 case RequestThreadEntityTypeCatalog.Organization:
-                    await ChangeOrganizationRequestStatus(context, model);
+                    result = await ChangeOrganizationRequestStatus(context, model);
                     break;
             }
+            return result;
+        }
+        private async Task<bool> IsRequesThreadAccessible(CharityEntities context, RequestThreadModel model)
+        {
+            bool result = false;
+            switch (model.EntityType)
+            {
+                case RequestThreadEntityTypeCatalog.Organization:
+                    result = await IsOrganizationRequestThreadAccessible(context, model);
+                    break;
+            }
+            return result;
         }
     }
 }

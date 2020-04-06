@@ -62,13 +62,19 @@ namespace DataProvider
             SetBaseProperties(dbModel, model);
             return dbModel;
         }
-        private async Task ChangeOrganizationRequestStatus(CharityEntities context, RequestThreadModel model)
+        private async Task<bool> ChangeOrganizationRequestStatus(CharityEntities context, RequestThreadModel model)
         {
             var organizationRequest = await context.OrganizationRequests.Where(x => x.Id == model.Entity.Id).FirstOrDefaultAsync();
             if (organizationRequest != null)
             {
+                if (organizationRequest.IsDeleted == true)
+                {
+                    return false;
+                }
                 organizationRequest.Status = (int)model.Status;
+                return true;
             }
+            return false;
         }
         public async Task<PaginatedResultModel<OrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
         {
@@ -87,9 +93,9 @@ namespace DataProvider
                                         && ort.IsDeleted == false
                                         &&
                                         (
-                                             om.Type == (int)OrganizationMemberTypeCatalog.Moderator
+                                             om.Type == (int)OrganizationMemberRolesCatalog.Moderator
                                              ||
-                                             om.Type == (int)OrganizationMemberTypeCatalog.Owner
+                                             om.Type == (int)OrganizationMemberRolesCatalog.Owner
                                              ||
                                              ort.CreatedBy == _loggedInMemberId
                                              ||

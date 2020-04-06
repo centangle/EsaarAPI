@@ -13,15 +13,17 @@ namespace DataProvider
             where T : IBase
             where M : IBase
         {
-            dbModel.IsActive = model.IsActive;
+            
             if (dbModel.Id == 0)
             {
+                dbModel.IsActive = true;
                 dbModel.IsDeleted = false;
                 dbModel.CreatedBy = _loggedInMemberId;
                 dbModel.CreatedDate = model.CreatedDate;
             }
             else
             {
+                dbModel.IsActive = model.IsActive;
                 dbModel.IsDeleted = model.IsDeleted;
             }
             dbModel.UpdatedBy = _loggedInMemberId;

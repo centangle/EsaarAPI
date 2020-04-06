@@ -37,10 +37,10 @@ namespace DataProvider
                             {
                                 Id = model.Id,
                             },
-                            Type = OrganizationMemberTypeCatalog.Owner
+                            Role = OrganizationMemberRolesCatalog.Owner
                         };
 
-                        AddMemberToOrganization(context, membershipModel);
+                        await AddMemberToOrganization(context, membershipModel);
                         await context.SaveChangesAsync();
                         transaction.Commit();
                         return model.Id;
