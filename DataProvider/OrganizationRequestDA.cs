@@ -106,9 +106,20 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
+                var memberOrganizations = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
+
+                List<int> memberModeratorOrgz = new List<int>();
+                if (memberModeratorOrgz != null)
+                {
+                    foreach (var memberOrg in memberOrganizations)
+                    {
+                        if (IsOrganizationMemberModerator(memberOrg))
+                        {
+                            memberModeratorOrgz.Add(memberOrg.Organization.Id);
+                        }
+                    }
+                }
                 var requestQueryable = (from ort in context.OrganizationRequests
-                                        join om in context.OrganizationMembers on _loggedInMemberId equals om.MemberId into tom
-                                        from om in tom.DefaultIfEmpty()
                                         join o in context.Organizations on ort.OrganizationId equals o.Id
                                         join m in context.Members on ort.CreatedBy equals m.Id
                                         join am in context.Members on ort.AssignedTo equals am.Id into tam
@@ -119,13 +130,11 @@ namespace DataProvider
                                         && ort.IsDeleted == false
                                         &&
                                         (
-                                             om.Type == (int)OrganizationMemberRolesCatalog.Moderator
-                                             ||
-                                             om.Type == (int)OrganizationMemberRolesCatalog.Owner
-                                             ||
                                              ort.CreatedBy == _loggedInMemberId
                                              ||
                                              o.OwnedBy == _loggedInMemberId
+                                             ||
+                                             memberModeratorOrgz.Any(x => x == o.Id)
                                         )
                                         select new OrganizationRequestModel
                                         {
