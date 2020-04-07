@@ -182,17 +182,7 @@ namespace DataProvider
             dbModel.Description = model.Description;
             ImageHelper.Save(model);
             dbModel.LogoUrl = model.ImageUrl;
-            if (model.OwnedBy == null || model.OwnedBy.Id == 0)
-            {
-                if (_loggedInMemberId == 0)
-                {
-                    throw new KnownException("Organization must have an owner.");
-                }
-                dbModel.OwnedBy = _loggedInMemberId;
-
-            }
-            else
-                dbModel.OwnedBy = model.OwnedBy.Id;
+            SetEntityId(model.OwnedBy, "Organization must have an owner.");
             dbModel.IsVerified = model.IsVerified;
             dbModel.IsPeripheralOrganization = model.IsPeripheralOrganization;
             SetBaseProperties(dbModel, model);
@@ -236,7 +226,6 @@ namespace DataProvider
                               }).FirstOrDefaultAsync();
             }
         }
-
         public async Task<List<OrganizationModel>> GetPeripheralOrganizations()
         {
             using (CharityEntities context = new CharityEntities())
@@ -274,7 +263,6 @@ namespace DataProvider
                               }).ToListAsync();
             }
         }
-
         public async Task<List<OrganizationModel>> GetRootOrganizations()
         {
             using (CharityEntities context = new CharityEntities())
@@ -312,7 +300,6 @@ namespace DataProvider
                               }).ToListAsync();
             }
         }
-
         public async Task<IEnumerable<OrganizationModel>> GetAllOrganizations(bool getHierarchicalData)
         {
             using (CharityEntities context = new CharityEntities())
@@ -350,7 +337,6 @@ namespace DataProvider
             context.Configuration.AutoDetectChangesEnabled = true;
             return Organizations;
         }
-
         private string GetAllOrganizationsTreeQuery()
         {
             return @"

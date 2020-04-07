@@ -1,4 +1,6 @@
-﻿using Models.Interfaces;
+﻿using Helpers;
+using Models.BriefModel;
+using Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,7 @@ namespace DataProvider
             where T : IBase
             where M : IBase
         {
-            
+
             if (dbModel.Id == 0)
             {
                 dbModel.IsActive = true;
@@ -28,6 +30,25 @@ namespace DataProvider
             }
             dbModel.UpdatedBy = _loggedInMemberId;
             dbModel.UpdatedDate = model.UpdatedDate;
+        }
+        public M SetEntityId<M>(M model, string errorMessage)
+            where M : BaseBriefModel, new()
+        {
+            bool isModerator = true;
+            if (model != null && model.Id > 0 && isModerator)
+            {
+                return model;
+            }
+            else
+            {
+                if (_loggedInMemberId == 0)
+                    throw new KnownException(errorMessage);
+                else
+                    model = new M();
+                model.Id = _loggedInMemberId;
+                return model;
+            }
+
         }
     }
 }

@@ -34,6 +34,13 @@ namespace DataProvider
                 }
             }
         }
+        public async Task<List<OrganizationMembershipModel>> GetMemberRoleForOrganization(int organizationId, int? memberId)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                return await GetMemberRoleForOrganization(context, organizationId, memberId);
+            }
+        }
         private async Task<OrganizationMember> AddMemberToOrganization(CharityEntities context, OrganizationMembershipModel model)
         {
             var dbModel = SetOrganizationMember(new OrganizationMember(), model);
@@ -50,16 +57,7 @@ namespace DataProvider
             {
                 throw new KnownException("Organization is required.");
             }
-            if (model.Member == null || model.Member.Id < 1)
-            {
-                if (_loggedInMemberId == 0)
-                    throw new KnownException("Member is required.");
-                else
-                {
-                    model.Member = new Models.BriefModel.BaseBriefModel();
-                    model.Member.Id = _loggedInMemberId;
-                }
-            }
+            model.Member = SetEntityId(model.Member, "Member is required.");
             dbModel.OrganizationId = model.Organization.Id;
             dbModel.MemberId = model.Member.Id;
             dbModel.Type = (int)model.Role;

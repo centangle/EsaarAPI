@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Filters;
@@ -29,14 +30,18 @@ namespace DataManager.GlobalFaultExceptionHandler
         {
             HttpResponseException ex = new HttpResponseException(new HttpResponseMessage(code)
             {
-                //Content = new  StringContent(getErrorJSON(message)),
-                Content = new StringContent(message),
+                Content = new StringContent(getErrorJSON(message)),
+                //Content = new StringContent(message),
                 ReasonPhrase = phrase
             });
-            //ex.Response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            ex.Response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             return ex;
         }
-        
+        public static string getErrorJSON(string msg)
+        {
+            return "{ \"ExceptionMessage\":\"" + msg + "\" }";
+        }
+
     }
 }

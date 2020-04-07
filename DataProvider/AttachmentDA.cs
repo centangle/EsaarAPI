@@ -44,7 +44,6 @@ namespace DataProvider
                 }
             }
         }
-
         public async Task<bool> DeleteAttachment(string url)
         {
             using (CharityEntities context = new CharityEntities())
@@ -83,7 +82,6 @@ namespace DataProvider
             dbModel.FileExtension = model.FileExtension;
             return dbModel;
         }
-
         private async Task AssignAttachments(CharityEntities context, List<AttachmentModel> attachments, int entityId, bool isNew)
         {
             if (attachments != null)

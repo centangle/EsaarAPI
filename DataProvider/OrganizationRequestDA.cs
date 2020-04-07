@@ -43,16 +43,7 @@ namespace DataProvider
             {
                 throw new KnownException("Organization is required.");
             }
-            if (model.Entity == null || model.Entity.Id < 1)
-            {
-                if (_loggedInMemberId == 0)
-                    throw new KnownException("Entity is required.");
-                else
-                {
-                    model.Entity = new Models.BriefModel.BaseBriefModel();
-                    model.Entity.Id = _loggedInMemberId;
-                }
-            }
+            SetEntityId(model.Entity, "Entity is required");
             dbModel.OrganizationId = model.Organization.Id;
             dbModel.EntityId = model.Entity.Id;
             dbModel.EntityType = (int)model.EntityType;
