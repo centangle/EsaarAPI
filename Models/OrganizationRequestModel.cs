@@ -27,7 +27,7 @@ namespace Models
         {
             OrderByColumn = "CreatedDate";
         }
-        public int OrganizationId { get; set; }
+        public int? OrganizationId { get; set; }
         public OrganizationRequestTypeCatalog? Type { get; set; }
 
     }

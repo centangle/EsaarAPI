@@ -1,4 +1,5 @@
 ﻿using Catalogs;
+using DataProvider.Helpers;
 using Helpers;
 using Models;
 using Models.BriefModel;
@@ -34,14 +35,53 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<List<OrganizationMembershipModel>> GetMemberRoleForOrganization(int organizationId, int? memberId)
+        public async Task<List<OrganizationMemberModel>> GetMemberRoleForOrganization(int organizationId, int? memberId)
         {
             using (CharityEntities context = new CharityEntities())
             {
                 return await GetMemberRoleForOrganization(context, organizationId, memberId);
             }
         }
-        private async Task<OrganizationMember> AddMemberToOrganization(CharityEntities context, OrganizationMembershipModel model)
+
+        public async Task<PaginatedResultModel<OrganizationMemberModel>> GetOrganizationMembers(OrganizationMemberSearchModel filters)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var requestQueryable = (from om in context.OrganizationMembers
+                                        join o in context.Organizations on om.OrganizationId equals o.Id
+                                        join m in context.Members on om.MemberId equals m.Id
+                                        where
+                                        (filters.OrganizationId == null || o.Id == filters.OrganizationId)
+                                        && (string.IsNullOrEmpty(filters.OrganizationName) || o.Name.Contains(filters.OrganizationName) || o.NativeName.Contains(filters.OrganizationName))
+                                        && (filters.MemberId == null || m.Id == filters.MemberId)
+                                        && (string.IsNullOrEmpty(filters.MemberName) || m.Name.Contains(filters.MemberName) || m.NativeName.Contains(filters.MemberName))
+                                        && (filters.Role == null || om.Type == (int)filters.Role.Value)
+                                        && om.IsDeleted == false
+                                        select new OrganizationMemberModel
+                                        {
+                                            Id = om.Id,
+                                            Organization = new BaseBriefModel()
+                                            {
+                                                Id = o.Id,
+                                                Name = o.Name,
+                                                NativeName = o.NativeName,
+                                            },
+                                            Member = new BaseBriefModel()
+                                            {
+                                                Id = m.Id,
+                                                Name = m.Name,
+                                                NativeName = m.NativeName,
+                                            },
+                                            Role = (OrganizationMemberRolesCatalog)om.Type,
+                                            CreatedDate = om.CreatedDate
+                                        }).AsQueryable();
+
+                return await requestQueryable.Paginate(filters);
+            }
+        }
+
+        #region[Private Functions]
+        private async Task<OrganizationMember> AddMemberToOrganization(CharityEntities context, OrganizationMemberModel model)
         {
             var dbModel = SetOrganizationMember(new OrganizationMember(), model);
             if (!(await IsAlreadyAMember(context, dbModel.OrganizationId, dbModel.MemberId, model.Role)))
@@ -51,7 +91,7 @@ namespace DataProvider
             return dbModel;
 
         }
-        private OrganizationMember SetOrganizationMember(OrganizationMember dbModel, OrganizationMembershipModel model)
+        private OrganizationMember SetOrganizationMember(OrganizationMember dbModel, OrganizationMemberModel model)
         {
             if (model.Organization == null || model.Organization.Id < 1)
             {
@@ -64,9 +104,9 @@ namespace DataProvider
             SetBaseProperties(dbModel, model);
             return dbModel;
         }
-        private OrganizationMembershipModel GetOrganizationMembershipModel(OrganizationRequestModel model)
+        private OrganizationMemberModel GetOrganizationMembershipModel(OrganizationRequestModel model)
         {
-            OrganizationMembershipModel membershipModel = new OrganizationMembershipModel();
+            OrganizationMemberModel membershipModel = new OrganizationMemberModel();
             membershipModel.Organization = model.Organization;
             membershipModel.Member = model.Entity;
             switch (model.Type)
@@ -99,9 +139,9 @@ namespace DataProvider
                 await AddMemberToOrganization(context, memberModel);
             }
         }
-        private async Task<List<OrganizationMembershipModel>> GetMemberRoleForOrganization(CharityEntities context, int? organizationId, int? memberId, bool verifyActiveMember = true)
+        private async Task<List<OrganizationMemberModel>> GetMemberRoleForOrganization(CharityEntities context, int? organizationId, int? memberId, bool verifyActiveMember = true)
         {
-            List<OrganizationMembershipModel> orgMemberRoles = new List<OrganizationMembershipModel>();
+            List<OrganizationMemberModel> orgMemberRoles = new List<OrganizationMemberModel>();
             var lstOrgMembRole = await (from o in context.Organizations
                                         join om in context.OrganizationMembers on o.Id equals om.OrganizationId
                                         join m in context.Members on om.MemberId equals m.Id
@@ -110,7 +150,7 @@ namespace DataProvider
                                         && (memberId == null || m.Id == memberId)
                                         && om.IsDeleted == false
                                         && (verifyActiveMember == false || om.IsActive == true)
-                                        select new OrganizationMembershipModel
+                                        select new OrganizationMemberModel
                                         {
                                             Id = om.Id,
                                             Organization = new BaseBriefModel
@@ -130,7 +170,7 @@ namespace DataProvider
             foreach (var orgMemberRole in lstOrgMembRole)
             {
                 var memberRoles = orgMemberRole.Select(x => x.Role).ToList();
-                orgMemberRoles.Add(new OrganizationMembershipModel()
+                orgMemberRoles.Add(new OrganizationMemberModel()
                 {
                     Organization = orgMemberRole.FirstOrDefault().Organization,
                     Member = orgMemberRole.FirstOrDefault().Member,
@@ -139,7 +179,7 @@ namespace DataProvider
             }
             return orgMemberRoles;
         }
-        private async Task<bool> IsOrganizationMembershipRequestAllowed(CharityEntities context, OrganizationRequestModel requestModel, OrganizationMembershipModel membershipModel)
+        private async Task<bool> IsOrganizationMembershipRequestAllowed(CharityEntities context, OrganizationRequestModel requestModel, OrganizationMemberModel membershipModel)
         {
             var sameTypeOfRequestInProcess = (await context.OrganizationRequests.Where(
                                                                 x =>
@@ -192,6 +232,8 @@ namespace DataProvider
             }
             throw new KnownException("Request has been deleted");
         }
+        #endregion
+
 
     }
 }

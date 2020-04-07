@@ -7,7 +7,7 @@ namespace DataManager.Controllers
 {
     public class OrganizationRequestController : BaseController
     {
-        public async Task<PaginatedResultModel<OrganizationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int organizationId, OrganizationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<OrganizationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, OrganizationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
             OrganizationRequestSearchModel filters = new OrganizationRequestSearchModel();

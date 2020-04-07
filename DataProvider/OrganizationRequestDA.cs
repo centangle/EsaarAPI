@@ -79,7 +79,7 @@ namespace DataProvider
                                         join am in context.Members on ort.AssignedTo equals am.Id into tam
                                         from am in tam.DefaultIfEmpty()
                                         where
-                                        ort.OrganizationId == filters.OrganizationId
+                                        (filters.OrganizationId == null || ort.OrganizationId == filters.OrganizationId)
                                         && (filters.Type == null || ort.Type == (int)filters.Type.Value)
                                         && ort.IsDeleted == false
                                         &&

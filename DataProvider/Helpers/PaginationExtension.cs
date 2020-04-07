@@ -24,26 +24,24 @@ namespace DataProvider.Helpers
                     else
                         query = query.OrderBy(search.OrderByColumn, "OrderByDescending");
                 }
-                if (search.DisablePagination)
+
+                try
                 {
-                    var resultList = await query.Skip((search.CurrentPage - 1) * search.RecordsPerPage).Take(search.RecordsPerPage).ToListAsync();
+                    if (search.DisablePagination == false)
+                    {
+                        query = query.Skip((search.CurrentPage - 1) * search.RecordsPerPage).Take(search.RecordsPerPage);
+                    }
+                    List<T> resultList = await query.ToListAsync() as List<T>;
                     searchResult.Items = resultList ?? new List<T>();
                     if (search.CalculateTotal)
                     {
                         searchResult.TotalCount = (query == null ? 0 : await query.CountAsync());
                     }
+
                 }
-                else
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        List<T> resultList = await query.ToListAsync() as List<T>;
-                        searchResult.Items = resultList ?? new List<T>();
-                    }
-                    catch (Exception ex)
-                    {
-                        searchResult.Items = new List<T>();
-                    }
+                    searchResult.Items = new List<T>();
                 }
                 return searchResult;
             }

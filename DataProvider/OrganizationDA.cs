@@ -31,7 +31,7 @@ namespace DataProvider
                         context.Organizations.Add(dbModel);
                         await context.SaveChangesAsync();
                         model.Id = dbModel.Id;
-                        OrganizationMembershipModel membershipModel = new OrganizationMembershipModel
+                        OrganizationMemberModel membershipModel = new OrganizationMemberModel
                         {
                             Organization = new BaseBriefModel
                             {

@@ -134,7 +134,7 @@
     <Compile Include="OrganizationMember.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
-    <Compile Include="OrganizationMembershipDA.cs" />
+    <Compile Include="OrganizationMembersDA.cs" />
     <Compile Include="Organization.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>

@@ -58,7 +58,7 @@
     <Compile Include="Logic.cs" />
     <Compile Include="OrganizationItemBL.cs" />
     <Compile Include="MemberBL.cs" />
-    <Compile Include="OrganizationMembershipBL.cs" />
+    <Compile Include="OrganizationMembersBL.cs" />
     <Compile Include="OrganizationRequestBL.cs" />
     <Compile Include="RefreshTokenBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

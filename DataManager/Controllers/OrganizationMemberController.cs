@@ -12,6 +12,20 @@ namespace DataManager.Controllers
     [Authorize]
     public class OrganizationMemberController : BaseController
     {
+        [HttpGet]
+        public async Task<PaginatedResultModel<OrganizationMemberModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, string organizationName = null, int? memberId = null, string memberName = null, OrganizationMemberRolesCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
+        {
+            var _logic = new Logic(LoggedInMemberId);
+            OrganizationMemberSearchModel filters = new OrganizationMemberSearchModel();
+            filters.OrganizationId = organizationId;
+            filters.OrganizationName = organizationName;
+            filters.MemberId = memberId;
+            filters.MemberName = memberName;
+            filters.Role = type;
+            SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
+            return await _logic.GetOrganizationMembers(filters);
+        }
+
         [HttpPost]
         public async Task<List<OrganizationMemberRolesCatalog>> GetMemberRole(int organizationId)
         {

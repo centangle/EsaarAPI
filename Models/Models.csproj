@@ -54,7 +54,7 @@
     <Compile Include="Interfaces\ITree.cs" />
     <Compile Include="OrganizationItemModel.cs" />
     <Compile Include="OrganizationRequestModel.cs" />
-    <Compile Include="OrganizationMembershipModel.cs" />
+    <Compile Include="OrganizationMemberModel.cs" />
     <Compile Include="OrganizationModel.cs" />
     <Compile Include="ItemModel.cs" />
     <Compile Include="PaginatedResultModel.cs" />
