@@ -21,5 +21,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.GetOrganizationMembers(filters);
         }
+        public async Task<List<OrganizationMemberModel>> GetOrganizationMembersForDD(OrganizationMemberSearchModel filters)
+        {
+            return await _dataAccess.GetOrganizationMembersForDD(filters);
+        }
     }
 }

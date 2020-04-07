@@ -42,7 +42,6 @@ namespace DataProvider
                 return await GetMemberRoleForOrganization(context, organizationId, memberId);
             }
         }
-
         public async Task<PaginatedResultModel<OrganizationMemberModel>> GetOrganizationMembers(OrganizationMemberSearchModel filters)
         {
             using (CharityEntities context = new CharityEntities())
@@ -77,6 +76,46 @@ namespace DataProvider
                                         }).AsQueryable();
 
                 return await requestQueryable.Paginate(filters);
+            }
+        }
+        public async Task<List<OrganizationMemberModel>> GetOrganizationMembersForDD(OrganizationMemberSearchModel filters)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var organizationMember = (await GetMemberRoleForOrganization(context, filters.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(organizationMember))
+                {
+                    return await (from om in context.OrganizationMembers
+                                  join o in context.Organizations on om.OrganizationId equals o.Id
+                                  join m in context.Members on om.MemberId equals m.Id
+                                  where
+                                  (o.Id == filters.OrganizationId)
+                                  && (string.IsNullOrEmpty(filters.MemberName) || m.Name.Contains(filters.MemberName) || m.NativeName.Contains(filters.MemberName))
+                                  && om.Type == (int)filters.Role.Value
+                                  && om.IsDeleted == false
+                                  select new OrganizationMemberModel
+                                  {
+                                      Id = om.Id,
+                                      Organization = new BaseBriefModel()
+                                      {
+                                          Id = o.Id,
+                                          Name = o.Name,
+                                          NativeName = o.NativeName,
+                                      },
+                                      Member = new BaseBriefModel()
+                                      {
+                                          Id = m.Id,
+                                          Name = m.Name,
+                                          NativeName = m.NativeName,
+                                      },
+                                      Role = (OrganizationMemberRolesCatalog)om.Type,
+                                      CreatedDate = om.CreatedDate
+                                  }).OrderBy(x => x.Member.Name).Take(filters.RecordsPerPage).ToListAsync();
+                }
+                else
+                {
+                    return new List<OrganizationMemberModel>();
+                }
             }
         }
 
@@ -221,9 +260,7 @@ namespace DataProvider
                 else
                 {
                     var organizationMember = (await GetMemberRoleForOrganization(context, orgRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
-                    if (organizationMember != null &&
-                      (organizationMember.Roles.Contains(OrganizationMemberRolesCatalog.Moderator)
-                      || organizationMember.Roles.Contains(OrganizationMemberRolesCatalog.Owner)))
+                    if (IsOrganizationMemberModerator(organizationMember))
                     {
                         return true;
                     }
@@ -231,6 +268,24 @@ namespace DataProvider
                 throw new KnownException("You are not authorized to perform this action");
             }
             throw new KnownException("Request has been deleted");
+        }
+
+        private bool IsOrganizationMemberModerator(OrganizationMemberModel organizationMember)
+        {
+            if (organizationMember != null &&
+                        (
+                            organizationMember.Roles.Contains(OrganizationMemberRolesCatalog.Owner)
+                            ||
+                            organizationMember.Roles.Contains(OrganizationMemberRolesCatalog.Moderator)
+                        )
+                    )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         #endregion
 

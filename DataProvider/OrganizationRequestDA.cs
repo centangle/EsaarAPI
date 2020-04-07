@@ -14,6 +14,41 @@ namespace DataProvider
 {
     public partial class DataAccess
     {
+        public async Task<bool> AssignRequest(int organizationId, int requestId, int? moderatorId)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var organizationMember = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(organizationMember))
+                {
+                    var organizationRequest = await context.OrganizationRequests.Where(x => x.Id == requestId).FirstOrDefaultAsync();
+                    {
+                        if (organizationRequest != null)
+                        {
+
+
+                            if (organizationRequest.IsDeleted)
+                            {
+                                throw new KnownException("This request has been deleted");
+                            }
+                            else if (organizationRequest.AssignedTo != null && organizationRequest.AssignedTo > 0)
+                            {
+                                throw new KnownException("This request has already been assigned");
+                            }
+                            if (moderatorId == null || moderatorId < 1)
+                            {
+                                moderatorId = _loggedInMemberId;
+                            }
+                            organizationRequest.AssignedTo = moderatorId;
+                            await context.SaveChangesAsync();
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+        }
         private async Task<int> AddOrganizationRequest(CharityEntities context, OrganizationRequestModel model)
         {
             using (var transaction = context.Database.BeginTransaction())
@@ -43,7 +78,7 @@ namespace DataProvider
             {
                 throw new KnownException("Organization is required.");
             }
-            SetEntityId(model.Entity, "Entity is required");
+            model.Entity = SetEntityId(model.Entity, "Entity is required");
             dbModel.OrganizationId = model.Organization.Id;
             dbModel.EntityId = model.Entity.Id;
             dbModel.EntityType = (int)model.EntityType;

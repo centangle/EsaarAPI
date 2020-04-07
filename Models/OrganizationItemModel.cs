@@ -28,6 +28,7 @@ namespace Models
         {
             OrderByColumn = "ItemName";
         }
+        public int OrganizationId { get; set; }
         public string ItemName { get; set; }
     }
 }

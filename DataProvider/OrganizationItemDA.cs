@@ -168,7 +168,8 @@ namespace DataProvider
                 var orgItemQueryable = (from oi in context.OrganizationItems
                                         join o in context.Organizations on oi.OrganizationId equals o.Id
                                         join i in context.Items on oi.ItemId equals i.Id
-                                        where (string.IsNullOrEmpty(filters.ItemName) || i.Name.Contains(filters.ItemName))
+                                        where o.Id == filters.OrganizationId
+                                        && (string.IsNullOrEmpty(filters.ItemName) || i.Name.Contains(filters.ItemName))
                                         && oi.IsDeleted == false
                                         select new OrganizationItemPaginationModel
                                         {

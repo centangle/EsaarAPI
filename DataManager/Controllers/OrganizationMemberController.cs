@@ -25,6 +25,17 @@ namespace DataManager.Controllers
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetOrganizationMembers(filters);
         }
+        [HttpGet]
+        public async Task<PaginatedResultModel<OrganizationMemberModel>> GetOrganizationMembersForDD(int numberOfRecords, int organizationId, OrganizationMemberRolesCatalog type, string memberName = null)
+        {
+            var _logic = new Logic(LoggedInMemberId);
+            OrganizationMemberSearchModel filters = new OrganizationMemberSearchModel();
+            filters.OrganizationId = organizationId;
+            filters.MemberName = memberName;
+            filters.Role = type;
+            filters.RecordsPerPage = numberOfRecords;
+            return await _logic.GetOrganizationMembers(filters);
+        }
 
         [HttpPost]
         public async Task<List<OrganizationMemberRolesCatalog>> GetMemberRole(int organizationId)

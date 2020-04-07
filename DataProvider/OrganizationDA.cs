@@ -37,6 +37,10 @@ namespace DataProvider
                             {
                                 Id = model.Id,
                             },
+                            Member = new BaseBriefModel()
+                            {
+                                Id = model.OwnedBy.Id,
+                            },
                             Role = OrganizationMemberRolesCatalog.Owner
                         };
 
@@ -182,7 +186,8 @@ namespace DataProvider
             dbModel.Description = model.Description;
             ImageHelper.Save(model);
             dbModel.LogoUrl = model.ImageUrl;
-            SetEntityId(model.OwnedBy, "Organization must have an owner.");
+            model.OwnedBy = SetEntityId(model.OwnedBy, "Organization must have an owner.");
+            dbModel.OwnedBy = model.OwnedBy.Id;
             dbModel.IsVerified = model.IsVerified;
             dbModel.IsPeripheralOrganization = model.IsPeripheralOrganization;
             SetBaseProperties(dbModel, model);
