@@ -189,7 +189,7 @@ namespace DataProvider
             model.OwnedBy = SetEntityId(model.OwnedBy, "Organization must have an owner.");
             dbModel.OwnedBy = model.OwnedBy.Id;
             dbModel.IsVerified = model.IsVerified;
-            dbModel.IsPeripheralOrganization = model.IsPeripheralOrganization;
+            dbModel.IsPeripheral = model.IsPeripheral;
             SetBaseProperties(dbModel, model);
             return dbModel;
 
@@ -225,7 +225,7 @@ namespace DataProvider
                                       NativeName = ob == null ? "" : ob.NativeName
                                   },
                                   IsVerified = o.IsVerified,
-                                  IsPeripheralOrganization = o.IsPeripheralOrganization,
+                                  IsPeripheral = o.IsPeripheral,
                                   IsActive = o.IsActive,
                                   CreatedDate = o.CreatedDate,
                               }).FirstOrDefaultAsync();
@@ -239,7 +239,7 @@ namespace DataProvider
                               join ob in context.Members on o.OwnedBy equals ob.Id
                               join po in context.Organizations on o.ParentId equals po.Id into tpo
                               from po in tpo.DefaultIfEmpty()
-                              where o.IsPeripheralOrganization == true
+                              where o.IsPeripheral == true
                               && o.IsDeleted == false
                               select new OrganizationModel
                               {
@@ -262,7 +262,7 @@ namespace DataProvider
                                       NativeName = ob == null ? "" : ob.NativeName
                                   },
                                   IsVerified = o.IsVerified,
-                                  IsPeripheralOrganization = o.IsPeripheralOrganization,
+                                  IsPeripheral = o.IsPeripheral,
                                   IsActive = o.IsActive,
                                   CreatedDate = o.CreatedDate,
                               }).ToListAsync();
@@ -299,7 +299,7 @@ namespace DataProvider
                                       NativeName = ob == null ? "" : ob.NativeName
                                   },
                                   IsVerified = o.IsVerified,
-                                  IsPeripheralOrganization = o.IsPeripheralOrganization,
+                                  IsPeripheral = o.IsPeripheral,
                                   IsActive = o.IsActive,
                                   CreatedDate = o.CreatedDate,
                               }).ToListAsync();

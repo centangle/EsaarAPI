@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 
 namespace Models
 {
-    public class ItemModel : BaseModel, IImage, ITree<ItemModel>
+    public class ItemModel : BaseModel, IImage, ITree<ItemModel>, IPeripheral
     {
         public ItemModel()
         {
@@ -44,7 +44,7 @@ namespace Models
         public string Description { get; set; }
         public string ImageUrl { get; set; }
         public string ImageInBase64 { get; set; }
-        public bool IsPeripheralItem { get; set; }
+        public bool IsPeripheral { get; set; }
 
         public ICollection<ItemModel> children { get; set; }
     }

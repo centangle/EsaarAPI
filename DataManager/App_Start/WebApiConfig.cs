@@ -2,6 +2,7 @@
 using System.Web.Http.Cors;
 using DataManager.GlobalFaultExceptionHandler;
 using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json.Converters;
 
 namespace DataManager
 {
@@ -13,6 +14,9 @@ namespace DataManager
             // Configure Web API to use only bearer token authentication.
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+
+            var json = config.Formatters.JsonFormatter;
+            json.SerializerSettings.Converters.Add(new StringEnumConverter());
 
             // Web API routes
             config.MapHttpAttributeRoutes();

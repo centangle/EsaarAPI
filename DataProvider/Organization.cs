@@ -33,7 +33,7 @@ namespace DataProvider
         public Nullable<int> Type { get; set; }
         public int OwnedBy { get; set; }
         public bool IsVerified { get; set; }
-        public bool IsPeripheralOrganization { get; set; }
+        public bool IsPeripheral { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }

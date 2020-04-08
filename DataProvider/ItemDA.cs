@@ -161,7 +161,7 @@ namespace DataProvider
             else
                 dbModel.DefaultUOM = model.DefaultUOM.Id;
             dbModel.Description = model.Description;
-            dbModel.IsPeripheralItem = model.IsPeripheralItem;
+            dbModel.IsPeripheral = model.IsPeripheral;
             SetBaseProperties(dbModel, model);
             ImageHelper.Save(model);
             dbModel.ImageUrl = model.ImageUrl;
@@ -200,7 +200,7 @@ namespace DataProvider
                                   Description = i.Description,
                                   Type = (ItemTypeCatalog)(i.Type ?? 0),
                                   ImageUrl = i.ImageUrl,
-                                  IsPeripheralItem = i.IsPeripheralItem,
+                                  IsPeripheral = i.IsPeripheral,
                                   IsActive = i.IsActive,
                               }).FirstOrDefaultAsync();
             }
@@ -214,7 +214,7 @@ namespace DataProvider
                               from pi in tpi.DefaultIfEmpty()
                               join uom in context.UOMs on i.DefaultUOM equals uom.Id into tuom
                               from uom in tuom.DefaultIfEmpty()
-                              where i.IsPeripheralItem == true
+                              where i.IsPeripheral == true
                               && i.IsDeleted == false
                               select new ItemModel
                               {
@@ -237,7 +237,7 @@ namespace DataProvider
                                   Description = i.Description,
                                   Type = (ItemTypeCatalog)(i.Type ?? 0),
                                   ImageUrl = i.ImageUrl,
-                                  IsPeripheralItem = i.IsPeripheralItem,
+                                  IsPeripheral = i.IsPeripheral,
                                   IsActive = i.IsActive,
                               }).ToListAsync();
             }
@@ -274,7 +274,7 @@ namespace DataProvider
                                   Description = i.Description,
                                   Type = (ItemTypeCatalog)(i.Type ?? 0),
                                   ImageUrl = i.ImageUrl,
-                                  IsPeripheralItem = i.IsPeripheralItem,
+                                  IsPeripheral = i.IsPeripheral,
                                   IsActive = i.IsActive,
                               }).ToListAsync();
             }

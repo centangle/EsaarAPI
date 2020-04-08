@@ -15,7 +15,7 @@ namespace DataManager.Controllers
             return await _logic.AssignRequest(organizationId, requestId, moderatorId);
         }
         [HttpGet]
-        public async Task<PaginatedResultModel<OrganizationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, OrganizationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, OrganizationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
             OrganizationRequestSearchModel filters = new OrganizationRequestSearchModel();

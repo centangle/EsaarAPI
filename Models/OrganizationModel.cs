@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 
 namespace Models
 {
-    public class OrganizationModel : BaseModel, IImage, ITree<OrganizationModel>
+    public class OrganizationModel : BaseModel, IImage, ITree<OrganizationModel>, IPeripheral
     {
         public OrganizationModel()
         {
@@ -44,7 +44,7 @@ namespace Models
         public string ImageUrl { get; set; }
         public string ImageInBase64 { get; set; }
         public MemberBriefModel OwnedBy { get; set; }
-        public bool IsPeripheralOrganization { get; set; }
+        public bool IsPeripheral { get; set; }
         public bool IsVerified { get; set; }
         public ICollection<OrganizationModel> children { get; set; }
     }

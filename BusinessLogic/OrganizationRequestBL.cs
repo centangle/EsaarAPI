@@ -9,7 +9,7 @@ namespace BusinessLogic
         {
             return await _dataAccess.AssignRequest(organizationId, requestId, moderatorId);
         }
-        public async Task<PaginatedResultModel<OrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
+        public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
         {
             return await _dataAccess.GetOrganizationRequests(filters);
         }

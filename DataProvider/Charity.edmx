@@ -170,7 +170,7 @@
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="Type" Type="int" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
-          <Property Name="IsPeripheralItem" Type="bit" Nullable="false" />
+          <Property Name="IsPeripheral" Type="bit" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -219,7 +219,7 @@
           <Property Name="Type" Type="int" />
           <Property Name="OwnedBy" Type="int" Nullable="false" />
           <Property Name="IsVerified" Type="bit" Nullable="false" />
-          <Property Name="IsPeripheralOrganization" Type="bit" Nullable="false" />
+          <Property Name="IsPeripheral" Type="bit" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -1477,7 +1477,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Type" Type="Int32" />
           <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="IsPeripheralItem" Type="Boolean" Nullable="false" />
+          <Property Name="IsPeripheral" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -1535,7 +1535,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Type" Type="Int32" />
           <Property Name="OwnedBy" Type="Int32" Nullable="false" />
           <Property Name="IsVerified" Type="Boolean" Nullable="false" />
-          <Property Name="IsPeripheralOrganization" Type="Boolean" Nullable="false" />
+          <Property Name="IsPeripheral" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -2416,7 +2416,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsPeripheralItem" ColumnName="IsPeripheralItem" />
+                <ScalarProperty Name="IsPeripheral" ColumnName="IsPeripheral" />
                 <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -2467,7 +2467,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsPeripheralOrganization" ColumnName="IsPeripheralOrganization" />
+                <ScalarProperty Name="IsPeripheral" ColumnName="IsPeripheral" />
                 <ScalarProperty Name="IsVerified" ColumnName="IsVerified" />
                 <ScalarProperty Name="OwnedBy" ColumnName="OwnedBy" />
                 <ScalarProperty Name="Type" ColumnName="Type" />

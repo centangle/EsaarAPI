@@ -102,7 +102,7 @@ namespace DataProvider
             }
             return false;
         }
-        public async Task<PaginatedResultModel<OrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
+        public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -136,7 +136,7 @@ namespace DataProvider
                                              ||
                                              memberModeratorOrgz.Any(x => x == o.Id)
                                         )
-                                        select new OrganizationRequestModel
+                                        select new PaginatedOrganizationRequestModel
                                         {
                                             Id = ort.Id,
                                             Organization = new BaseBriefModel()
@@ -160,6 +160,7 @@ namespace DataProvider
                                             EntityType = (OrganizationRequestEntityTypeCatalog)ort.EntityType,
                                             Type = (OrganizationRequestTypeCatalog)ort.Type,
                                             Status = (StatusCatalog)ort.Status,
+                                            LoggedInMemberId = _loggedInMemberId,
                                             CreatedDate = ort.CreatedDate
                                         }).AsQueryable();
 

@@ -1,6 +1,7 @@
 ﻿using Catalogs;
 using Models.Base;
 using Models.BriefModel;
+using System.Runtime.Serialization;
 
 namespace Models
 {
@@ -19,6 +20,33 @@ namespace Models
         public StatusCatalog Status { get; set; }
         public BaseBriefModel AssignedTo { get; set; }
         public string Note { get; set; }
+    }
+
+    public class PaginatedOrganizationRequestModel : OrganizationRequestModel
+    {
+        [IgnoreDataMember]
+        public int LoggedInMemberId { get; set; }
+
+        public bool IsOpenRequest
+        {
+            get
+            {
+                if (AssignedTo == null || AssignedTo.Id == 0)
+                    return true;
+                else
+                    return false;
+            }
+        }
+        public bool CanAccessRequestThread
+        {
+            get
+            {
+                if (AssignedTo != null && AssignedTo.Id == LoggedInMemberId && LoggedInMemberId != 0)
+                    return true;
+                else
+                    return false;
+            }
+        }
     }
 
     public class OrganizationRequestSearchModel : BaseSearchModel

@@ -7,4 +7,8 @@ namespace Models.Interfaces
         int? ParentId { get; set; }
         ICollection<T> children { get; set; }
     }
+    public interface IPeripheral
+    {
+        bool IsPeripheral { get; set; }
+    }
 }

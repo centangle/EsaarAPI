@@ -91,10 +91,13 @@ namespace DataProvider.Helpers
             }
             return singleNodes;
         }
-        public static void SingleTreeNodeToList<T>(T treeNodes, List<TreeTraversal<T>> singleNodes, Guid ParentId) where T : ITree<T>, new()
+        public static void SingleTreeNodeToList<T>(T treeNode, List<TreeTraversal<T>> singleNodes, Guid ParentId) where T : ITree<T>, new()
         {
-
-            foreach (var node in treeNodes.children)
+            if (treeNode.children == null || treeNode.children.Count == 0)
+            {
+                (treeNode as IPeripheral).IsPeripheral = true;
+            }
+            foreach (var node in treeNode.children)
             {
                 var traversalNode = new TreeTraversal<T>();
                 traversalNode.Id = Guid.NewGuid();
@@ -103,6 +106,7 @@ namespace DataProvider.Helpers
                 singleNodes.Add(traversalNode);
                 SingleTreeNodeToList(node, singleNodes, traversalNode.Id);
             }
+
 
         }
 

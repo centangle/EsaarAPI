@@ -30,7 +30,7 @@ namespace DataProvider
         public string Description { get; set; }
         public Nullable<int> Type { get; set; }
         public string ImageUrl { get; set; }
-        public bool IsPeripheralItem { get; set; }
+        public bool IsPeripheral { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }
