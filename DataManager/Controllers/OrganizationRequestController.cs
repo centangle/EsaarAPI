@@ -1,6 +1,8 @@
 ﻿using BusinessLogic;
 using Catalogs;
 using Models;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -23,6 +25,11 @@ namespace DataManager.Controllers
             filters.Type = type;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetOrganizationRequests(filters);
+        }
+        [HttpGet]
+        public Array GetRequestStatus()
+        {
+            return Enum.GetValues(typeof(OrganizationStatusCatalog));
         }
     }
 }

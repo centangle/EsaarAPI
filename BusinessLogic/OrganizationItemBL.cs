@@ -26,6 +26,10 @@ namespace BusinessLogic
         {
             return await _dataAccess.DeleteOrganizationItems(ids);
         }
+        public async Task<bool> DeleteOrganizationItem(int organizationId, int itemId)
+        {
+            return await _dataAccess.DeleteOrganizationItem(organizationId, itemId);
+        }
         public async Task<OrganizationItemModel> GetOrganizationItem(int id)
         {
             return await _dataAccess.GetOrganizationItem(id);

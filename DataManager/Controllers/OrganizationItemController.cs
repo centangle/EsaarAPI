@@ -1,12 +1,7 @@
 ﻿using BusinessLogic;
 using Catalogs;
-using DataProvider;
 using Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -61,6 +56,12 @@ namespace DataManager.Controllers
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.DeleteOrganizationItems(new List<int> { id });
+        }
+        [HttpDelete]
+        public async Task<bool> DeleteOrganizationItem(int organizationId, int itemId)
+        {
+            var _logic = new Logic(LoggedInMemberId);
+            return await _logic.DeleteOrganizationItem(organizationId, itemId);
         }
         [HttpDelete]
         public async Task<bool> DeleteMultipleOrganizationItem(List<int> ids)

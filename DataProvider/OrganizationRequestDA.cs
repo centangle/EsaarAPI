@@ -84,7 +84,7 @@ namespace DataProvider
             dbModel.EntityType = (int)model.EntityType;
             dbModel.Type = (int)model.Type;
             if (dbModel.Id == 0)
-                dbModel.Status = (int)StatusCatalog.Initiated;
+                dbModel.Status = (int)OrganizationStatusCatalog.Initiated;
             SetBaseProperties(dbModel, model);
             return dbModel;
         }
@@ -159,7 +159,7 @@ namespace DataProvider
                                             },
                                             EntityType = (OrganizationRequestEntityTypeCatalog)ort.EntityType,
                                             Type = (OrganizationRequestTypeCatalog)ort.Type,
-                                            Status = (StatusCatalog)ort.Status,
+                                            Status = (OrganizationStatusCatalog)ort.Status,
                                             LoggedInMemberId = _loggedInMemberId,
                                             CreatedDate = ort.CreatedDate
                                         }).AsQueryable();

@@ -16,11 +16,16 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var dbModel = SetOrganizationItem(new OrganizationItem(), model);
-                context.OrganizationItems.Add(dbModel);
-                await context.SaveChangesAsync();
-                model.Id = dbModel.Id;
-                return model.Id;
+                var currentItems = await GetCurrentOrganizationItems(context, model.Organization.Id);
+                if (!DoesOrganizationItemBindingExist(model.Organization.Id, model.Item.Id, currentItems))
+                {
+                    var dbModel = SetOrganizationItem(new OrganizationItem(), model);
+                    context.OrganizationItems.Add(dbModel);
+                    await context.SaveChangesAsync();
+                    model.Id = dbModel.Id;
+                    return model.Id;
+                }
+                return 0;
             }
         }
         public async Task<bool> UpdateOrganizationItem(OrganizationItemModel model)
@@ -30,6 +35,10 @@ namespace DataProvider
                 OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
+                    if (dbModel.ItemId != model.Item.Id)
+                    {
+                        throw new KnownException("Cannot change item in update");
+                    }
                     SetOrganizationItem(dbModel, model);
                     return await context.SaveChangesAsync() > 0;
                 }
@@ -41,14 +50,18 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
+                var currentItems = await GetCurrentOrganizationItems(context, organizationItems.FirstOrDefault().Organization.Id);
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
                     {
                         foreach (var item in organizationItems)
                         {
-                            var dbModel = SetOrganizationItem(new OrganizationItem(), item);
-                            context.OrganizationItems.Add(dbModel);
+                            if (!DoesOrganizationItemBindingExist(item.Organization.Id, item.Item.Id, currentItems))
+                            {
+                                var dbModel = SetOrganizationItem(new OrganizationItem(), item);
+                                context.OrganizationItems.Add(dbModel);
+                            }
                         }
                         await context.SaveChangesAsync();
                         transaction.Commit();
@@ -71,10 +84,17 @@ namespace DataProvider
                 {
                     try
                     {
-                        foreach (var item in organizationItems)
+                        foreach (var orgItemModel in organizationItems)
                         {
-                            OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == item.Id && x.IsDeleted == false).FirstOrDefaultAsync();
-                            SetOrganizationItem(dbModel, item);
+                            OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == orgItemModel.Id && x.IsDeleted == false).FirstOrDefaultAsync();
+                            if (dbModel != null)
+                            {
+                                if (dbModel.ItemId != orgItemModel.Item.Id)
+                                {
+                                    throw new KnownException("Cannot change item in update");
+                                }
+                                SetOrganizationItem(dbModel, orgItemModel);
+                            }
                         }
                         await context.SaveChangesAsync();
                         transaction.Commit();
@@ -131,7 +151,21 @@ namespace DataProvider
             }
 
         }
+        public async Task<bool> DeleteOrganizationItem(int organizationId, int itemId)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.OrganizationId == organizationId && x.ItemId == itemId && x.IsDeleted == false).FirstOrDefaultAsync();
+                if (dbModel != null)
+                {
+                    dbModel.IsDeleted = true;
+                    return await context.SaveChangesAsync() > 0;
+                }
+            }
+            return false;
 
+
+        }
         public async Task<OrganizationItemModel> GetOrganizationItem(int id)
         {
             using (CharityEntities context = new CharityEntities())
@@ -193,6 +227,20 @@ namespace DataProvider
                 return await orgItemQueryable.Paginate(filters);
             }
 
+        }
+        private async Task<List<OrganizationItem>> GetCurrentOrganizationItems(CharityEntities context, int organizationId)
+        {
+            return await context.OrganizationItems.Where(x => x.OrganizationId == organizationId && x.IsDeleted == false).ToListAsync();
+        }
+        private bool DoesOrganizationItemBindingExist(int organizationId, int itemId, List<OrganizationItem> currentItems)
+        {
+            var alreadyExist = currentItems.Where(x => x.OrganizationId == organizationId && x.ItemId == itemId && x.IsDeleted == false).Count() > 0;
+            if (alreadyExist)
+            {
+                throw new KnownException("This item already exist in organization");
+            }
+            else
+                return false;
         }
     }
 }

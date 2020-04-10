@@ -4,6 +4,7 @@ using Helpers;
 using Models;
 using Models.BriefModel;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace DataProvider
                     }
                     return 0;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw ex;
                 }
@@ -144,7 +145,7 @@ namespace DataProvider
             RequestThreadModel requestThreadModel = new RequestThreadModel();
             requestThreadModel.Entity.Id = model.Id;
             requestThreadModel.EntityType = RequestThreadEntityTypeCatalog.Organization;
-            requestThreadModel.Status = StatusCatalog.Initiated;
+            requestThreadModel.Status = OrganizationStatusCatalog.Initiated;
             requestThreadModel.Note = model.Note;
             requestThreadModel.Type = RequestThreadTypeCatalog.General;
             requestThreadModel.IsSystemGenerated = true;
@@ -172,7 +173,7 @@ namespace DataProvider
                                                    Id = rt.EntityId,
                                                },
                                                EntityType = (RequestThreadEntityTypeCatalog)rt.EntityType,
-                                               Status = (StatusCatalog)rt.Status,
+                                               Status = (OrganizationStatusCatalog)rt.Status,
                                                Note = rt.Note,
                                                Type = (RequestThreadTypeCatalog)rt.Type,
                                                IsSystemGenerated = rt.IsSystemGenerated,
@@ -208,20 +209,13 @@ namespace DataProvider
                 {
                     requestQueryable = (from rt in requestQueryable
                                         join ort in context.OrganizationRequests on rt.EntityId equals ort.Id
-                                        join om in context.OrganizationMembers on _loggedInMemberId equals om.MemberId into tom
-                                        from om in tom.DefaultIfEmpty()
                                         join o in context.Organizations on ort.OrganizationId equals o.Id
                                         where
-                                         (
-                                              ort.AssignedTo == _loggedInMemberId
-                                             && om.Type == (int)OrganizationMemberRolesCatalog.Moderator
-                                         )// Assigned to Logged In Member and he/she is a moderator
-                                         ||
-                                         (
-                                              om.Type == (int)OrganizationMemberRolesCatalog.Owner
-                                         )
-                                        || ort.CreatedBy == _loggedInMemberId
-                                        || o.OwnedBy == _loggedInMemberId
+                                             ort.CreatedBy == _loggedInMemberId
+                                             ||
+                                             o.OwnedBy == _loggedInMemberId
+                                             ||
+                                             ort.AssignedTo == _loggedInMemberId
                                         select rt).AsQueryable();
                 }
                 var requestThreadQueryable = (from rt in requestQueryable
@@ -246,7 +240,7 @@ namespace DataProvider
                                                       NativeName = "",
                                                   },
                                                   EntityType = (RequestThreadEntityTypeCatalog)rt.EntityType,
-                                                  Status = (StatusCatalog)rt.Status,
+                                                  Status = (OrganizationStatusCatalog)rt.Status,
                                                   Note = rt.Note,
                                                   Type = (RequestThreadTypeCatalog)rt.Type,
                                                   IsSystemGenerated = rt.IsSystemGenerated,
@@ -261,7 +255,7 @@ namespace DataProvider
             if (model.Status != null && currentStatus != (int)model.Status)
             {
                 result = await ChangeRequestEntityStatus(context, model);
-                if (result && model.Status == StatusCatalog.Approved)
+                if (result && model.Status == OrganizationStatusCatalog.Approved)
                 {
                     await AddRequestApprovalEntry(context, model);
                 }

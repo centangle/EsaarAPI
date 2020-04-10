@@ -226,8 +226,8 @@ namespace DataProvider
                                                                 && x.EntityId == _loggedInMemberId
                                                                 && x.EntityType == (int)requestModel.EntityType
                                                                 && x.Type == (int)requestModel.Type
-                                                                && x.Status != (int)StatusCatalog.Approved
-                                                                && x.Status != (int)StatusCatalog.Rejected
+                                                                && x.Status != (int)OrganizationStatusCatalog.Approved
+                                                                && x.Status != (int)OrganizationStatusCatalog.Rejected
                                                                 && x.IsDeleted == false).CountAsync()) > 0;
 
             if (sameTypeOfRequestInProcess)

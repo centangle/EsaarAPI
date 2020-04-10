@@ -26,4 +26,11 @@
     {
         General
     }
+    public enum OrganizationStatusCatalog : int
+    {
+        Initiated,
+        InProcess,
+        Approved,
+        Rejected
+    }
 }
