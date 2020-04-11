@@ -383,6 +383,7 @@ namespace DataProvider
         private MapperConfiguration GetOrganizationMapperConfig()
         {
             return new MapperConfiguration(cfg => cfg.CreateMap<Organization, OrganizationModel>()
+               .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.LogoUrl))
                .ForMember(dest => dest.Parent,
                input => input.MapFrom(i => new BaseBriefModel { Id = i.ParentId ?? 0 }))
                .ForMember(dest => dest.OwnedBy,

@@ -12,15 +12,15 @@ namespace DataProvider
     using System;
     using System.Collections.Generic;
     
-    public partial class RequestItem
+    public partial class DonationRequestItem
     {
         public int Id { get; set; }
-        public System.Guid RequestId { get; set; }
+        public int DonationRequestId { get; set; }
         public int ItemId { get; set; }
         public double Quantity { get; set; }
         public int SelectedUnit { get; set; }
-        public Nullable<double> ApprovedQuantity { get; set; }
-        public Nullable<int> ApprovedUnit { get; set; }
+        public string Note { get; set; }
+        public Nullable<System.DateTime> DueDate { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }
@@ -28,9 +28,8 @@ namespace DataProvider
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
     
+        public virtual DonationRequest DonationRequest { get; set; }
         public virtual Item Item { get; set; }
-        public virtual Request Request { get; set; }
         public virtual UOM UOM { get; set; }
-        public virtual UOM UOM1 { get; set; }
     }
 }

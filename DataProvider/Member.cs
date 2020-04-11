@@ -17,9 +17,9 @@ namespace DataProvider
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Member()
         {
+            this.DonationRequests = new HashSet<DonationRequest>();
+            this.DonationRequestVolunteers = new HashSet<DonationRequestVolunteer>();
             this.OrganizationMembers = new HashSet<OrganizationMember>();
-            this.Requests = new HashSet<Request>();
-            this.RequestVolunteers = new HashSet<RequestVolunteer>();
         }
     
         public int Id { get; set; }
@@ -37,10 +37,10 @@ namespace DataProvider
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DonationRequest> DonationRequests { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DonationRequestVolunteer> DonationRequestVolunteers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrganizationMember> OrganizationMembers { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Request> Requests { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RequestVolunteer> RequestVolunteers { get; set; }
     }
 }

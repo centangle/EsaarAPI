@@ -49,6 +49,7 @@
     <Compile Include="Base\BaseSearchModel.cs" />
     <Compile Include="BriefModel\BaseBriefModel.cs" />
     <Compile Include="BriefModel\MemberBriefModel.cs" />
+    <Compile Include="DonationRequestOrganizationModel.cs" />
     <Compile Include="Interfaces\IBase.cs" />
     <Compile Include="Interfaces\IImage.cs" />
     <Compile Include="Interfaces\ITree.cs" />
@@ -59,6 +60,8 @@
     <Compile Include="ItemModel.cs" />
     <Compile Include="PaginatedResultModel.cs" />
     <Compile Include="MemberModel.cs" />
+    <Compile Include="DonationRequestItemModel.cs" />
+    <Compile Include="DonationRequestModel.cs" />
     <Compile Include="RequestThreadModel.cs" />
     <Compile Include="UOMModel.cs" />
     <Compile Include="UserModel.cs" />

@@ -12,19 +12,19 @@ namespace DataProvider
     using System;
     using System.Collections.Generic;
     
-    public partial class RequestOrganization
+    public partial class DonationRequestOrganizationItem
     {
         public int Id { get; set; }
-        public System.Guid RequestId { get; set; }
-        public int OrganizationId { get; set; }
+        public int RequestOrganizationId { get; set; }
+        public int RequestItemId { get; set; }
+        public int Quantity { get; set; }
+        public int SelectedUnit { get; set; }
+        public int Status { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
-    
-        public virtual Organization Organization { get; set; }
-        public virtual Request Request { get; set; }
     }
 }

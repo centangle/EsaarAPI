@@ -200,7 +200,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\DonationRequestController.cs" />
     <Compile Include="Controllers\OrganizationRequestController.cs" />
+    <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="Controllers\RequestThreadController.cs" />
     <Compile Include="GlobalFaultExceptionHandler\ApiExceptionHandelling.cs" />
     <Compile Include="SwaggerFilters\AuthorizationOpertationFilter.cs" />

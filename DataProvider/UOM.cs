@@ -17,9 +17,8 @@ namespace DataProvider
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public UOM()
         {
+            this.DonationRequestItems = new HashSet<DonationRequestItem>();
             this.Items = new HashSet<Item>();
-            this.RequestItems = new HashSet<RequestItem>();
-            this.RequestItems1 = new HashSet<RequestItem>();
         }
     
         public int Id { get; set; }
@@ -37,10 +36,8 @@ namespace DataProvider
         public System.DateTime UpdatedDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DonationRequestItem> DonationRequestItems { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Item> Items { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RequestItem> RequestItems { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RequestItem> RequestItems1 { get; set; }
     }
 }

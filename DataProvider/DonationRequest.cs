@@ -12,17 +12,17 @@ namespace DataProvider
     using System;
     using System.Collections.Generic;
     
-    public partial class Request
+    public partial class DonationRequest
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Request()
+        public DonationRequest()
         {
-            this.RequestItems = new HashSet<RequestItem>();
-            this.RequestOrganizations = new HashSet<RequestOrganization>();
-            this.RequestVolunteers = new HashSet<RequestVolunteer>();
+            this.DonationRequestItems = new HashSet<DonationRequestItem>();
+            this.DonationRequestOrganizations = new HashSet<DonationRequestOrganization>();
+            this.DonationRequestVolunteers = new HashSet<DonationRequestVolunteer>();
         }
     
-        public System.Guid Id { get; set; }
+        public int Id { get; set; }
         public int MemberId { get; set; }
         public Nullable<int> Type { get; set; }
         public string Note { get; set; }
@@ -46,6 +46,7 @@ namespace DataProvider
         public System.DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
+        public Nullable<int> CampaignId { get; set; }
     
         public virtual Country Country { get; set; }
         public virtual District District { get; set; }
@@ -54,10 +55,10 @@ namespace DataProvider
         public virtual Tehsil Tehsil { get; set; }
         public virtual UnionCouncil UnionCouncil { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RequestItem> RequestItems { get; set; }
+        public virtual ICollection<DonationRequestItem> DonationRequestItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RequestOrganization> RequestOrganizations { get; set; }
+        public virtual ICollection<DonationRequestOrganization> DonationRequestOrganizations { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RequestVolunteer> RequestVolunteers { get; set; }
+        public virtual ICollection<DonationRequestVolunteer> DonationRequestVolunteers { get; set; }
     }
 }

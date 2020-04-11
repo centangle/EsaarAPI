@@ -17,11 +17,11 @@ namespace DataProvider
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Organization()
         {
+            this.DonationRequestOrganizations = new HashSet<DonationRequestOrganization>();
             this.Organization1 = new HashSet<Organization>();
             this.OrganizationItems = new HashSet<OrganizationItem>();
             this.OrganizationMembers = new HashSet<OrganizationMember>();
             this.OrganizationRequests = new HashSet<OrganizationRequest>();
-            this.RequestOrganizations = new HashSet<RequestOrganization>();
         }
     
         public int Id { get; set; }
@@ -42,6 +42,8 @@ namespace DataProvider
         public System.DateTime UpdatedDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DonationRequestOrganization> DonationRequestOrganizations { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Organization> Organization1 { get; set; }
         public virtual Organization Organization2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -50,7 +52,5 @@ namespace DataProvider
         public virtual ICollection<OrganizationMember> OrganizationMembers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrganizationRequest> OrganizationRequests { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RequestOrganization> RequestOrganizations { get; set; }
     }
 }

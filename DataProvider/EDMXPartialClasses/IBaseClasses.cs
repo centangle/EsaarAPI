@@ -9,4 +9,7 @@ namespace DataProvider
     public partial class OrganizationRequest : IBase { }
     public partial class RequestThread : IBase { }
     public partial class Attachment : IBase { }
+    public partial class DonationRequest : IBase { }
+    public partial class DonationRequestItem : IBase { }
+    public partial class DonationRequestOrganization : IBase { }
 }

@@ -36,6 +36,11 @@ namespace DataProvider
         public virtual DbSet<Attachment> Attachments { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<District> Districts { get; set; }
+        public virtual DbSet<DonationRequest> DonationRequests { get; set; }
+        public virtual DbSet<DonationRequestItem> DonationRequestItems { get; set; }
+        public virtual DbSet<DonationRequestOrganization> DonationRequestOrganizations { get; set; }
+        public virtual DbSet<DonationRequestOrganizationItem> DonationRequestOrganizationItems { get; set; }
+        public virtual DbSet<DonationRequestVolunteer> DonationRequestVolunteers { get; set; }
         public virtual DbSet<ExceptionLog> ExceptionLogs { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
@@ -44,11 +49,7 @@ namespace DataProvider
         public virtual DbSet<OrganizationItem> OrganizationItems { get; set; }
         public virtual DbSet<OrganizationMember> OrganizationMembers { get; set; }
         public virtual DbSet<OrganizationRequest> OrganizationRequests { get; set; }
-        public virtual DbSet<Request> Requests { get; set; }
-        public virtual DbSet<RequestItem> RequestItems { get; set; }
-        public virtual DbSet<RequestOrganization> RequestOrganizations { get; set; }
         public virtual DbSet<RequestThread> RequestThreads { get; set; }
-        public virtual DbSet<RequestVolunteer> RequestVolunteers { get; set; }
         public virtual DbSet<State> States { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Tehsil> Tehsils { get; set; }

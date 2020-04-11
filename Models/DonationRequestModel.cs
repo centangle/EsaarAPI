@@ -1,0 +1,71 @@
+﻿using Catalogs;
+using Models.Base;
+using Models.BriefModel;
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+
+namespace Models
+{
+    public class DonationRequestModel : BaseModel
+    {
+        public BaseBriefModel Member { get; set; }
+        public List<DonationRequestItemModel> Items { get; set; }
+        public DonationRequestTypeCatalog Type { get; set; }
+        public string Note { get; set; }
+        public DateTime Date { get; set; }
+        public string PrefferedCollectionTime { get; set; }
+        public string Address { get; set; }
+        public string AddressLatLong { get; set; }
+        public BaseBriefModel Campaign { get; set; }
+        public BaseBriefModel Organization { get; set; }
+    }
+    public class PaginatedDonationRequestModel : DonationRequestModel
+    {
+        [IgnoreDataMember]
+        public int LoggedInMemberId { get; set; }
+
+        //public bool IsOpenRequest
+        //{
+        //    get
+        //    {
+        //        if (AssignedTo == null || AssignedTo.Id == 0)
+        //            return true;
+        //        else
+        //            return false;
+        //    }
+        //}
+        //public bool CanAccessRequestThread
+        //{
+        //    get
+        //    {
+        //        if (LoggedInMemberId != 0 && ((AssignedTo != null && AssignedTo.Id == LoggedInMemberId) || (CreatedBy == LoggedInMemberId)))
+        //            return true;
+        //        else
+        //            return false;
+        //    }
+        //}
+        //public bool CanUpdateStatus
+        //{
+        //    get
+        //    {
+        //        if (Status == OrganizationStatusCatalog.Approved || Status == OrganizationStatusCatalog.Rejected)
+        //            return false;
+        //        else
+        //            return true;
+        //    }
+        //}
+    }
+
+    public class DonationRequestSearchModel : BaseSearchModel
+    {
+        public DonationRequestSearchModel()
+        {
+            OrderByColumn = "CreatedDate";
+        }
+        public int? OrganizationId { get; set; }
+        public int? CampaignId { get; set; }
+        public DonationRequestTypeCatalog? Type { get; set; }
+
+    }
+}

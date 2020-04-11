@@ -147,6 +147,101 @@
           <Property Name="UpdatedBy" Type="int" Nullable="false" />
           <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
+        <EntityType Name="DonationRequest">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MemberId" Type="int" Nullable="false" />
+          <Property Name="Type" Type="int" />
+          <Property Name="Note" Type="nvarchar(max)" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="DueDate" Type="datetime" />
+          <Property Name="IsApproved" Type="bit" Nullable="false" />
+          <Property Name="ApprovedDate" Type="datetime" />
+          <Property Name="IsCollected" Type="bit" Nullable="false" />
+          <Property Name="CollectionDate" Type="datetime" />
+          <Property Name="PrefferedCollectionTime" Type="nvarchar" MaxLength="100" />
+          <Property Name="Address" Type="nvarchar(max)" />
+          <Property Name="AddressLatLong" Type="varchar" MaxLength="500" />
+          <Property Name="CountryId" Type="int" />
+          <Property Name="StateId" Type="int" />
+          <Property Name="DistrictId" Type="int" />
+          <Property Name="TehsilId" Type="int" />
+          <Property Name="UnionCouncilId" Type="int" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="CampaignId" Type="int" />
+        </EntityType>
+        <EntityType Name="DonationRequestItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DonationRequestId" Type="int" Nullable="false" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="Quantity" Type="float" Nullable="false" />
+          <Property Name="SelectedUnit" Type="int" Nullable="false" />
+          <Property Name="Note" Type="nvarchar(max)" />
+          <Property Name="DueDate" Type="datetime" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DonationRequestOrganization">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="DonationRequestId" Type="int" Nullable="false" />
+          <Property Name="OrganizationId" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="AssignedTo" Type="int" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DonationRequestOrganizationItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RequestOrganizationId" Type="int" Nullable="false" />
+          <Property Name="RequestItemId" Type="int" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="SelectedUnit" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DonationRequestVolunteer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DonationRequestId" Type="int" Nullable="false" />
+          <Property Name="VolunteerId" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
         <EntityType Name="ExceptionLog">
           <Key>
             <PropertyRef Name="Id" />
@@ -287,67 +382,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="ProtectedTicket" Type="nvarchar" MaxLength="4000" />
           <Property Name="CreatedDate" Type="datetime2" Precision="7" />
         </EntityType>
-        <EntityType Name="Request">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="MemberId" Type="int" Nullable="false" />
-          <Property Name="Type" Type="int" />
-          <Property Name="Note" Type="nvarchar(max)" />
-          <Property Name="Date" Type="date" Nullable="false" />
-          <Property Name="DueDate" Type="datetime" />
-          <Property Name="IsApproved" Type="bit" Nullable="false" />
-          <Property Name="ApprovedDate" Type="datetime" />
-          <Property Name="IsCollected" Type="bit" Nullable="false" />
-          <Property Name="CollectionDate" Type="datetime" />
-          <Property Name="PrefferedCollectionTime" Type="nvarchar" MaxLength="100" />
-          <Property Name="Address" Type="nvarchar(max)" />
-          <Property Name="AddressLatLong" Type="varchar" MaxLength="500" />
-          <Property Name="CountryId" Type="int" />
-          <Property Name="StateId" Type="int" />
-          <Property Name="DistrictId" Type="int" />
-          <Property Name="TehsilId" Type="int" />
-          <Property Name="UnionCouncilId" Type="int" />
-          <Property Name="IsActive" Type="bit" Nullable="false" />
-          <Property Name="IsDeleted" Type="bit" Nullable="false" />
-          <Property Name="CreatedBy" Type="int" Nullable="false" />
-          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="UpdatedBy" Type="int" Nullable="false" />
-          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
-        </EntityType>
-        <EntityType Name="RequestItem">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RequestId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="ItemId" Type="int" Nullable="false" />
-          <Property Name="Quantity" Type="float" Nullable="false" />
-          <Property Name="SelectedUnit" Type="int" Nullable="false" />
-          <Property Name="ApprovedQuantity" Type="float" />
-          <Property Name="ApprovedUnit" Type="int" />
-          <Property Name="IsActive" Type="bit" Nullable="false" />
-          <Property Name="IsDeleted" Type="bit" Nullable="false" />
-          <Property Name="CreatedBy" Type="int" Nullable="false" />
-          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="UpdatedBy" Type="int" Nullable="false" />
-          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
-        </EntityType>
-        <EntityType Name="RequestOrganization">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="RequestId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="OrganizationId" Type="int" Nullable="false" />
-          <Property Name="IsActive" Type="bit" Nullable="false" />
-          <Property Name="IsDeleted" Type="bit" Nullable="false" />
-          <Property Name="CreatedBy" Type="int" Nullable="false" />
-          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="UpdatedBy" Type="int" Nullable="false" />
-          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
-        </EntityType>
         <EntityType Name="RequestThread">
           <Key>
             <PropertyRef Name="Id" />
@@ -365,20 +399,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedBy" Type="int" Nullable="false" />
           <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="IsSystemGenerated" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="RequestVolunteer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RequestId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="VolunteerId" Type="int" Nullable="false" />
-          <Property Name="IsActive" Type="bit" Nullable="false" />
-          <Property Name="IsDeleted" Type="bit" Nullable="false" />
-          <Property Name="CreatedBy" Type="int" Nullable="false" />
-          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="UpdatedBy" Type="int" Nullable="false" />
-          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
         <EntityType Name="State">
           <Key>
@@ -613,6 +633,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_DonationRequestOrganization_DonationRequestOrganization">
+          <End Role="DonationRequestOrganization" Type="Self.DonationRequestOrganization" Multiplicity="1" />
+          <End Role="DonationRequestOrganization1" Type="Self.DonationRequestOrganization" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="DonationRequestOrganization">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequestOrganization1">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Item_UOM">
           <End Role="UOM" Type="Self.UOM" Multiplicity="0..1" />
           <End Role="Item" Type="Self.Item" Multiplicity="*" />
@@ -711,169 +743,157 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
         </Association>
         <Association Name="FK_Request_Beneficiary">
           <End Role="Member" Type="Self.Member" Multiplicity="1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Role="DonationRequest" Type="Self.DonationRequest" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Member">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Request">
+            <Dependent Role="DonationRequest">
               <PropertyRef Name="MemberId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_Country">
           <End Role="Country" Type="Self.Country" Multiplicity="0..1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Role="DonationRequest" Type="Self.DonationRequest" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Country">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Request">
+            <Dependent Role="DonationRequest">
               <PropertyRef Name="CountryId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_District">
           <End Role="District" Type="Self.District" Multiplicity="0..1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Role="DonationRequest" Type="Self.DonationRequest" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="District">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Request">
+            <Dependent Role="DonationRequest">
               <PropertyRef Name="DistrictId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_State">
           <End Role="State" Type="Self.State" Multiplicity="0..1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Role="DonationRequest" Type="Self.DonationRequest" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="State">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Request">
+            <Dependent Role="DonationRequest">
               <PropertyRef Name="StateId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_Tehsil">
           <End Role="Tehsil" Type="Self.Tehsil" Multiplicity="0..1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Role="DonationRequest" Type="Self.DonationRequest" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Tehsil">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Request">
+            <Dependent Role="DonationRequest">
               <PropertyRef Name="TehsilId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Request_UnionCouncil">
           <End Role="UnionCouncil" Type="Self.UnionCouncil" Multiplicity="0..1" />
-          <End Role="Request" Type="Self.Request" Multiplicity="*" />
+          <End Role="DonationRequest" Type="Self.DonationRequest" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UnionCouncil">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Request">
+            <Dependent Role="DonationRequest">
               <PropertyRef Name="UnionCouncilId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestItem_Item">
           <End Role="Item" Type="Self.Item" Multiplicity="1" />
-          <End Role="RequestItem" Type="Self.RequestItem" Multiplicity="*" />
+          <End Role="DonationRequestItem" Type="Self.DonationRequestItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Item">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="RequestItem">
+            <Dependent Role="DonationRequestItem">
               <PropertyRef Name="ItemId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestItem_Request">
-          <End Role="Request" Type="Self.Request" Multiplicity="1" />
-          <End Role="RequestItem" Type="Self.RequestItem" Multiplicity="*" />
+          <End Role="DonationRequest" Type="Self.DonationRequest" Multiplicity="1" />
+          <End Role="DonationRequestItem" Type="Self.DonationRequestItem" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Request">
+            <Principal Role="DonationRequest">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="RequestItem">
-              <PropertyRef Name="RequestId" />
+            <Dependent Role="DonationRequestItem">
+              <PropertyRef Name="DonationRequestId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestItem_UOM">
           <End Role="UOM" Type="Self.UOM" Multiplicity="1" />
-          <End Role="RequestItem" Type="Self.RequestItem" Multiplicity="*" />
+          <End Role="DonationRequestItem" Type="Self.DonationRequestItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UOM">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="RequestItem">
+            <Dependent Role="DonationRequestItem">
               <PropertyRef Name="SelectedUnit" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RequestItem_UOM1">
-          <End Role="UOM" Type="Self.UOM" Multiplicity="0..1" />
-          <End Role="RequestItem" Type="Self.RequestItem" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UOM">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RequestItem">
-              <PropertyRef Name="ApprovedUnit" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestOrganization_Organization">
           <End Role="Organization" Type="Self.Organization" Multiplicity="1" />
-          <End Role="RequestOrganization" Type="Self.RequestOrganization" Multiplicity="*" />
+          <End Role="DonationRequestOrganization" Type="Self.DonationRequestOrganization" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Organization">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="RequestOrganization">
+            <Dependent Role="DonationRequestOrganization">
               <PropertyRef Name="OrganizationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestOrganization_Request">
-          <End Role="Request" Type="Self.Request" Multiplicity="1" />
-          <End Role="RequestOrganization" Type="Self.RequestOrganization" Multiplicity="*" />
+          <End Role="DonationRequest" Type="Self.DonationRequest" Multiplicity="1" />
+          <End Role="DonationRequestOrganization" Type="Self.DonationRequestOrganization" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Request">
+            <Principal Role="DonationRequest">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="RequestOrganization">
-              <PropertyRef Name="RequestId" />
+            <Dependent Role="DonationRequestOrganization">
+              <PropertyRef Name="DonationRequestId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestVolunteer_Member">
           <End Role="Member" Type="Self.Member" Multiplicity="1" />
-          <End Role="RequestVolunteer" Type="Self.RequestVolunteer" Multiplicity="*" />
+          <End Role="DonationRequestVolunteer" Type="Self.DonationRequestVolunteer" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Member">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="RequestVolunteer">
+            <Dependent Role="DonationRequestVolunteer">
               <PropertyRef Name="VolunteerId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RequestVolunteer_RequestVolunteer">
-          <End Role="Request" Type="Self.Request" Multiplicity="1" />
-          <End Role="RequestVolunteer" Type="Self.RequestVolunteer" Multiplicity="*" />
+          <End Role="DonationRequest" Type="Self.DonationRequest" Multiplicity="1" />
+          <End Role="DonationRequestVolunteer" Type="Self.DonationRequestVolunteer" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Request">
+            <Principal Role="DonationRequest">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="RequestVolunteer">
-              <PropertyRef Name="RequestId" />
+            <Dependent Role="DonationRequestVolunteer">
+              <PropertyRef Name="DonationRequestId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -928,6 +948,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="Attachment" EntityType="Self.Attachment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Country" EntityType="Self.Country" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="District" EntityType="Self.District" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DonationRequest" EntityType="Self.DonationRequest" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DonationRequestItem" EntityType="Self.DonationRequestItem" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DonationRequestOrganization" EntityType="Self.DonationRequestOrganization" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DonationRequestOrganizationItem" EntityType="Self.DonationRequestOrganizationItem" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DonationRequestVolunteer" EntityType="Self.DonationRequestVolunteer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExceptionLog" EntityType="Self.ExceptionLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Item" EntityType="Self.Item" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Log" EntityType="Self.Log" Schema="dbo" store:Type="Tables" />
@@ -936,11 +961,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="OrganizationItem" EntityType="Self.OrganizationItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganizationMember" EntityType="Self.OrganizationMember" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganizationRequest" EntityType="Self.OrganizationRequest" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Request" EntityType="Self.Request" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RequestItem" EntityType="Self.RequestItem" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RequestOrganization" EntityType="Self.RequestOrganization" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestThread" EntityType="Self.RequestThread" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RequestVolunteer" EntityType="Self.RequestVolunteer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="State" EntityType="Self.State" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tehsil" EntityType="Self.Tehsil" Schema="dbo" store:Type="Tables" />
@@ -1004,6 +1025,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="State" EntitySet="State" />
             <End Role="District" EntitySet="District" />
           </AssociationSet>
+          <AssociationSet Name="FK_DonationRequestOrganization_DonationRequestOrganization" Association="Self.FK_DonationRequestOrganization_DonationRequestOrganization">
+            <End Role="DonationRequestOrganization" EntitySet="DonationRequestOrganization" />
+            <End Role="DonationRequestOrganization1" EntitySet="DonationRequestOrganization" />
+          </AssociationSet>
           <AssociationSet Name="FK_Item_UOM" Association="Self.FK_Item_UOM">
             <End Role="UOM" EntitySet="UOM" />
             <End Role="Item" EntitySet="Item" />
@@ -1038,59 +1063,55 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </AssociationSet>
           <AssociationSet Name="FK_Request_Beneficiary" Association="Self.FK_Request_Beneficiary">
             <End Role="Member" EntitySet="Member" />
-            <End Role="Request" EntitySet="Request" />
+            <End Role="DonationRequest" EntitySet="DonationRequest" />
           </AssociationSet>
           <AssociationSet Name="FK_Request_Country" Association="Self.FK_Request_Country">
             <End Role="Country" EntitySet="Country" />
-            <End Role="Request" EntitySet="Request" />
+            <End Role="DonationRequest" EntitySet="DonationRequest" />
           </AssociationSet>
           <AssociationSet Name="FK_Request_District" Association="Self.FK_Request_District">
             <End Role="District" EntitySet="District" />
-            <End Role="Request" EntitySet="Request" />
+            <End Role="DonationRequest" EntitySet="DonationRequest" />
           </AssociationSet>
           <AssociationSet Name="FK_Request_State" Association="Self.FK_Request_State">
             <End Role="State" EntitySet="State" />
-            <End Role="Request" EntitySet="Request" />
+            <End Role="DonationRequest" EntitySet="DonationRequest" />
           </AssociationSet>
           <AssociationSet Name="FK_Request_Tehsil" Association="Self.FK_Request_Tehsil">
             <End Role="Tehsil" EntitySet="Tehsil" />
-            <End Role="Request" EntitySet="Request" />
+            <End Role="DonationRequest" EntitySet="DonationRequest" />
           </AssociationSet>
           <AssociationSet Name="FK_Request_UnionCouncil" Association="Self.FK_Request_UnionCouncil">
             <End Role="UnionCouncil" EntitySet="UnionCouncil" />
-            <End Role="Request" EntitySet="Request" />
+            <End Role="DonationRequest" EntitySet="DonationRequest" />
           </AssociationSet>
           <AssociationSet Name="FK_RequestItem_Item" Association="Self.FK_RequestItem_Item">
             <End Role="Item" EntitySet="Item" />
-            <End Role="RequestItem" EntitySet="RequestItem" />
+            <End Role="DonationRequestItem" EntitySet="DonationRequestItem" />
           </AssociationSet>
           <AssociationSet Name="FK_RequestItem_Request" Association="Self.FK_RequestItem_Request">
-            <End Role="Request" EntitySet="Request" />
-            <End Role="RequestItem" EntitySet="RequestItem" />
+            <End Role="DonationRequest" EntitySet="DonationRequest" />
+            <End Role="DonationRequestItem" EntitySet="DonationRequestItem" />
           </AssociationSet>
           <AssociationSet Name="FK_RequestItem_UOM" Association="Self.FK_RequestItem_UOM">
             <End Role="UOM" EntitySet="UOM" />
-            <End Role="RequestItem" EntitySet="RequestItem" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestItem_UOM1" Association="Self.FK_RequestItem_UOM1">
-            <End Role="UOM" EntitySet="UOM" />
-            <End Role="RequestItem" EntitySet="RequestItem" />
+            <End Role="DonationRequestItem" EntitySet="DonationRequestItem" />
           </AssociationSet>
           <AssociationSet Name="FK_RequestOrganization_Organization" Association="Self.FK_RequestOrganization_Organization">
             <End Role="Organization" EntitySet="Organization" />
-            <End Role="RequestOrganization" EntitySet="RequestOrganization" />
+            <End Role="DonationRequestOrganization" EntitySet="DonationRequestOrganization" />
           </AssociationSet>
           <AssociationSet Name="FK_RequestOrganization_Request" Association="Self.FK_RequestOrganization_Request">
-            <End Role="Request" EntitySet="Request" />
-            <End Role="RequestOrganization" EntitySet="RequestOrganization" />
+            <End Role="DonationRequest" EntitySet="DonationRequest" />
+            <End Role="DonationRequestOrganization" EntitySet="DonationRequestOrganization" />
           </AssociationSet>
           <AssociationSet Name="FK_RequestVolunteer_Member" Association="Self.FK_RequestVolunteer_Member">
             <End Role="Member" EntitySet="Member" />
-            <End Role="RequestVolunteer" EntitySet="RequestVolunteer" />
+            <End Role="DonationRequestVolunteer" EntitySet="DonationRequestVolunteer" />
           </AssociationSet>
           <AssociationSet Name="FK_RequestVolunteer_RequestVolunteer" Association="Self.FK_RequestVolunteer_RequestVolunteer">
-            <End Role="Request" EntitySet="Request" />
-            <End Role="RequestVolunteer" EntitySet="RequestVolunteer" />
+            <End Role="DonationRequest" EntitySet="DonationRequest" />
+            <End Role="DonationRequestVolunteer" EntitySet="DonationRequestVolunteer" />
           </AssociationSet>
           <AssociationSet Name="FK_State_Country" Association="Self.FK_State_Country">
             <End Role="Country" EntitySet="Country" />
@@ -1122,6 +1143,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="Attachments" EntityType="CharityModel.Attachment" />
           <EntitySet Name="Countries" EntityType="CharityModel.Country" />
           <EntitySet Name="Districts" EntityType="CharityModel.District" />
+          <EntitySet Name="DonationRequests" EntityType="CharityModel.DonationRequest" />
+          <EntitySet Name="DonationRequestItems" EntityType="CharityModel.DonationRequestItem" />
+          <EntitySet Name="DonationRequestOrganizations" EntityType="CharityModel.DonationRequestOrganization" />
+          <EntitySet Name="DonationRequestOrganizationItems" EntityType="CharityModel.DonationRequestOrganizationItem" />
+          <EntitySet Name="DonationRequestVolunteers" EntityType="CharityModel.DonationRequestVolunteer" />
           <EntitySet Name="ExceptionLogs" EntityType="CharityModel.ExceptionLog" />
           <EntitySet Name="Items" EntityType="CharityModel.Item" />
           <EntitySet Name="Logs" EntityType="CharityModel.Log" />
@@ -1130,11 +1156,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="OrganizationItems" EntityType="CharityModel.OrganizationItem" />
           <EntitySet Name="OrganizationMembers" EntityType="CharityModel.OrganizationMember" />
           <EntitySet Name="OrganizationRequests" EntityType="CharityModel.OrganizationRequest" />
-          <EntitySet Name="Requests" EntityType="CharityModel.Request" />
-          <EntitySet Name="RequestItems" EntityType="CharityModel.RequestItem" />
-          <EntitySet Name="RequestOrganizations" EntityType="CharityModel.RequestOrganization" />
           <EntitySet Name="RequestThreads" EntityType="CharityModel.RequestThread" />
-          <EntitySet Name="RequestVolunteers" EntityType="CharityModel.RequestVolunteer" />
           <EntitySet Name="States" EntityType="CharityModel.State" />
           <EntitySet Name="sysdiagrams" EntityType="CharityModel.sysdiagram" />
           <EntitySet Name="Tehsils" EntityType="CharityModel.Tehsil" />
@@ -1179,7 +1201,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </AssociationSet>
           <AssociationSet Name="FK_Request_Country" Association="CharityModel.FK_Request_Country">
             <End Role="Country" EntitySet="Countries" />
-            <End Role="Request" EntitySet="Requests" />
+            <End Role="DonationRequest" EntitySet="DonationRequests" />
           </AssociationSet>
           <AssociationSet Name="FK_State_Country" Association="CharityModel.FK_State_Country">
             <End Role="Country" EntitySet="Countries" />
@@ -1191,11 +1213,59 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </AssociationSet>
           <AssociationSet Name="FK_Request_District" Association="CharityModel.FK_Request_District">
             <End Role="District" EntitySet="Districts" />
-            <End Role="Request" EntitySet="Requests" />
+            <End Role="DonationRequest" EntitySet="DonationRequests" />
           </AssociationSet>
           <AssociationSet Name="FK_Tehsil_District" Association="CharityModel.FK_Tehsil_District">
             <End Role="District" EntitySet="Districts" />
             <End Role="Tehsil" EntitySet="Tehsils" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Request_Beneficiary" Association="CharityModel.FK_Request_Beneficiary">
+            <End Role="Member" EntitySet="Members" />
+            <End Role="DonationRequest" EntitySet="DonationRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Request_State" Association="CharityModel.FK_Request_State">
+            <End Role="State" EntitySet="States" />
+            <End Role="DonationRequest" EntitySet="DonationRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Request_Tehsil" Association="CharityModel.FK_Request_Tehsil">
+            <End Role="Tehsil" EntitySet="Tehsils" />
+            <End Role="DonationRequest" EntitySet="DonationRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Request_UnionCouncil" Association="CharityModel.FK_Request_UnionCouncil">
+            <End Role="UnionCouncil" EntitySet="UnionCouncils" />
+            <End Role="DonationRequest" EntitySet="DonationRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestItem_Request" Association="CharityModel.FK_RequestItem_Request">
+            <End Role="DonationRequest" EntitySet="DonationRequests" />
+            <End Role="DonationRequestItem" EntitySet="DonationRequestItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestOrganization_Request" Association="CharityModel.FK_RequestOrganization_Request">
+            <End Role="DonationRequest" EntitySet="DonationRequests" />
+            <End Role="DonationRequestOrganization" EntitySet="DonationRequestOrganizations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestVolunteer_RequestVolunteer" Association="CharityModel.FK_RequestVolunteer_RequestVolunteer">
+            <End Role="DonationRequest" EntitySet="DonationRequests" />
+            <End Role="DonationRequestVolunteer" EntitySet="DonationRequestVolunteers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestItem_Item" Association="CharityModel.FK_RequestItem_Item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="DonationRequestItem" EntitySet="DonationRequestItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestItem_UOM" Association="CharityModel.FK_RequestItem_UOM">
+            <End Role="UOM" EntitySet="UOMs" />
+            <End Role="DonationRequestItem" EntitySet="DonationRequestItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DonationRequestOrganization_DonationRequestOrganization" Association="CharityModel.FK_DonationRequestOrganization_DonationRequestOrganization">
+            <End Role="DonationRequestOrganization" EntitySet="DonationRequestOrganizations" />
+            <End Role="DonationRequestOrganization1" EntitySet="DonationRequestOrganizations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestOrganization_Organization" Association="CharityModel.FK_RequestOrganization_Organization">
+            <End Role="Organization" EntitySet="Organizations" />
+            <End Role="DonationRequestOrganization" EntitySet="DonationRequestOrganizations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RequestVolunteer_Member" Association="CharityModel.FK_RequestVolunteer_Member">
+            <End Role="Member" EntitySet="Members" />
+            <End Role="DonationRequestVolunteer" EntitySet="DonationRequestVolunteers" />
           </AssociationSet>
           <AssociationSet Name="FK_ChildItem_ParentItem" Association="CharityModel.FK_ChildItem_ParentItem">
             <End Role="Item" EntitySet="Items" />
@@ -1209,21 +1279,9 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="Item" EntitySet="Items" />
             <End Role="OrganizationItem" EntitySet="OrganizationItems" />
           </AssociationSet>
-          <AssociationSet Name="FK_RequestItem_Item" Association="CharityModel.FK_RequestItem_Item">
-            <End Role="Item" EntitySet="Items" />
-            <End Role="RequestItem" EntitySet="RequestItems" />
-          </AssociationSet>
           <AssociationSet Name="FK_OrganizationMember_Member" Association="CharityModel.FK_OrganizationMember_Member">
             <End Role="Member" EntitySet="Members" />
             <End Role="OrganizationMember" EntitySet="OrganizationMembers" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Request_Beneficiary" Association="CharityModel.FK_Request_Beneficiary">
-            <End Role="Member" EntitySet="Members" />
-            <End Role="Request" EntitySet="Requests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestVolunteer_Member" Association="CharityModel.FK_RequestVolunteer_Member">
-            <End Role="Member" EntitySet="Members" />
-            <End Role="RequestVolunteer" EntitySet="RequestVolunteers" />
           </AssociationSet>
           <AssociationSet Name="FK_Organization_Organization" Association="CharityModel.FK_Organization_Organization">
             <End Role="Organization" EntitySet="Organizations" />
@@ -1240,42 +1298,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_OrganizationRequest_Organization" Association="CharityModel.FK_OrganizationRequest_Organization">
             <End Role="Organization" EntitySet="Organizations" />
             <End Role="OrganizationRequest" EntitySet="OrganizationRequests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestOrganization_Organization" Association="CharityModel.FK_RequestOrganization_Organization">
-            <End Role="Organization" EntitySet="Organizations" />
-            <End Role="RequestOrganization" EntitySet="RequestOrganizations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Request_State" Association="CharityModel.FK_Request_State">
-            <End Role="State" EntitySet="States" />
-            <End Role="Request" EntitySet="Requests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Request_Tehsil" Association="CharityModel.FK_Request_Tehsil">
-            <End Role="Tehsil" EntitySet="Tehsils" />
-            <End Role="Request" EntitySet="Requests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Request_UnionCouncil" Association="CharityModel.FK_Request_UnionCouncil">
-            <End Role="UnionCouncil" EntitySet="UnionCouncils" />
-            <End Role="Request" EntitySet="Requests" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestItem_Request" Association="CharityModel.FK_RequestItem_Request">
-            <End Role="Request" EntitySet="Requests" />
-            <End Role="RequestItem" EntitySet="RequestItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestOrganization_Request" Association="CharityModel.FK_RequestOrganization_Request">
-            <End Role="Request" EntitySet="Requests" />
-            <End Role="RequestOrganization" EntitySet="RequestOrganizations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestVolunteer_RequestVolunteer" Association="CharityModel.FK_RequestVolunteer_RequestVolunteer">
-            <End Role="Request" EntitySet="Requests" />
-            <End Role="RequestVolunteer" EntitySet="RequestVolunteers" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestItem_UOM" Association="CharityModel.FK_RequestItem_UOM">
-            <End Role="UOM" EntitySet="UOMs" />
-            <End Role="RequestItem" EntitySet="RequestItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RequestItem_UOM1" Association="CharityModel.FK_RequestItem_UOM1">
-            <End Role="UOM" EntitySet="UOMs" />
-            <End Role="RequestItem" EntitySet="RequestItems" />
           </AssociationSet>
           <AssociationSet Name="FK_UnionCouncil_Tehsil" Association="CharityModel.FK_UnionCouncil_Tehsil">
             <End Role="Tehsil" EntitySet="Tehsils" />
@@ -1430,7 +1452,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_Country" FromRole="Country" ToRole="Address" />
-          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_Country" FromRole="Country" ToRole="Request" />
+          <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_Country" FromRole="Country" ToRole="DonationRequest" />
           <NavigationProperty Name="States" Relationship="CharityModel.FK_State_Country" FromRole="Country" ToRole="State" />
         </EntityType>
         <EntityType Name="District">
@@ -1451,8 +1473,121 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_District" FromRole="District" ToRole="Address" />
           <NavigationProperty Name="State" Relationship="CharityModel.FK_District_State" FromRole="District" ToRole="State" />
-          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_District" FromRole="District" ToRole="Request" />
+          <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_District" FromRole="District" ToRole="DonationRequest" />
           <NavigationProperty Name="Tehsils" Relationship="CharityModel.FK_Tehsil_District" FromRole="District" ToRole="Tehsil" />
+        </EntityType>
+        <EntityType Name="DonationRequest">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MemberId" Type="Int32" Nullable="false" />
+          <Property Name="Type" Type="Int32" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="DueDate" Type="DateTime" Precision="3" />
+          <Property Name="IsApproved" Type="Boolean" Nullable="false" />
+          <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
+          <Property Name="IsCollected" Type="Boolean" Nullable="false" />
+          <Property Name="CollectionDate" Type="DateTime" Precision="3" />
+          <Property Name="PrefferedCollectionTime" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AddressLatLong" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="CountryId" Type="Int32" />
+          <Property Name="StateId" Type="Int32" />
+          <Property Name="DistrictId" Type="Int32" />
+          <Property Name="TehsilId" Type="Int32" />
+          <Property Name="UnionCouncilId" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="CampaignId" Type="Int32" />
+          <NavigationProperty Name="Country" Relationship="CharityModel.FK_Request_Country" FromRole="DonationRequest" ToRole="Country" />
+          <NavigationProperty Name="District" Relationship="CharityModel.FK_Request_District" FromRole="DonationRequest" ToRole="District" />
+          <NavigationProperty Name="Member" Relationship="CharityModel.FK_Request_Beneficiary" FromRole="DonationRequest" ToRole="Member" />
+          <NavigationProperty Name="State" Relationship="CharityModel.FK_Request_State" FromRole="DonationRequest" ToRole="State" />
+          <NavigationProperty Name="Tehsil" Relationship="CharityModel.FK_Request_Tehsil" FromRole="DonationRequest" ToRole="Tehsil" />
+          <NavigationProperty Name="UnionCouncil" Relationship="CharityModel.FK_Request_UnionCouncil" FromRole="DonationRequest" ToRole="UnionCouncil" />
+          <NavigationProperty Name="DonationRequestItems" Relationship="CharityModel.FK_RequestItem_Request" FromRole="DonationRequest" ToRole="DonationRequestItem" />
+          <NavigationProperty Name="DonationRequestOrganizations" Relationship="CharityModel.FK_RequestOrganization_Request" FromRole="DonationRequest" ToRole="DonationRequestOrganization" />
+          <NavigationProperty Name="DonationRequestVolunteers" Relationship="CharityModel.FK_RequestVolunteer_RequestVolunteer" FromRole="DonationRequest" ToRole="DonationRequestVolunteer" />
+        </EntityType>
+        <EntityType Name="DonationRequestItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DonationRequestId" Type="Int32" Nullable="false" />
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="SelectedUnit" Type="Int32" Nullable="false" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DueDate" Type="DateTime" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="DonationRequest" Relationship="CharityModel.FK_RequestItem_Request" FromRole="DonationRequestItem" ToRole="DonationRequest" />
+          <NavigationProperty Name="Item" Relationship="CharityModel.FK_RequestItem_Item" FromRole="DonationRequestItem" ToRole="Item" />
+          <NavigationProperty Name="UOM" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="DonationRequestItem" ToRole="UOM" />
+        </EntityType>
+        <EntityType Name="DonationRequestOrganization">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="DonationRequestId" Type="Int32" Nullable="false" />
+          <Property Name="OrganizationId" Type="Int32" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="AssignedTo" Type="Int32" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DonationRequest" Relationship="CharityModel.FK_RequestOrganization_Request" FromRole="DonationRequestOrganization" ToRole="DonationRequest" />
+          <NavigationProperty Name="DonationRequestOrganization1" Relationship="CharityModel.FK_DonationRequestOrganization_DonationRequestOrganization" FromRole="DonationRequestOrganization" ToRole="DonationRequestOrganization1" />
+          <NavigationProperty Name="DonationRequestOrganization2" Relationship="CharityModel.FK_DonationRequestOrganization_DonationRequestOrganization" FromRole="DonationRequestOrganization1" ToRole="DonationRequestOrganization" />
+          <NavigationProperty Name="Organization" Relationship="CharityModel.FK_RequestOrganization_Organization" FromRole="DonationRequestOrganization" ToRole="Organization" />
+        </EntityType>
+        <EntityType Name="DonationRequestOrganizationItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RequestOrganizationId" Type="Int32" Nullable="false" />
+          <Property Name="RequestItemId" Type="Int32" Nullable="false" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="SelectedUnit" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+        </EntityType>
+        <EntityType Name="DonationRequestVolunteer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DonationRequestId" Type="Int32" Nullable="false" />
+          <Property Name="VolunteerId" Type="Int32" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="DonationRequest" Relationship="CharityModel.FK_RequestVolunteer_RequestVolunteer" FromRole="DonationRequestVolunteer" ToRole="DonationRequest" />
+          <NavigationProperty Name="Member" Relationship="CharityModel.FK_RequestVolunteer_Member" FromRole="DonationRequestVolunteer" ToRole="Member" />
         </EntityType>
         <EntityType Name="ExceptionLog">
           <Key>
@@ -1484,11 +1619,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="DonationRequestItems" Relationship="CharityModel.FK_RequestItem_Item" FromRole="Item" ToRole="DonationRequestItem" />
           <NavigationProperty Name="Item1" Relationship="CharityModel.FK_ChildItem_ParentItem" FromRole="Item" ToRole="Item1" />
           <NavigationProperty Name="Item2" Relationship="CharityModel.FK_ChildItem_ParentItem" FromRole="Item1" ToRole="Item" />
           <NavigationProperty Name="UOM" Relationship="CharityModel.FK_Item_UOM" FromRole="Item" ToRole="UOM" />
           <NavigationProperty Name="OrganizationItems" Relationship="CharityModel.FK_OrganizationItem_Item" FromRole="Item" ToRole="OrganizationItem" />
-          <NavigationProperty Name="RequestItems" Relationship="CharityModel.FK_RequestItem_Item" FromRole="Item" ToRole="RequestItem" />
         </EntityType>
         <EntityType Name="Log">
           <Key>
@@ -1518,9 +1653,9 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="AspNetUser" Relationship="CharityModel.FK_People_AspNetUsers" FromRole="Member" ToRole="AspNetUser" />
+          <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_Beneficiary" FromRole="Member" ToRole="DonationRequest" />
+          <NavigationProperty Name="DonationRequestVolunteers" Relationship="CharityModel.FK_RequestVolunteer_Member" FromRole="Member" ToRole="DonationRequestVolunteer" />
           <NavigationProperty Name="OrganizationMembers" Relationship="CharityModel.FK_OrganizationMember_Member" FromRole="Member" ToRole="OrganizationMember" />
-          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_Beneficiary" FromRole="Member" ToRole="Request" />
-          <NavigationProperty Name="RequestVolunteers" Relationship="CharityModel.FK_RequestVolunteer_Member" FromRole="Member" ToRole="RequestVolunteer" />
         </EntityType>
         <EntityType Name="Organization">
           <Key>
@@ -1542,12 +1677,12 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="DonationRequestOrganizations" Relationship="CharityModel.FK_RequestOrganization_Organization" FromRole="Organization" ToRole="DonationRequestOrganization" />
           <NavigationProperty Name="Organization1" Relationship="CharityModel.FK_Organization_Organization" FromRole="Organization" ToRole="Organization1" />
           <NavigationProperty Name="Organization2" Relationship="CharityModel.FK_Organization_Organization" FromRole="Organization1" ToRole="Organization" />
           <NavigationProperty Name="OrganizationItems" Relationship="CharityModel.FK_OrganizationItem_Organization" FromRole="Organization" ToRole="OrganizationItem" />
           <NavigationProperty Name="OrganizationMembers" Relationship="CharityModel.FK_OrganizationMember_Organization" FromRole="Organization" ToRole="OrganizationMember" />
           <NavigationProperty Name="OrganizationRequests" Relationship="CharityModel.FK_OrganizationRequest_Organization" FromRole="Organization" ToRole="OrganizationRequest" />
-          <NavigationProperty Name="RequestOrganizations" Relationship="CharityModel.FK_RequestOrganization_Organization" FromRole="Organization" ToRole="RequestOrganization" />
         </EntityType>
         <EntityType Name="OrganizationItem">
           <Key>
@@ -1601,82 +1736,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Organization" Relationship="CharityModel.FK_OrganizationRequest_Organization" FromRole="OrganizationRequest" ToRole="Organization" />
         </EntityType>
-        <EntityType Name="Request">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="MemberId" Type="Int32" Nullable="false" />
-          <Property Name="Type" Type="Int32" />
-          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="DueDate" Type="DateTime" Precision="3" />
-          <Property Name="IsApproved" Type="Boolean" Nullable="false" />
-          <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
-          <Property Name="IsCollected" Type="Boolean" Nullable="false" />
-          <Property Name="CollectionDate" Type="DateTime" Precision="3" />
-          <Property Name="PrefferedCollectionTime" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="AddressLatLong" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="CountryId" Type="Int32" />
-          <Property Name="StateId" Type="Int32" />
-          <Property Name="DistrictId" Type="Int32" />
-          <Property Name="TehsilId" Type="Int32" />
-          <Property Name="UnionCouncilId" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
-          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <NavigationProperty Name="Country" Relationship="CharityModel.FK_Request_Country" FromRole="Request" ToRole="Country" />
-          <NavigationProperty Name="District" Relationship="CharityModel.FK_Request_District" FromRole="Request" ToRole="District" />
-          <NavigationProperty Name="Member" Relationship="CharityModel.FK_Request_Beneficiary" FromRole="Request" ToRole="Member" />
-          <NavigationProperty Name="State" Relationship="CharityModel.FK_Request_State" FromRole="Request" ToRole="State" />
-          <NavigationProperty Name="Tehsil" Relationship="CharityModel.FK_Request_Tehsil" FromRole="Request" ToRole="Tehsil" />
-          <NavigationProperty Name="UnionCouncil" Relationship="CharityModel.FK_Request_UnionCouncil" FromRole="Request" ToRole="UnionCouncil" />
-          <NavigationProperty Name="RequestItems" Relationship="CharityModel.FK_RequestItem_Request" FromRole="Request" ToRole="RequestItem" />
-          <NavigationProperty Name="RequestOrganizations" Relationship="CharityModel.FK_RequestOrganization_Request" FromRole="Request" ToRole="RequestOrganization" />
-          <NavigationProperty Name="RequestVolunteers" Relationship="CharityModel.FK_RequestVolunteer_RequestVolunteer" FromRole="Request" ToRole="RequestVolunteer" />
-        </EntityType>
-        <EntityType Name="RequestItem">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="RequestId" Type="Guid" Nullable="false" />
-          <Property Name="ItemId" Type="Int32" Nullable="false" />
-          <Property Name="Quantity" Type="Double" Nullable="false" />
-          <Property Name="SelectedUnit" Type="Int32" Nullable="false" />
-          <Property Name="ApprovedQuantity" Type="Double" />
-          <Property Name="ApprovedUnit" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
-          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <NavigationProperty Name="Item" Relationship="CharityModel.FK_RequestItem_Item" FromRole="RequestItem" ToRole="Item" />
-          <NavigationProperty Name="Request" Relationship="CharityModel.FK_RequestItem_Request" FromRole="RequestItem" ToRole="Request" />
-          <NavigationProperty Name="UOM" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="RequestItem" ToRole="UOM" />
-          <NavigationProperty Name="UOM1" Relationship="CharityModel.FK_RequestItem_UOM1" FromRole="RequestItem" ToRole="UOM" />
-        </EntityType>
-        <EntityType Name="RequestOrganization">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="RequestId" Type="Guid" Nullable="false" />
-          <Property Name="OrganizationId" Type="Int32" Nullable="false" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
-          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <NavigationProperty Name="Organization" Relationship="CharityModel.FK_RequestOrganization_Organization" FromRole="RequestOrganization" ToRole="Organization" />
-          <NavigationProperty Name="Request" Relationship="CharityModel.FK_RequestOrganization_Request" FromRole="RequestOrganization" ToRole="Request" />
-        </EntityType>
         <EntityType Name="RequestThread">
           <Key>
             <PropertyRef Name="Id" />
@@ -1694,22 +1753,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="IsSystemGenerated" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="RequestVolunteer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="RequestId" Type="Guid" Nullable="false" />
-          <Property Name="VolunteerId" Type="Int32" Nullable="false" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
-          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <NavigationProperty Name="Member" Relationship="CharityModel.FK_RequestVolunteer_Member" FromRole="RequestVolunteer" ToRole="Member" />
-          <NavigationProperty Name="Request" Relationship="CharityModel.FK_RequestVolunteer_RequestVolunteer" FromRole="RequestVolunteer" ToRole="Request" />
         </EntityType>
         <EntityType Name="State">
           <Key>
@@ -1730,7 +1773,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_State" FromRole="State" ToRole="Address" />
           <NavigationProperty Name="Country" Relationship="CharityModel.FK_State_Country" FromRole="State" ToRole="Country" />
           <NavigationProperty Name="Districts" Relationship="CharityModel.FK_District_State" FromRole="State" ToRole="District" />
-          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_State" FromRole="State" ToRole="Request" />
+          <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_State" FromRole="State" ToRole="DonationRequest" />
         </EntityType>
         <EntityType Name="sysdiagram">
           <Key>
@@ -1760,7 +1803,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_Tehsil" FromRole="Tehsil" ToRole="Address" />
           <NavigationProperty Name="District" Relationship="CharityModel.FK_Tehsil_District" FromRole="Tehsil" ToRole="District" />
-          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_Tehsil" FromRole="Tehsil" ToRole="Request" />
+          <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_Tehsil" FromRole="Tehsil" ToRole="DonationRequest" />
           <NavigationProperty Name="UnionCouncils" Relationship="CharityModel.FK_UnionCouncil_Tehsil" FromRole="Tehsil" ToRole="UnionCouncil" />
         </EntityType>
         <EntityType Name="UnionCouncil">
@@ -1780,7 +1823,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_UnionCouncil" FromRole="UnionCouncil" ToRole="Address" />
-          <NavigationProperty Name="Requests" Relationship="CharityModel.FK_Request_UnionCouncil" FromRole="UnionCouncil" ToRole="Request" />
+          <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_UnionCouncil" FromRole="UnionCouncil" ToRole="DonationRequest" />
           <NavigationProperty Name="Tehsil" Relationship="CharityModel.FK_UnionCouncil_Tehsil" FromRole="UnionCouncil" ToRole="Tehsil" />
         </EntityType>
         <EntityType Name="UOM">
@@ -1800,9 +1843,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="DonationRequestItems" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="UOM" ToRole="DonationRequestItem" />
           <NavigationProperty Name="Items" Relationship="CharityModel.FK_Item_UOM" FromRole="UOM" ToRole="Item" />
-          <NavigationProperty Name="RequestItems" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="UOM" ToRole="RequestItem" />
-          <NavigationProperty Name="RequestItems1" Relationship="CharityModel.FK_RequestItem_UOM1" FromRole="UOM" ToRole="RequestItem" />
         </EntityType>
         <EntityType Name="RefreshToken">
           <Key>
@@ -1929,12 +1971,12 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
         </Association>
         <Association Name="FK_Request_Country">
           <End Type="CharityModel.Country" Role="Country" Multiplicity="0..1" />
-          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
+          <End Type="CharityModel.DonationRequest" Role="DonationRequest" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Country">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Request">
+            <Dependent Role="DonationRequest">
               <PropertyRef Name="CountryId" />
             </Dependent>
           </ReferentialConstraint>
@@ -1969,12 +2011,12 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
         </Association>
         <Association Name="FK_Request_District">
           <End Type="CharityModel.District" Role="District" Multiplicity="0..1" />
-          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
+          <End Type="CharityModel.DonationRequest" Role="DonationRequest" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="District">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Request">
+            <Dependent Role="DonationRequest">
               <PropertyRef Name="DistrictId" />
             </Dependent>
           </ReferentialConstraint>
@@ -1988,6 +2030,150 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="Tehsil">
               <PropertyRef Name="DistrictId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Request_Beneficiary">
+          <End Type="CharityModel.Member" Role="Member" Multiplicity="1" />
+          <End Type="CharityModel.DonationRequest" Role="DonationRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequest">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Request_State">
+          <End Type="CharityModel.State" Role="State" Multiplicity="0..1" />
+          <End Type="CharityModel.DonationRequest" Role="DonationRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="State">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequest">
+              <PropertyRef Name="StateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Request_Tehsil">
+          <End Type="CharityModel.Tehsil" Role="Tehsil" Multiplicity="0..1" />
+          <End Type="CharityModel.DonationRequest" Role="DonationRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tehsil">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequest">
+              <PropertyRef Name="TehsilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Request_UnionCouncil">
+          <End Type="CharityModel.UnionCouncil" Role="UnionCouncil" Multiplicity="0..1" />
+          <End Type="CharityModel.DonationRequest" Role="DonationRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnionCouncil">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequest">
+              <PropertyRef Name="UnionCouncilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RequestItem_Request">
+          <End Type="CharityModel.DonationRequest" Role="DonationRequest" Multiplicity="1" />
+          <End Type="CharityModel.DonationRequestItem" Role="DonationRequestItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DonationRequest">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequestItem">
+              <PropertyRef Name="DonationRequestId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RequestOrganization_Request">
+          <End Type="CharityModel.DonationRequest" Role="DonationRequest" Multiplicity="1" />
+          <End Type="CharityModel.DonationRequestOrganization" Role="DonationRequestOrganization" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DonationRequest">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequestOrganization">
+              <PropertyRef Name="DonationRequestId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RequestVolunteer_RequestVolunteer">
+          <End Type="CharityModel.DonationRequest" Role="DonationRequest" Multiplicity="1" />
+          <End Type="CharityModel.DonationRequestVolunteer" Role="DonationRequestVolunteer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DonationRequest">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequestVolunteer">
+              <PropertyRef Name="DonationRequestId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RequestItem_Item">
+          <End Type="CharityModel.Item" Role="Item" Multiplicity="1" />
+          <End Type="CharityModel.DonationRequestItem" Role="DonationRequestItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequestItem">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RequestItem_UOM">
+          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="1" />
+          <End Type="CharityModel.DonationRequestItem" Role="DonationRequestItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UOM">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequestItem">
+              <PropertyRef Name="SelectedUnit" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DonationRequestOrganization_DonationRequestOrganization">
+          <End Type="CharityModel.DonationRequestOrganization" Role="DonationRequestOrganization" Multiplicity="1" />
+          <End Type="CharityModel.DonationRequestOrganization" Role="DonationRequestOrganization1" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="DonationRequestOrganization">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequestOrganization1">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RequestOrganization_Organization">
+          <End Type="CharityModel.Organization" Role="Organization" Multiplicity="1" />
+          <End Type="CharityModel.DonationRequestOrganization" Role="DonationRequestOrganization" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequestOrganization">
+              <PropertyRef Name="OrganizationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RequestVolunteer_Member">
+          <End Type="CharityModel.Member" Role="Member" Multiplicity="1" />
+          <End Type="CharityModel.DonationRequestVolunteer" Role="DonationRequestVolunteer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DonationRequestVolunteer">
+              <PropertyRef Name="VolunteerId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2027,18 +2213,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_RequestItem_Item">
-          <End Type="CharityModel.Item" Role="Item" Multiplicity="1" />
-          <End Type="CharityModel.RequestItem" Role="RequestItem" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Item">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RequestItem">
-              <PropertyRef Name="ItemId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_OrganizationMember_Member">
           <End Type="CharityModel.Member" Role="Member" Multiplicity="1" />
           <End Type="CharityModel.OrganizationMember" Role="OrganizationMember" Multiplicity="*" />
@@ -2048,30 +2222,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="OrganizationMember">
               <PropertyRef Name="MemberId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Request_Beneficiary">
-          <End Type="CharityModel.Member" Role="Member" Multiplicity="1" />
-          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Member">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Request">
-              <PropertyRef Name="MemberId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RequestVolunteer_Member">
-          <End Type="CharityModel.Member" Role="Member" Multiplicity="1" />
-          <End Type="CharityModel.RequestVolunteer" Role="RequestVolunteer" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Member">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RequestVolunteer">
-              <PropertyRef Name="VolunteerId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2120,114 +2270,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="OrganizationRequest">
               <PropertyRef Name="OrganizationId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RequestOrganization_Organization">
-          <End Type="CharityModel.Organization" Role="Organization" Multiplicity="1" />
-          <End Type="CharityModel.RequestOrganization" Role="RequestOrganization" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Organization">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RequestOrganization">
-              <PropertyRef Name="OrganizationId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Request_State">
-          <End Type="CharityModel.State" Role="State" Multiplicity="0..1" />
-          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="State">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Request">
-              <PropertyRef Name="StateId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Request_Tehsil">
-          <End Type="CharityModel.Tehsil" Role="Tehsil" Multiplicity="0..1" />
-          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Tehsil">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Request">
-              <PropertyRef Name="TehsilId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Request_UnionCouncil">
-          <End Type="CharityModel.UnionCouncil" Role="UnionCouncil" Multiplicity="0..1" />
-          <End Type="CharityModel.Request" Role="Request" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UnionCouncil">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Request">
-              <PropertyRef Name="UnionCouncilId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RequestItem_Request">
-          <End Type="CharityModel.Request" Role="Request" Multiplicity="1" />
-          <End Type="CharityModel.RequestItem" Role="RequestItem" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Request">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RequestItem">
-              <PropertyRef Name="RequestId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RequestOrganization_Request">
-          <End Type="CharityModel.Request" Role="Request" Multiplicity="1" />
-          <End Type="CharityModel.RequestOrganization" Role="RequestOrganization" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Request">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RequestOrganization">
-              <PropertyRef Name="RequestId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RequestVolunteer_RequestVolunteer">
-          <End Type="CharityModel.Request" Role="Request" Multiplicity="1" />
-          <End Type="CharityModel.RequestVolunteer" Role="RequestVolunteer" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Request">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RequestVolunteer">
-              <PropertyRef Name="RequestId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RequestItem_UOM">
-          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="1" />
-          <End Type="CharityModel.RequestItem" Role="RequestItem" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UOM">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RequestItem">
-              <PropertyRef Name="SelectedUnit" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RequestItem_UOM1">
-          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="0..1" />
-          <End Type="CharityModel.RequestItem" Role="RequestItem" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UOM">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RequestItem">
-              <PropertyRef Name="ApprovedUnit" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2395,6 +2437,106 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="DonationRequests">
+            <EntityTypeMapping TypeName="CharityModel.DonationRequest">
+              <MappingFragment StoreEntitySet="DonationRequest">
+                <ScalarProperty Name="CampaignId" ColumnName="CampaignId" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="UnionCouncilId" ColumnName="UnionCouncilId" />
+                <ScalarProperty Name="TehsilId" ColumnName="TehsilId" />
+                <ScalarProperty Name="DistrictId" ColumnName="DistrictId" />
+                <ScalarProperty Name="StateId" ColumnName="StateId" />
+                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
+                <ScalarProperty Name="AddressLatLong" ColumnName="AddressLatLong" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="PrefferedCollectionTime" ColumnName="PrefferedCollectionTime" />
+                <ScalarProperty Name="CollectionDate" ColumnName="CollectionDate" />
+                <ScalarProperty Name="IsCollected" ColumnName="IsCollected" />
+                <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
+                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DonationRequestItems">
+            <EntityTypeMapping TypeName="CharityModel.DonationRequestItem">
+              <MappingFragment StoreEntitySet="DonationRequestItem">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="SelectedUnit" ColumnName="SelectedUnit" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="DonationRequestId" ColumnName="DonationRequestId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DonationRequestOrganizations">
+            <EntityTypeMapping TypeName="CharityModel.DonationRequestOrganization">
+              <MappingFragment StoreEntitySet="DonationRequestOrganization">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="AssignedTo" ColumnName="AssignedTo" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
+                <ScalarProperty Name="DonationRequestId" ColumnName="DonationRequestId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DonationRequestOrganizationItems">
+            <EntityTypeMapping TypeName="CharityModel.DonationRequestOrganizationItem">
+              <MappingFragment StoreEntitySet="DonationRequestOrganizationItem">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="SelectedUnit" ColumnName="SelectedUnit" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="RequestItemId" ColumnName="RequestItemId" />
+                <ScalarProperty Name="RequestOrganizationId" ColumnName="RequestOrganizationId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DonationRequestVolunteers">
+            <EntityTypeMapping TypeName="CharityModel.DonationRequestVolunteer">
+              <MappingFragment StoreEntitySet="DonationRequestVolunteer">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="VolunteerId" ColumnName="VolunteerId" />
+                <ScalarProperty Name="DonationRequestId" ColumnName="DonationRequestId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="ExceptionLogs">
             <EntityTypeMapping TypeName="CharityModel.ExceptionLog">
               <MappingFragment StoreEntitySet="ExceptionLog">
@@ -2530,70 +2672,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Requests">
-            <EntityTypeMapping TypeName="CharityModel.Request">
-              <MappingFragment StoreEntitySet="Request">
-                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
-                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="UnionCouncilId" ColumnName="UnionCouncilId" />
-                <ScalarProperty Name="TehsilId" ColumnName="TehsilId" />
-                <ScalarProperty Name="DistrictId" ColumnName="DistrictId" />
-                <ScalarProperty Name="StateId" ColumnName="StateId" />
-                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
-                <ScalarProperty Name="AddressLatLong" ColumnName="AddressLatLong" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="PrefferedCollectionTime" ColumnName="PrefferedCollectionTime" />
-                <ScalarProperty Name="CollectionDate" ColumnName="CollectionDate" />
-                <ScalarProperty Name="IsCollected" ColumnName="IsCollected" />
-                <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
-                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
-                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RequestItems">
-            <EntityTypeMapping TypeName="CharityModel.RequestItem">
-              <MappingFragment StoreEntitySet="RequestItem">
-                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
-                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="ApprovedUnit" ColumnName="ApprovedUnit" />
-                <ScalarProperty Name="ApprovedQuantity" ColumnName="ApprovedQuantity" />
-                <ScalarProperty Name="SelectedUnit" ColumnName="SelectedUnit" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
-                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RequestOrganizations">
-            <EntityTypeMapping TypeName="CharityModel.RequestOrganization">
-              <MappingFragment StoreEntitySet="RequestOrganization">
-                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
-                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
-                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="RequestThreads">
             <EntityTypeMapping TypeName="CharityModel.RequestThread">
               <MappingFragment StoreEntitySet="RequestThread">
@@ -2609,21 +2687,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="EntityType" ColumnName="EntityType" />
                 <ScalarProperty Name="EntityId" ColumnName="EntityId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RequestVolunteers">
-            <EntityTypeMapping TypeName="CharityModel.RequestVolunteer">
-              <MappingFragment StoreEntitySet="RequestVolunteer">
-                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
-                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="VolunteerId" ColumnName="VolunteerId" />
-                <ScalarProperty Name="RequestId" ColumnName="RequestId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

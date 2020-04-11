@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Web.Hosting;
 
 namespace DataProvider.Helpers
@@ -12,7 +13,10 @@ namespace DataProvider.Helpers
         {
             if (!string.IsNullOrEmpty(model.ImageInBase64))
             {
-                var ImageInBytes = Convert.FromBase64String(model.ImageInBase64);
+                var imageParts = model.ImageInBase64.Split(',').ToList<string>();
+                //Exclude the header from base64 by taking second element in List.
+                byte[] ImageInBytes = Convert.FromBase64String(imageParts[1]);
+                //var ImageInBytes = Convert.FromBase64String(model.ImageInBase64);
                 string imageUrl = model.ImageUrl;
                 if (string.IsNullOrEmpty(imageUrl))
                 {

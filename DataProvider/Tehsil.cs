@@ -18,7 +18,7 @@ namespace DataProvider
         public Tehsil()
         {
             this.Addresses = new HashSet<Address>();
-            this.Requests = new HashSet<Request>();
+            this.DonationRequests = new HashSet<DonationRequest>();
             this.UnionCouncils = new HashSet<UnionCouncil>();
         }
     
@@ -39,7 +39,7 @@ namespace DataProvider
         public virtual ICollection<Address> Addresses { get; set; }
         public virtual District District { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Request> Requests { get; set; }
+        public virtual ICollection<DonationRequest> DonationRequests { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UnionCouncil> UnionCouncils { get; set; }
     }

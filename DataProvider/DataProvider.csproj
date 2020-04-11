@@ -108,6 +108,22 @@
     <Compile Include="District.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="DonationRequest.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DonationRequestItem.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DonationRequestOrganization.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DonationRequestOrganizationDA.cs" />
+    <Compile Include="DonationRequestOrganizationItem.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DonationRequestVolunteer.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
     <Compile Include="EDMXPartialClasses\Item.cs" />
     <Compile Include="EDMXPartialClasses\Organization.cs" />
     <Compile Include="EDMXPartialClasses\IBaseClasses.cs" />
@@ -116,6 +132,7 @@
     </Compile>
     <Compile Include="DapperHelper.cs" />
     <Compile Include="Helpers\EntityHelper.cs" />
+    <Compile Include="Helpers\ExceptionHelper.cs" />
     <Compile Include="Helpers\ImageHelperDA.cs" />
     <Compile Include="Helpers\PaginationExtension.cs" />
     <Compile Include="Helpers\TreeHelper.cs" />
@@ -153,22 +170,12 @@
     </Compile>
     <Compile Include="RefreshTokenDA.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Request.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RequestItem.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RequestOrganization.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
+    <Compile Include="DonationRequestDA.cs" />
+    <Compile Include="DonationRequestItemDA.cs" />
     <Compile Include="RequestThread.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="RequestThreadDA.cs" />
-    <Compile Include="RequestVolunteer.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
     <Compile Include="spGetItemWithChildren_Result.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
