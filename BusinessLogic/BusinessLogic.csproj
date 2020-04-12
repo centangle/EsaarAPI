@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="AddressLogic.cs" />
     <Compile Include="AttachmentBL.cs" />
+    <Compile Include="DonationRequestOrganizationItemBL.cs" />
     <Compile Include="OrganizationBL.cs" />
     <Compile Include="ItemBL.cs" />
     <Compile Include="Logic.cs" />

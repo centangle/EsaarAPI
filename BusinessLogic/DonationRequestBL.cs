@@ -17,5 +17,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.UpdateDonationRequest(model);
         }
+        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequests(DonationRequestSearchModel filters)
+        {
+            return await _dataAccess.GetDonationRequests(filters);
+        }
     }
 }

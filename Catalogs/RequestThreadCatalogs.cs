@@ -6,7 +6,7 @@
     }
     public enum RequestThreadEntityTypeCatalog : int
     {
-        Request,
+        Donation,
         Organization,
         Complain,
 

@@ -49,6 +49,8 @@
     <Compile Include="Base\BaseSearchModel.cs" />
     <Compile Include="BriefModel\BaseBriefModel.cs" />
     <Compile Include="BriefModel\MemberBriefModel.cs" />
+    <Compile Include="BriefModel\UOMBriefModel.cs" />
+    <Compile Include="DonationRequestOrganizationItemModel.cs" />
     <Compile Include="DonationRequestOrganizationModel.cs" />
     <Compile Include="Interfaces\IBase.cs" />
     <Compile Include="Interfaces\IImage.cs" />

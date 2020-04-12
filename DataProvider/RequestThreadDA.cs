@@ -21,7 +21,7 @@ namespace DataProvider
             {
                 try
                 {
-                    var accessGranted = await IsRequesThreadAccessible(context, model);
+                    var accessGranted = await IsRequestThreadAccessible(context, model);
                     if (accessGranted)
                     {
                         using (var transaction = context.Database.BeginTransaction())
@@ -62,7 +62,7 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var accessGranted = await IsRequesThreadAccessible(context, model);
+                var accessGranted = await IsRequestThreadAccessible(context, model);
                 if (accessGranted)
                 {
                     using (var transaction = context.Database.BeginTransaction())
@@ -140,17 +140,6 @@ namespace DataProvider
             SetBaseProperties(dbModel, model);
             return dbModel;
         }
-        private RequestThreadModel GetRequestThreadModel(OrganizationRequestModel model)
-        {
-            RequestThreadModel requestThreadModel = new RequestThreadModel();
-            requestThreadModel.Entity.Id = model.Id;
-            requestThreadModel.EntityType = RequestThreadEntityTypeCatalog.Organization;
-            requestThreadModel.Status = OrganizationStatusCatalog.Initiated;
-            requestThreadModel.Note = model.Note;
-            requestThreadModel.Type = RequestThreadTypeCatalog.General;
-            requestThreadModel.IsSystemGenerated = true;
-            return requestThreadModel;
-        }
         public async Task<RequestThreadModel> GetRequestThread(int id)
         {
             using (CharityEntities context = new CharityEntities())
@@ -173,7 +162,7 @@ namespace DataProvider
                                                    Id = rt.EntityId,
                                                },
                                                EntityType = (RequestThreadEntityTypeCatalog)rt.EntityType,
-                                               Status = (OrganizationStatusCatalog)rt.Status,
+                                               Status = (StatusCatalog)rt.Status,
                                                Note = rt.Note,
                                                Type = (RequestThreadTypeCatalog)rt.Type,
                                                IsSystemGenerated = rt.IsSystemGenerated,
@@ -240,7 +229,7 @@ namespace DataProvider
                                                       NativeName = "",
                                                   },
                                                   EntityType = (RequestThreadEntityTypeCatalog)rt.EntityType,
-                                                  Status = (OrganizationStatusCatalog)rt.Status,
+                                                  Status = (StatusCatalog)rt.Status,
                                                   Note = rt.Note,
                                                   Type = (RequestThreadTypeCatalog)rt.Type,
                                                   IsSystemGenerated = rt.IsSystemGenerated,
@@ -255,22 +244,8 @@ namespace DataProvider
             if (model.Status != null && currentStatus != (int)model.Status)
             {
                 result = await ChangeRequestEntityStatus(context, model);
-                if (result && model.Status == OrganizationStatusCatalog.Approved)
-                {
-                    await AddRequestApprovalEntry(context, model);
-                }
-
             }
             return result;
-        }
-        private async Task AddRequestApprovalEntry(CharityEntities context, RequestThreadModel model)
-        {
-            switch (model.EntityType)
-            {
-                case RequestThreadEntityTypeCatalog.Organization:
-                    await AddOrganizationMemberForRequest(context, model);
-                    break;
-            }
         }
         private async Task<bool> ChangeRequestEntityStatus(CharityEntities context, RequestThreadModel model)
         {
@@ -280,16 +255,23 @@ namespace DataProvider
                 case RequestThreadEntityTypeCatalog.Organization:
                     result = await ChangeOrganizationRequestStatus(context, model);
                     break;
+                case RequestThreadEntityTypeCatalog.Donation:
+                    result = await ChangeDonationRequestStatus(context, model);
+                    break;
+
             }
             return result;
         }
-        private async Task<bool> IsRequesThreadAccessible(CharityEntities context, RequestThreadModel model)
+        private async Task<bool> IsRequestThreadAccessible(CharityEntities context, RequestThreadModel model)
         {
             bool result = false;
             switch (model.EntityType)
             {
                 case RequestThreadEntityTypeCatalog.Organization:
                     result = await IsOrganizationRequestThreadAccessible(context, model);
+                    break;
+                case RequestThreadEntityTypeCatalog.Donation:
+                    result = await IsDonationRequestThreadAccessible(context, model);
                     break;
             }
             return result;

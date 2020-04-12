@@ -9,6 +9,12 @@ namespace Models
 {
     public class DonationRequestModel : BaseModel
     {
+        public DonationRequestModel()
+        {
+            Member = new BaseBriefModel();
+            Items = new List<DonationRequestItemModel>();
+            Campaign = new BaseBriefModel();
+        }
         public BaseBriefModel Member { get; set; }
         public List<DonationRequestItemModel> Items { get; set; }
         public DonationRequestTypeCatalog Type { get; set; }
@@ -17,13 +23,18 @@ namespace Models
         public string PrefferedCollectionTime { get; set; }
         public string Address { get; set; }
         public string AddressLatLong { get; set; }
+        public int OrganizationId { get; set; }
         public BaseBriefModel Campaign { get; set; }
-        public BaseBriefModel Organization { get; set; }
     }
     public class PaginatedDonationRequestModel : DonationRequestModel
     {
+        public PaginatedDonationRequestModel()
+        {
+            DonationRequestOrganization = new DonationRequestOrganizationModel();
+        }
         [IgnoreDataMember]
         public int LoggedInMemberId { get; set; }
+        public DonationRequestOrganizationModel DonationRequestOrganization { get; set; }
 
         //public bool IsOpenRequest
         //{

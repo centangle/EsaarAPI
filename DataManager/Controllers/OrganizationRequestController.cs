@@ -3,6 +3,7 @@ using Catalogs;
 using Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -29,7 +30,8 @@ namespace DataManager.Controllers
         [HttpGet]
         public Array GetRequestStatus()
         {
-            return Enum.GetValues(typeof(OrganizationStatusCatalog));
+            return Enum.GetValues(typeof(StatusCatalog)).Cast<StatusCatalog>()
+                .Where(x => x != StatusCatalog.Collected && x != StatusCatalog.Delivered).ToArray();
         }
     }
 }

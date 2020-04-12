@@ -17,9 +17,13 @@ namespace DataProvider
         public int Id { get; set; }
         public int RequestOrganizationId { get; set; }
         public int RequestItemId { get; set; }
-        public int Quantity { get; set; }
-        public int SelectedUnit { get; set; }
-        public int Status { get; set; }
+        public double Quantity { get; set; }
+        public int QuantityUOM { get; set; }
+        public Nullable<double> CollectedQuantity { get; set; }
+        public Nullable<int> CollectedQuantityUOM { get; set; }
+        public Nullable<double> DeliveredQuantity { get; set; }
+        public Nullable<int> DeliveredQuantityUOM { get; set; }
+        public Nullable<int> Status { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }

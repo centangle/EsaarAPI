@@ -14,8 +14,9 @@ namespace Models
         }
         public BaseBriefModel Creator { get; set; }
         public BaseBriefModel Entity { get; set; }
-        public RequestThreadEntityTypeCatalog EntityType { get; set; } = RequestThreadEntityTypeCatalog.Request;
-        public OrganizationStatusCatalog? Status { get; set; }
+        public RequestThreadEntityTypeCatalog EntityType { get; set; } = RequestThreadEntityTypeCatalog.Donation;
+        public StatusCatalog? Status { get; set; }
+        public string TempStatus { get; set; }
         public RequestThreadTypeCatalog Type { get; set; } = RequestThreadTypeCatalog.General;
         public List<AttachmentModel> Attachments { get; set; }
         public bool IsSystemGenerated { get; set; }

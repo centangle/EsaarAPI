@@ -1,10 +1,12 @@
-﻿using DataProvider.Helpers;
+﻿using Catalogs;
+using DataProvider.Helpers;
 using Helpers;
 using Models;
 using Models.BriefModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,7 +29,12 @@ namespace DataProvider
                         model.Id = dbModel.Id;
                         AddDonationRequestItems(context, model.Items, model.Id);
                         var donationRequestOrganizations = GetDonationRequestOrganization(model);
-                        AddDonationRequestOrganizations(context, donationRequestOrganizations, model.Id);
+                        await AddDonationRequestOrganizations(context, donationRequestOrganizations, model.Id);
+                        foreach (var org in donationRequestOrganizations)
+                        {
+                            var requestThreadModel = GetDonationRequestThreadModel(org.Id);
+                            await AddRequestThread(context, requestThreadModel);
+                        }
                         await context.SaveChangesAsync();
                         transaction.Commit();
                         return model.Id;
@@ -92,87 +99,83 @@ namespace DataProvider
             SetBaseProperties(dbModel, model);
             return dbModel;
         }
-        private List<DonationRequestOrganizationModel> GetDonationRequestOrganization(DonationRequestModel model)
+
+        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequests(DonationRequestSearchModel filters)
         {
-            if (model.Organization == null || model.Organization.Id < 1)
+            using (CharityEntities context = new CharityEntities())
             {
-                throw new KnownException("Organization is required");
-            }
-            else
-            {
-                return new List<DonationRequestOrganizationModel> {new DonationRequestOrganizationModel
+                var memberOrganizations = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
+
+                List<int> memberModeratorOrgz = new List<int>();
+                if (memberModeratorOrgz != null)
                 {
-                    Organization=model.Organization
-                }};
+                    foreach (var memberOrg in memberOrganizations)
+                    {
+                        if (IsOrganizationMemberModerator(memberOrg))
+                        {
+                            memberModeratorOrgz.Add(memberOrg.Organization.Id);
+                        }
+                    }
+                }
+                var requestQueryable = (from dr in context.DonationRequests
+                                        join m in context.Members on dr.CreatedBy equals m.Id
+                                        join dro in context.DonationRequestOrganizations on dr.Id equals dro.DonationRequestId
+                                        join o in context.Organizations on dro.OrganizationId equals o.Id
+                                        join am in context.Members on dro.AssignedTo equals am.Id into tam
+                                        from am in tam.DefaultIfEmpty()
+                                        where
+                                        (filters.OrganizationId == null || dro.OrganizationId == filters.OrganizationId)
+                                        && (filters.Type == null || dr.Type == (int)filters.Type.Value)
+                                        && dr.IsDeleted == false
+                                        &&
+                                        (
+                                             dr.MemberId == _loggedInMemberId
+                                             ||
+                                             o.OwnedBy == _loggedInMemberId
+                                             ||
+                                             memberModeratorOrgz.Any(x => x == o.Id)
+                                        )
+                                        select new PaginatedDonationRequestModel
+                                        {
+                                            Id = dr.Id,
+                                            Member = new BaseBriefModel()
+                                            {
+                                                Id = m.Id,
+                                                Name = m.Name,
+                                                NativeName = m.NativeName,
+                                            },
+
+                                            //Campaign = new BaseBriefModel()
+                                            //{
+                                            //    Id = m.Id,
+                                            //    Name = m.Name,
+                                            //    NativeName = m.NativeName,
+                                            //},
+                                            DonationRequestOrganization = new DonationRequestOrganizationModel()
+                                            {
+                                                Id = dro.Id,
+                                                Organization = new BaseBriefModel()
+                                                {
+                                                    Id = o.Id,
+                                                    Name = o.Name,
+                                                    NativeName = o.NativeName,
+                                                },
+                                                AssignedTo = new BaseBriefModel()
+                                                {
+                                                    Id = am == null ? 0 : am.Id,
+                                                    Name = am == null ? "" : am.Name,
+                                                    NativeName = am == null ? "" : am.NativeName,
+                                                },
+                                                Status = (StatusCatalog)dro.Status,
+                                            },
+                                            Type=(DonationRequestTypeCatalog)dr.Type,
+                                            LoggedInMemberId = _loggedInMemberId,
+                                            CreatedDate = dr.CreatedDate
+                                        }).AsQueryable();
+
+                return await requestQueryable.Paginate(filters);
             }
         }
-        //public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequests(DonationRequestSearchModel filters)
-        //{
-        //    using (CharityEntities context = new CharityEntities())
-        //    {
-        //        var memberOrganizations = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
-
-        //        List<int> memberModeratorOrgz = new List<int>();
-        //        if (memberModeratorOrgz != null)
-        //        {
-        //            foreach (var memberOrg in memberOrganizations)
-        //            {
-        //                if (IsOrganizationMemberModerator(memberOrg))
-        //                {
-        //                    memberModeratorOrgz.Add(memberOrg.Organization.Id);
-        //                }
-        //            }
-        //        }
-        //        var requestQueryable = (from dr in context.DonationRequests
-        //                                join m in context.Members on dr.CreatedBy equals m.Id
-        //                                join dro in context.DonationRequestOrganizations on dr.Id equals dro.DonationRequestId
-        //                                join o in context.Organizations on dr.OrganizationId equals o.Id into to
-        //                                from o in to.DefaultIfEmpty()
-        //                                join am in context.Members on dro.AssignedTo equals am.Id into tam
-        //                                from am in tam.DefaultIfEmpty()
-        //                                where
-        //                                (filters.OrganizationId == null || dr.OrganizationId == filters.OrganizationId)
-        //                                && (filters.Type == null || dr.Type == (int)filters.Type.Value)
-        //                                && dr.IsDeleted == false
-        //                                &&
-        //                                (
-        //                                     dr.CreatedBy == _loggedInMemberId
-        //                                     ||
-        //                                     o.OwnedBy == _loggedInMemberId
-        //                                     ||
-        //                                     memberModeratorOrgz.Any(x => x == o.Id)
-        //                                )
-        //                                select new PaginatedDonationRequestModel
-        //                                {
-        //                                    Id = dr.Id,
-        //                                    Organization = new BaseBriefModel()
-        //                                    {
-        //                                        Id = o.Id,
-        //                                        Name = o.Name,
-        //                                        NativeName = o.NativeName,
-        //                                    },
-        //                                    Member = new BaseBriefModel()
-        //                                    {
-        //                                        Id = m.Id,
-        //                                        Name = m.Name,
-        //                                        NativeName = m.NativeName,
-        //                                    },
-        //                                    //AssignedTo = new BaseBriefModel()
-        //                                    //{
-        //                                    //    Id = am == null ? 0 : am.Id,
-        //                                    //    Name = am == null ? "" : am.Name,
-        //                                    //    NativeName = am == null ? "" : am.NativeName,
-        //                                    //},
-        //                                    //EntityType = (OrganizationRequestEntityTypeCatalog)ort.EntityType,
-        //                                    //Type = (OrganizationRequestTypeCatalog)ort.Type,
-        //                                    //Status = (OrganizationStatusCatalog)ort.Status,
-        //                                    LoggedInMemberId = _loggedInMemberId,
-        //                                    CreatedDate = dr.CreatedDate
-        //                                }).AsQueryable();
-
-        //        return await requestQueryable.Paginate(filters);
-        //    }
-        //}
 
 
     }

@@ -121,6 +121,7 @@
     <Compile Include="DonationRequestOrganizationItem.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="DonationRequestOrganizationItemDA.cs" />
     <Compile Include="DonationRequestVolunteer.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>

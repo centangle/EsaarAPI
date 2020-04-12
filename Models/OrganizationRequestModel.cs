@@ -17,7 +17,7 @@ namespace Models
         public BaseBriefModel Entity { get; set; }
         public OrganizationRequestEntityTypeCatalog EntityType { get; set; } = OrganizationRequestEntityTypeCatalog.Member;
         public OrganizationRequestTypeCatalog Type { get; set; } = OrganizationRequestTypeCatalog.Volunteer;
-        public OrganizationStatusCatalog Status { get; set; }
+        public StatusCatalog Status { get; set; }
         public BaseBriefModel AssignedTo { get; set; }
         public string Note { get; set; }
     }
@@ -51,7 +51,7 @@ namespace Models
         {
             get
             {
-                if (Status == OrganizationStatusCatalog.Approved || Status == OrganizationStatusCatalog.Rejected)
+                if (Status == StatusCatalog.Approved || Status == StatusCatalog.Rejected)
                     return false;
                 else
                     return true;

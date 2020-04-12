@@ -199,7 +199,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="DonationRequestId" Type="int" Nullable="false" />
           <Property Name="OrganizationId" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
@@ -218,9 +218,13 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="RequestOrganizationId" Type="int" Nullable="false" />
           <Property Name="RequestItemId" Type="int" Nullable="false" />
-          <Property Name="Quantity" Type="int" Nullable="false" />
-          <Property Name="SelectedUnit" Type="int" Nullable="false" />
-          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="Quantity" Type="float" Nullable="false" />
+          <Property Name="QuantityUOM" Type="int" Nullable="false" />
+          <Property Name="CollectedQuantity" Type="float" />
+          <Property Name="CollectedQuantityUOM" Type="int" />
+          <Property Name="DeliveredQuantity" Type="float" />
+          <Property Name="DeliveredQuantityUOM" Type="int" />
+          <Property Name="Status" Type="int" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -1540,7 +1544,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="DonationRequestId" Type="Int32" Nullable="false" />
           <Property Name="OrganizationId" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
@@ -1563,9 +1567,13 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="RequestOrganizationId" Type="Int32" Nullable="false" />
           <Property Name="RequestItemId" Type="Int32" Nullable="false" />
-          <Property Name="Quantity" Type="Int32" Nullable="false" />
-          <Property Name="SelectedUnit" Type="Int32" Nullable="false" />
-          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="QuantityUOM" Type="Int32" Nullable="false" />
+          <Property Name="CollectedQuantity" Type="Double" />
+          <Property Name="CollectedQuantityUOM" Type="Int32" />
+          <Property Name="DeliveredQuantity" Type="Double" />
+          <Property Name="DeliveredQuantityUOM" Type="Int32" />
+          <Property Name="Status" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -2514,7 +2522,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="SelectedUnit" ColumnName="SelectedUnit" />
+                <ScalarProperty Name="DeliveredQuantityUOM" ColumnName="DeliveredQuantityUOM" />
+                <ScalarProperty Name="DeliveredQuantity" ColumnName="DeliveredQuantity" />
+                <ScalarProperty Name="CollectedQuantityUOM" ColumnName="CollectedQuantityUOM" />
+                <ScalarProperty Name="CollectedQuantity" ColumnName="CollectedQuantity" />
+                <ScalarProperty Name="QuantityUOM" ColumnName="QuantityUOM" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="RequestItemId" ColumnName="RequestItemId" />
                 <ScalarProperty Name="RequestOrganizationId" ColumnName="RequestOrganizationId" />

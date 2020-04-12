@@ -84,7 +84,7 @@ namespace DataProvider
             dbModel.EntityType = (int)model.EntityType;
             dbModel.Type = (int)model.Type;
             if (dbModel.Id == 0)
-                dbModel.Status = (int)OrganizationStatusCatalog.Initiated;
+                dbModel.Status = (int)StatusCatalog.Initiated;
             SetBaseProperties(dbModel, model);
             return dbModel;
         }
@@ -98,9 +98,24 @@ namespace DataProvider
                     return false;
                 }
                 organizationRequest.Status = (int)model.Status;
+                if (model.Status == StatusCatalog.Approved)
+                {
+                    await AddOrganizationMemberForRequest(context, model);
+                }
                 return true;
             }
             return false;
+        }
+        private RequestThreadModel GetRequestThreadModel(OrganizationRequestModel model)
+        {
+            RequestThreadModel requestThreadModel = new RequestThreadModel();
+            requestThreadModel.Entity.Id = model.Id;
+            requestThreadModel.EntityType = RequestThreadEntityTypeCatalog.Organization;
+            requestThreadModel.Status = StatusCatalog.Initiated;
+            requestThreadModel.Note = model.Note;
+            requestThreadModel.Type = RequestThreadTypeCatalog.General;
+            requestThreadModel.IsSystemGenerated = true;
+            return requestThreadModel;
         }
         public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
         {
@@ -159,7 +174,7 @@ namespace DataProvider
                                             },
                                             EntityType = (OrganizationRequestEntityTypeCatalog)ort.EntityType,
                                             Type = (OrganizationRequestTypeCatalog)ort.Type,
-                                            Status = (OrganizationStatusCatalog)ort.Status,
+                                            Status = (StatusCatalog)ort.Status,
                                             LoggedInMemberId = _loggedInMemberId,
                                             CreatedDate = ort.CreatedDate
                                         }).AsQueryable();
