@@ -10,6 +10,7 @@ namespace DataProvider.Helpers
     {
         public Guid Id { get; set; }
         public Guid? ParentId { get; set; }
+        public Guid? RootId { get; set; }
         public T Node { get; set; }
     }
 }

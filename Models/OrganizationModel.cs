@@ -30,7 +30,20 @@ namespace Models
             }
             set { }
         }
+        [IgnoreDataMember]
+        public int? RootId
+        {
+            get
+            {
+                if (Root != null)
+                    return Root.Id;
+                else
+                    return 0;
+            }
+            set { }
+        }
         public BaseBriefModel Parent { get; set; }
+        public BaseBriefModel Root { get; set; }
         public OrganizationTypeCatalog Type { get; set; }
         [IgnoreDataMember]
         public string BaseFolder

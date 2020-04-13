@@ -8,31 +8,31 @@
         <EntityTypeShape EntityType="CharityModel.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="CharityModel.Address" Width="1.5" PointX="12" PointY="18.875" />
         <EntityTypeShape EntityType="CharityModel.AspNetRole" Width="1.5" PointX="8.25" PointY="14.5" />
-        <EntityTypeShape EntityType="CharityModel.AspNetUserClaim" Width="1.5" PointX="12.75" PointY="10.125" />
-        <EntityTypeShape EntityType="CharityModel.AspNetUserLogin" Width="1.5" PointX="12.75" PointY="6.75" />
+        <EntityTypeShape EntityType="CharityModel.AspNetUserClaim" Width="1.5" PointX="12.75" PointY="6.625" />
+        <EntityTypeShape EntityType="CharityModel.AspNetUserLogin" Width="1.5" PointX="12.75" PointY="10.125" />
         <EntityTypeShape EntityType="CharityModel.AspNetUser" Width="1.5" PointX="10.5" PointY="13.25" />
         <EntityTypeShape EntityType="CharityModel.Attachment" Width="1.5" PointX="2.75" PointY="0.75" />
         <EntityTypeShape EntityType="CharityModel.Country" Width="1.5" PointX="0.75" PointY="12.875" />
         <EntityTypeShape EntityType="CharityModel.District" Width="1.5" PointX="5.25" PointY="27.75" />
         <EntityTypeShape EntityType="CharityModel.DonationRequest" Width="1.5" PointX="15" PointY="21.875" />
-        <EntityTypeShape EntityType="CharityModel.DonationRequestItem" Width="1.5" PointX="17.25" PointY="23.25" />
-        <EntityTypeShape EntityType="CharityModel.DonationRequestOrganization" Width="1.5" PointX="20.25" PointY="23.25" />
+        <EntityTypeShape EntityType="CharityModel.DonationRequestItem" Width="1.5" PointX="20.25" PointY="23.25" />
+        <EntityTypeShape EntityType="CharityModel.DonationRequestOrganization" Width="1.5" PointX="17.25" PointY="23.25" />
         <EntityTypeShape EntityType="CharityModel.DonationRequestOrganizationItem" Width="1.5" PointX="4.75" PointY="0.75" />
         <EntityTypeShape EntityType="CharityModel.DonationRequestVolunteer" Width="1.5" PointX="17.25" PointY="18.75" />
         <EntityTypeShape EntityType="CharityModel.ExceptionLog" Width="1.5" PointX="0.75" PointY="5.75" />
-        <EntityTypeShape EntityType="CharityModel.Item" Width="1.5" PointX="15" PointY="29.875" />
+        <EntityTypeShape EntityType="CharityModel.Item" Width="1.5" PointX="18" PointY="28.875" />
         <EntityTypeShape EntityType="CharityModel.Log" Width="1.5" PointX="6.75" PointY="0.75" />
         <EntityTypeShape EntityType="CharityModel.Member" Width="1.5" PointX="12.75" PointY="13.25" />
-        <EntityTypeShape EntityType="CharityModel.Organization" Width="1.5" PointX="18" PointY="28.75" />
-        <EntityTypeShape EntityType="CharityModel.OrganizationItem" Width="1.5" PointX="20.25" PointY="30.125" />
-        <EntityTypeShape EntityType="CharityModel.OrganizationMember" Width="1.5" PointX="20.25" PointY="19" />
-        <EntityTypeShape EntityType="CharityModel.OrganizationRequest" Width="1.5" PointX="20.25" PointY="34.5" />
+        <EntityTypeShape EntityType="CharityModel.Organization" Width="1.5" PointX="15" PointY="15.625" />
+        <EntityTypeShape EntityType="CharityModel.OrganizationItem" Width="1.5" PointX="23.25" PointY="23.375" />
+        <EntityTypeShape EntityType="CharityModel.OrganizationMember" Width="1.5" PointX="20.25" PointY="15.5" />
+        <EntityTypeShape EntityType="CharityModel.OrganizationRequest" Width="1.5" PointX="17.25" PointY="8.375" />
         <EntityTypeShape EntityType="CharityModel.RequestThread" Width="1.5" PointX="2.75" PointY="6.75" />
         <EntityTypeShape EntityType="CharityModel.State" Width="1.5" PointX="3" PointY="27.75" />
         <EntityTypeShape EntityType="CharityModel.sysdiagram" Width="1.5" PointX="6.75" PointY="3.75" />
         <EntityTypeShape EntityType="CharityModel.Tehsil" Width="1.5" PointX="7.5" PointY="27.75" />
         <EntityTypeShape EntityType="CharityModel.UnionCouncil" Width="1.5" PointX="9.75" PointY="27.875" />
-        <EntityTypeShape EntityType="CharityModel.UOM" Width="1.5" PointX="12.75" PointY="30.375" />
+        <EntityTypeShape EntityType="CharityModel.UOM" Width="1.5" PointX="18" PointY="13.5" />
         <EntityTypeShape EntityType="CharityModel.RefreshToken" Width="1.5" PointX="4.75" PointY="6.75" />
         <AssociationConnector Association="CharityModel.FK_Address_Address" />
         <AssociationConnector Association="CharityModel.FK_Address_Country" />
@@ -61,7 +61,6 @@
         <AssociationConnector Association="CharityModel.FK_RequestOrganization_Organization" />
         <AssociationConnector Association="CharityModel.FK_RequestVolunteer_Member" />
         <AssociationConnector Association="CharityModel.FK_ChildItem_ParentItem" />
-        <AssociationConnector Association="CharityModel.FK_Item_UOM" />
         <AssociationConnector Association="CharityModel.FK_OrganizationItem_Item" />
         <AssociationConnector Association="CharityModel.FK_OrganizationMember_Member" />
         <AssociationConnector Association="CharityModel.FK_Organization_Organization" />

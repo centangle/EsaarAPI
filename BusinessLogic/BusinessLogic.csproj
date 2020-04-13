@@ -60,6 +60,7 @@
     <Compile Include="OrganizationItemBL.cs" />
     <Compile Include="MemberBL.cs" />
     <Compile Include="OrganizationMembersBL.cs" />
+    <Compile Include="OrganizationPackageBL.cs" />
     <Compile Include="OrganizationRequestBL.cs" />
     <Compile Include="RefreshTokenBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

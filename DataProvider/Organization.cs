@@ -25,9 +25,10 @@ namespace DataProvider
         }
     
         public int Id { get; set; }
+        public Nullable<int> RootId { get; set; }
+        public Nullable<int> ParentId { get; set; }
         public string Name { get; set; }
         public string NativeName { get; set; }
-        public Nullable<int> ParentId { get; set; }
         public string Description { get; set; }
         public string LogoUrl { get; set; }
         public Nullable<int> Type { get; set; }

@@ -54,12 +54,15 @@ namespace DataProvider
             foreach (var dbNode in currentDbNodes)
             {
                 int? parentId = null;
+                int? rootId = null;
                 var node = allNodes.Where(x => x.Node.Id == dbNode.Id).FirstOrDefault();
 
                 if (node != null)
                 {
                     if (node.Node.ParentId != null)
                         parentId = allNodes.Where(x => x.Id == node.ParentId).Select(x => x.Node.Id).FirstOrDefault();
+                    if (node.Node.RootId != null)
+                        rootId = allNodes.Where(x => x.Id == node.RootId).Select(x => x.Node.Id).FirstOrDefault();
                     var dbModel = SetTreeNode(dbNode, node.Node);
                     if (parentId == null || parentId == 0)
                     {
@@ -68,6 +71,14 @@ namespace DataProvider
                     else
                     {
                         dbModel.ParentId = parentId;
+                    }
+                    if (rootId == null || rootId == 0)
+                    {
+                        dbModel.RootId = null;
+                    }
+                    else
+                    {
+                        dbModel.RootId = rootId;
                     }
                 }
             }

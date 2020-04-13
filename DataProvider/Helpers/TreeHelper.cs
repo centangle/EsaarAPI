@@ -85,13 +85,14 @@ namespace DataProvider.Helpers
                 var traversalNode = new TreeTraversal<T>();
                 traversalNode.Id = Guid.NewGuid();
                 traversalNode.ParentId = null;
+                traversalNode.RootId = null;
                 traversalNode.Node = node;
                 singleNodes.Add(traversalNode);
-                SingleTreeNodeToList(node, singleNodes, traversalNode.Id);
+                SingleTreeNodeToList(node, singleNodes, traversalNode.Id, traversalNode.Id);
             }
             return singleNodes;
         }
-        public static void SingleTreeNodeToList<T>(T treeNode, List<TreeTraversal<T>> singleNodes, Guid ParentId) where T : ITree<T>, new()
+        public static void SingleTreeNodeToList<T>(T treeNode, List<TreeTraversal<T>> singleNodes, Guid ParentId, Guid RootId) where T : ITree<T>, new()
         {
             if (treeNode.children == null || treeNode.children.Count == 0)
             {
@@ -102,14 +103,13 @@ namespace DataProvider.Helpers
                 var traversalNode = new TreeTraversal<T>();
                 traversalNode.Id = Guid.NewGuid();
                 traversalNode.ParentId = ParentId;
+                traversalNode.RootId = RootId;
                 traversalNode.Node = node;
                 singleNodes.Add(traversalNode);
-                SingleTreeNodeToList(node, singleNodes, traversalNode.Id);
+                SingleTreeNodeToList(node, singleNodes, traversalNode.Id, RootId);
             }
 
 
         }
-
-
     }
 }

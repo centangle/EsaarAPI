@@ -161,6 +161,7 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="OrganizationItemDA.cs" />
+    <Compile Include="OrganizationPackageDA.cs" />
     <Compile Include="OrganizationRequest.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>

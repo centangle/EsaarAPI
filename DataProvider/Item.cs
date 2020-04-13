@@ -23,6 +23,8 @@ namespace DataProvider
         }
     
         public int Id { get; set; }
+        public Nullable<int> OrganizationId { get; set; }
+        public Nullable<int> RootId { get; set; }
         public Nullable<int> ParentId { get; set; }
         public string Name { get; set; }
         public string NativeName { get; set; }
@@ -31,6 +33,7 @@ namespace DataProvider
         public Nullable<int> Type { get; set; }
         public string ImageUrl { get; set; }
         public bool IsPeripheral { get; set; }
+        public Nullable<bool> IsCartItem { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }
@@ -43,7 +46,6 @@ namespace DataProvider
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Item> Item1 { get; set; }
         public virtual Item Item2 { get; set; }
-        public virtual UOM UOM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrganizationItem> OrganizationItems { get; set; }
     }

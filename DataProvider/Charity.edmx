@@ -265,6 +265,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrganizationId" Type="int" />
+          <Property Name="RootId" Type="int" />
           <Property Name="ParentId" Type="int" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
@@ -273,6 +275,7 @@
           <Property Name="Type" Type="int" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
           <Property Name="IsPeripheral" Type="bit" Nullable="false" />
+          <Property Name="IsCartItem" Type="bit" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -313,9 +316,10 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RootId" Type="int" />
+          <Property Name="ParentId" Type="int" />
           <Property Name="Name" Type="nvarchar" MaxLength="500" Nullable="false" />
           <Property Name="NativeName" Type="nvarchar" MaxLength="500" />
-          <Property Name="ParentId" Type="int" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="LogoUrl" Type="varchar" MaxLength="500" />
           <Property Name="Type" Type="int" />
@@ -649,18 +653,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="DonationRequestOrganization1">
               <PropertyRef Name="Id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Item_UOM">
-          <End Role="UOM" Type="Self.UOM" Multiplicity="0..1" />
-          <End Role="Item" Type="Self.Item" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UOM">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Item">
-              <PropertyRef Name="DefaultUOM" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1036,10 +1028,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="DonationRequestOrganization" EntitySet="DonationRequestOrganization" />
             <End Role="DonationRequestOrganization1" EntitySet="DonationRequestOrganization" />
           </AssociationSet>
-          <AssociationSet Name="FK_Item_UOM" Association="Self.FK_Item_UOM">
-            <End Role="UOM" EntitySet="UOM" />
-            <End Role="Item" EntitySet="Item" />
-          </AssociationSet>
           <AssociationSet Name="FK_Organization_Organization" Association="Self.FK_Organization_Organization">
             <End Role="Organization" EntitySet="Organization" />
             <End Role="Organization1" EntitySet="Organization" />
@@ -1277,10 +1265,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_ChildItem_ParentItem" Association="CharityModel.FK_ChildItem_ParentItem">
             <End Role="Item" EntitySet="Items" />
             <End Role="Item1" EntitySet="Items" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Item_UOM" Association="CharityModel.FK_Item_UOM">
-            <End Role="UOM" EntitySet="UOMs" />
-            <End Role="Item" EntitySet="Items" />
           </AssociationSet>
           <AssociationSet Name="FK_OrganizationItem_Item" Association="CharityModel.FK_OrganizationItem_Item">
             <End Role="Item" EntitySet="Items" />
@@ -1619,6 +1603,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrganizationId" Type="Int32" />
+          <Property Name="RootId" Type="Int32" />
           <Property Name="ParentId" Type="Int32" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
@@ -1627,6 +1613,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Type" Type="Int32" />
           <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="IsPeripheral" Type="Boolean" Nullable="false" />
+          <Property Name="IsCartItem" Type="Boolean" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -1636,7 +1623,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <NavigationProperty Name="DonationRequestItems" Relationship="CharityModel.FK_RequestItem_Item" FromRole="Item" ToRole="DonationRequestItem" />
           <NavigationProperty Name="Item1" Relationship="CharityModel.FK_ChildItem_ParentItem" FromRole="Item" ToRole="Item1" />
           <NavigationProperty Name="Item2" Relationship="CharityModel.FK_ChildItem_ParentItem" FromRole="Item1" ToRole="Item" />
-          <NavigationProperty Name="UOM" Relationship="CharityModel.FK_Item_UOM" FromRole="Item" ToRole="UOM" />
           <NavigationProperty Name="OrganizationItems" Relationship="CharityModel.FK_OrganizationItem_Item" FromRole="Item" ToRole="OrganizationItem" />
         </EntityType>
         <EntityType Name="Log">
@@ -1676,9 +1662,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RootId" Type="Int32" />
+          <Property Name="ParentId" Type="Int32" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="NativeName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="ParentId" Type="Int32" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LogoUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Type" Type="Int32" />
@@ -1858,7 +1845,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="DonationRequestItems" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="UOM" ToRole="DonationRequestItem" />
-          <NavigationProperty Name="Items" Relationship="CharityModel.FK_Item_UOM" FromRole="UOM" ToRole="Item" />
         </EntityType>
         <EntityType Name="RefreshToken">
           <Key>
@@ -2200,18 +2186,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="Item1">
               <PropertyRef Name="ParentId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Item_UOM">
-          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="0..1" />
-          <End Type="CharityModel.Item" Role="Item" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UOM">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Item">
-              <PropertyRef Name="DefaultUOM" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2579,6 +2553,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsCartItem" ColumnName="IsCartItem" />
                 <ScalarProperty Name="IsPeripheral" ColumnName="IsPeripheral" />
                 <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
@@ -2587,6 +2562,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="RootId" ColumnName="RootId" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2636,9 +2613,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="LogoUrl" ColumnName="LogoUrl" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="RootId" ColumnName="RootId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

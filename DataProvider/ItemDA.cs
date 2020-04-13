@@ -10,6 +10,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DataProvider
@@ -23,6 +24,8 @@ namespace DataProvider
                 var dbModel = SetItem(new Item(), model);
                 if (model.ParentId != 0)
                     dbModel.ParentId = model.ParentId;
+                if (model.RootId != 0)
+                    dbModel.RootId = model.RootId;
                 context.Items.Add(dbModel);
                 await context.SaveChangesAsync();
                 model.Id = dbModel.Id;
@@ -33,7 +36,7 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                Item dbModel = await context.Items.Where(x => x.Id == model.Id && x.IsDeleted==false).FirstOrDefaultAsync();
+                Item dbModel = await context.Items.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
                     SetItem(dbModel, model);
@@ -41,18 +44,23 @@ namespace DataProvider
                         dbModel.ParentId = model.ParentId;
                     else
                         dbModel.ParentId = null;
+                    if (model.RootId != 0)
+                        dbModel.RootId = model.RootId;
+                    else
+                        dbModel.RootId = null;
                     return await context.SaveChangesAsync() > 0;
                 }
                 return false;
             }
 
         }
-        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model)
+        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model, int? organizationId = null)
         {
             using (CharityEntities context = new CharityEntities())
             {
                 var currentDbNodes = new List<Item>();
                 var allNodes = TreeHelper.TreeToList(new List<ItemModel> { model });
+                UpdateRequiredTreeValues(allNodes, organizationId);
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
@@ -69,12 +77,13 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model)
+        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model, int? organizationId = null)
         {
             using (CharityEntities context = new CharityEntities())
             {
 
                 var allNodes = TreeHelper.TreeToList(new List<ItemModel> { model });
+                UpdateRequiredTreeValues(allNodes, organizationId);
                 var currentRootNode = allNodes.Where(x => x.Node.ParentId == null || x.Node.ParentId == 0).Select(x => x.Node.Id).FirstOrDefault();
                 var currentDbNodes = (await GetSingleItemTree<Item, Item>(context, currentRootNode, false, false)).ToList();
 
@@ -94,12 +103,13 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
+        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items, int? organizationId = null)
         {
             using (CharityEntities context = new CharityEntities())
             {
                 var currentDbNodes = new List<Item>();
                 var allNodes = TreeHelper.TreeToList(items);
+                UpdateRequiredTreeValues(allNodes, organizationId);
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
@@ -116,12 +126,13 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
+        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items, int? organizationId = null)
         {
             using (CharityEntities context = new CharityEntities())
             {
                 var currentDbNodes = (await GetAllItems<Item, Item>(context, false, false)).ToList();
                 var allNodes = TreeHelper.TreeToList(items);
+                UpdateRequiredTreeValues(allNodes, organizationId);
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
@@ -138,11 +149,14 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> DeleteItem(int Id)
+        public async Task<bool> DeleteItem(int id, int? organizationId = null)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                Item dbModel = await context.Items.Where(x => x.Id == Id && x.IsDeleted == false).FirstOrDefaultAsync();
+                var itemQueryable = context.Items.Where(x => x.Id == id && x.IsDeleted == false);
+                if (organizationId != null)
+                    itemQueryable.Where(x => x.OrganizationId == organizationId);
+                Item dbModel = await itemQueryable.FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
                     var root = (await GetSingleItemTree<Item, Item>(context, dbModel.Id, false)).First();
@@ -156,12 +170,24 @@ namespace DataProvider
         {
             dbModel.Name = model.Name;
             dbModel.NativeName = model.NativeName;
+            //Set UOM
             if (model.DefaultUOM == null || model.DefaultUOM.Id == 0)
                 dbModel.DefaultUOM = null;
             else
                 dbModel.DefaultUOM = model.DefaultUOM.Id;
+            //Set Organization
+            if (model.Organization == null || model.Organization.Id == 0)
+                dbModel.OrganizationId = null;
+            else
+                dbModel.OrganizationId = model.Organization.Id;
+            //Set Root
+            if (model.Root == null || model.Root.Id == 0)
+                dbModel.RootId = null;
+            else
+                dbModel.RootId = model.Root.Id;
             dbModel.Description = model.Description;
             dbModel.IsPeripheral = model.IsPeripheral;
+            dbModel.IsCartItem = model.IsCartItem;
             SetBaseProperties(dbModel, model);
             ImageHelper.Save(model);
             dbModel.ImageUrl = model.ImageUrl;
@@ -178,6 +204,7 @@ namespace DataProvider
                               join uom in context.UOMs on i.DefaultUOM equals uom.Id into tuom
                               from uom in tuom.DefaultIfEmpty()
                               where i.Id == id
+                              && i.OrganizationId == null
                               && i.IsDeleted == false
                               select new ItemModel
                               {
@@ -215,6 +242,7 @@ namespace DataProvider
                               join uom in context.UOMs on i.DefaultUOM equals uom.Id into tuom
                               from uom in tuom.DefaultIfEmpty()
                               where i.IsPeripheral == true
+                              && i.OrganizationId == null
                               && i.IsDeleted == false
                               select new ItemModel
                               {
@@ -253,6 +281,7 @@ namespace DataProvider
                               from uom in tuom.DefaultIfEmpty()
                               where i.ParentId == null
                               && i.IsDeleted == false
+                              && i.OrganizationId == null
                               select new ItemModel
                               {
                                   Id = i.Id,
@@ -325,6 +354,7 @@ namespace DataProvider
                             FROM Item ParentItem
                             WHERE ParentId is null
                             and IsDeleted=0
+                            and OrganizationId is null
                             UNION All
                                 SELECT ChildItem.*
                                 FROM Item ChildItem
@@ -344,6 +374,7 @@ namespace DataProvider
                             FROM Item ParentItem
                             WHERE Id = @Id
                             and IsDeleted=0
+                            and OrganizationId is null
                             UNION All
                                 SELECT ChildItem.*
                                 FROM Item ChildItem
@@ -364,6 +395,30 @@ namespace DataProvider
                .ForMember(s => s.children, m => m.Ignore())
                );
 
+        }
+        private void UpdateRequiredTreeValues(List<TreeTraversal<ItemModel>> allNodes, int? organizationId = null)
+        {
+            foreach (var traversedNode in allNodes)
+            {
+                traversedNode.Node.Organization = new BaseBriefModel
+                {
+                    Id = organizationId ?? 0
+                };
+                if (organizationId == null || organizationId == 0)
+                {
+                    if (traversedNode.Node.children == null || traversedNode.Node.children.Count() == 0)
+                    {
+                        traversedNode.Node.IsCartItem = true;
+                    }
+                }
+                else
+                {
+                    if (traversedNode.RootId == null)
+                    {
+                        traversedNode.Node.IsCartItem = true;
+                    }
+                }
+            }
         }
     }
 }

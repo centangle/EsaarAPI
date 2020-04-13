@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 
 namespace Models
 {
-    public class UOMModel : BaseModel, ITree<UOMModel>
+    public class UOMModel : BaseModel, IOneLevelTree<UOMModel>
     {
         public UOMModel()
         {

@@ -201,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\DonationRequestController.cs" />
+    <Compile Include="Controllers\OrganizationPackageController.cs" />
     <Compile Include="Controllers\OrganizationRequestController.cs" />
     <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="Controllers\RequestThreadController.cs" />

@@ -14,25 +14,22 @@ namespace BusinessLogic
         {
             return await _dataAccess.UpdateItem(model);
         }
-        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model)
+        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model, int? organizationId = null)
         {
-            return await _dataAccess.CreateSingleItemWithChildrens(model);
+            return await _dataAccess.CreateSingleItemWithChildrens(model, organizationId);
         }
-
-        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model)
+        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model, int? organizationId = null)
         {
-            return await _dataAccess.UpdateSingleItemWithChildren(model);
+            return await _dataAccess.UpdateSingleItemWithChildren(model, organizationId);
         }
-        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
+        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items, int? organizationId = null)
         {
-            return await _dataAccess.CreateMultipleItemsWithChildrens(items);
+            return await _dataAccess.CreateMultipleItemsWithChildrens(items, organizationId);
         }
-
-        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
+        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items, int? organizationId = null)
         {
-            return await _dataAccess.UpdateMultipleItemsWithChildrens(items);
+            return await _dataAccess.UpdateMultipleItemsWithChildrens(items, organizationId);
         }
-
         public async Task<ItemModel> GetItem(int id)
         {
             return await _dataAccess.GetItem(id);
@@ -53,9 +50,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.GetAllItems(getHierarchicalData);
         }
-        public async Task<bool> DeleteItem(int id)
+        public async Task<bool> DeleteItem(int id, int? organizationId = null)
         {
-            return await _dataAccess.DeleteItem(id);
+            return await _dataAccess.DeleteItem(id, organizationId);
         }
     }
 }

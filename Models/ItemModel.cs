@@ -13,6 +13,9 @@ namespace Models
         public ItemModel()
         {
             children = new List<ItemModel>();
+            Organization = new BaseBriefModel();
+            DefaultUOM = new BaseBriefModel();
+            Root = new BaseBriefModel();
         }
         [Required]
         public string Name { get; set; }
@@ -29,8 +32,22 @@ namespace Models
             }
             set { }
         }
+        [IgnoreDataMember]
+        public int? RootId
+        {
+            get
+            {
+                if (Root != null)
+                    return Root.Id;
+                else
+                    return 0;
+            }
+            set { }
+        }
         public BaseBriefModel Parent { get; set; }
+        public BaseBriefModel Root { get; set; }
         public BaseBriefModel DefaultUOM { get; set; }
+        public BaseBriefModel Organization { get; set; }
         [IgnoreDataMember]
         public ItemTypeCatalog Type { get; set; }
         [IgnoreDataMember]
@@ -45,6 +62,7 @@ namespace Models
         public string ImageUrl { get; set; }
         public string ImageInBase64 { get; set; }
         public bool IsPeripheral { get; set; }
+        public bool IsCartItem { get; set; }
 
         public ICollection<ItemModel> children { get; set; }
     }
