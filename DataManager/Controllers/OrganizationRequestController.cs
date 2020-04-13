@@ -12,10 +12,10 @@ namespace DataManager.Controllers
     public class OrganizationRequestController : BaseController
     {
         [HttpPut]
-        public async Task<bool> AssignRequest(int organizationId, int requestId, int? moderatorId)
+        public async Task<bool> AssignRequest(int organizationId, int requestId, int? moderatorId = null)
         {
             var _logic = new Logic(LoggedInMemberId);
-            return await _logic.AssignRequest(organizationId, requestId, moderatorId);
+            return await _logic.AssignOrganizationRequest(organizationId, requestId, moderatorId);
         }
         [HttpGet]
         public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, OrganizationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
@@ -31,7 +31,10 @@ namespace DataManager.Controllers
         public Array GetRequestStatus()
         {
             return Enum.GetValues(typeof(StatusCatalog)).Cast<StatusCatalog>()
-                .Where(x => x != StatusCatalog.Collected && x != StatusCatalog.Delivered).ToArray();
+                .Where(x => x != StatusCatalog.Collected
+                && x != StatusCatalog.Delivered
+                && x != StatusCatalog.VolunteerAssigned
+                ).ToArray();
         }
     }
 }

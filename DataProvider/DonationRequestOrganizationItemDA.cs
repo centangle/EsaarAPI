@@ -1,5 +1,6 @@
 ﻿using Helpers;
 using Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -27,16 +28,16 @@ namespace DataProvider
                 return true;
             }
         }
-        public async Task<bool> UpdateDonationRequestOrganizationItems(List<DonationRequestOrganizationItemModel> items, int donationRequestOrganizationId)
+        public async Task<bool> UpdateDonationRequestOrganizationItems(List<DonationRequestOrganizationItemModel> requestItems, int donationRequestOrganizationId)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                foreach (var item in items)
+                foreach (var requestItem in requestItems)
                 {
-                    var dbModel = await context.DonationRequestOrganizationItems.Where(x => x.RequestOrganizationId == donationRequestOrganizationId && x.RequestItemId == item.Id && x.IsDeleted == false).FirstOrDefaultAsync();
+                    var dbModel = await context.DonationRequestOrganizationItems.Where(x => x.RequestOrganizationId == donationRequestOrganizationId && x.RequestItemId == requestItem.Item.Id && x.IsDeleted == false).FirstOrDefaultAsync();
                     if (dbModel != null)
                     {
-                        SetDonationRequestOrganizationItem(dbModel, item, donationRequestOrganizationId);
+                        SetDonationRequestOrganizationItem(dbModel, requestItem, donationRequestOrganizationId);
                     }
                 }
                 await context.SaveChangesAsync();
@@ -67,10 +68,13 @@ namespace DataProvider
                     dbModel.QuantityUOM = model.QuantityUOM.Id;
                 }
             }
-            if (model.CollectedQuantity != null && model.CollectedQuantity > 0)
+            if (model.CollectedQuantity != null)
             {
                 dbModel.CollectedQuantity = model.CollectedQuantity;
-                if (model.CollectedQuantityUOM == null || model.CollectedQuantityUOM.Id < 1)
+                dbModel.CollectionVolunteerId = _loggedInMemberId;
+                dbModel.CollectionDate = DateTime.UtcNow;
+                dbModel.CollectionLatLong = "";
+                if (model.CollectedQuantity > 0 && (model.CollectedQuantityUOM == null || model.CollectedQuantityUOM.Id < 1))
                 {
                     throw new KnownException("Collected Quantity UOM is required");
                 }
@@ -80,10 +84,13 @@ namespace DataProvider
                 }
             }
 
-            if (model.DeliveredQuantity != null && model.DeliveredQuantity > 0)
+            if (model.DeliveredQuantity != null)
             {
                 dbModel.DeliveredQuantity = model.DeliveredQuantity;
-                if (model.DeliveredQuantityUOM == null || model.DeliveredQuantityUOM.Id < 1)
+                dbModel.DeliveryVolunteerId = _loggedInMemberId;
+                dbModel.DeliveryDate = DateTime.UtcNow;
+                dbModel.DeliveryLatLong = "";
+                if (model.DeliveredQuantity > 0 && (model.DeliveredQuantityUOM == null || model.DeliveredQuantityUOM.Id < 1))
                 {
                     throw new KnownException("Delivered Quantity UOM is required");
                 }

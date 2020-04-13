@@ -86,14 +86,25 @@ namespace DataProvider
             var donationOrganizationRequest = await context.DonationRequestOrganizations.Where(x => x.Id == model.Entity.Id).FirstOrDefaultAsync();
             if (donationOrganizationRequest != null)
             {
-                if (donationOrganizationRequest.IsDeleted == true)
+                var organizationMember = (await GetMemberRoleForOrganization(context, donationOrganizationRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(organizationMember))
                 {
-                    return false;
+                    if (donationOrganizationRequest.IsDeleted == true)
+                    {
+                        return false;
+                    }
+                    donationOrganizationRequest.Status = (int)model.Status;
+                    return true;
                 }
-                donationOrganizationRequest.Status = (int)model.Status;
-                return true;
+                else
+                {
+                    throw new KnownException("You are not authorized to change status.");
+                }
             }
-            return false;
+            else
+            {
+                return false;
+            }
         }
     }
 }

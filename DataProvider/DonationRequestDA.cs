@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace DataProvider
@@ -78,6 +79,41 @@ namespace DataProvider
                 }
             }
         }
+        public async Task<bool> AssignDonationRequest(int organizationId, int donationRequestId, int? moderatorId)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var organizationMember = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(organizationMember))
+                {
+                    var donationRequest = await context.DonationRequests.Where(x => x.Id == donationRequestId).FirstOrDefaultAsync();
+                    {
+                        if (donationRequest != null)
+                        {
+
+                            if (donationRequest.IsDeleted)
+                            {
+                                throw new KnownException("This request has been deleted");
+                            }
+                            var donationRequestOrganization = await context.DonationRequestOrganizations.Where(x => x.DonationRequestId == donationRequestId && x.OrganizationId == organizationId && x.IsDeleted == false).FirstOrDefaultAsync();
+                            if (donationRequestOrganization == null || donationRequestOrganization.AssignedTo != null && donationRequestOrganization.AssignedTo > 0)
+                            {
+                                throw new KnownException("This request has already been assigned");
+                            }
+                            if (moderatorId == null || moderatorId < 1)
+                            {
+                                moderatorId = _loggedInMemberId;
+                            }
+                            donationRequestOrganization.AssignedTo = moderatorId;
+                            await context.SaveChangesAsync();
+                            return true;
+                        }
+                    }
+                }
+                throw new KnownException("You are not authorized to perform this action");
+            }
+
+        }
         private DonationRequest SetRequest(DonationRequest dbModel, DonationRequestModel model)
         {
             model.Member = SetEntityId(model.Member, "Member is required");
@@ -100,7 +136,7 @@ namespace DataProvider
             return dbModel;
         }
 
-        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequests(DonationRequestSearchModel filters)
+        public async Task<DonationRequestModel> GetBriefDonationRequest(int organizationRequestId)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -114,6 +150,96 @@ namespace DataProvider
                         if (IsOrganizationMemberModerator(memberOrg))
                         {
                             memberModeratorOrgz.Add(memberOrg.Organization.Id);
+                        }
+                    }
+                }
+                var donationRequest = await (from dr in context.DonationRequests
+                                             join dro in context.DonationRequestOrganizations on dr.Id equals dro.DonationRequestId
+                                             join o in context.Organizations on dro.OrganizationId equals o.Id
+                                             join m in context.Members on dr.CreatedBy equals m.Id
+                                             where
+                                             dro.Id == organizationRequestId
+                                             && dr.IsDeleted == false
+                                             &&
+                                             (
+                                                  dr.MemberId == _loggedInMemberId
+                                                  ||
+                                                  o.OwnedBy == _loggedInMemberId
+                                                  ||
+                                                  memberModeratorOrgz.Any(x => x == o.Id)
+                                             )
+                                             select new PaginatedDonationRequestModel
+                                             {
+                                                 Id = dr.Id,
+                                                 Member = new BaseBriefModel()
+                                                 {
+                                                     Id = m.Id,
+                                                     Name = m.Name,
+                                                     NativeName = m.NativeName,
+                                                 },
+                                                 DonationRequestOrganization = new DonationRequestOrganizationModel()
+                                                 {
+                                                     Id = dro.Id,
+                                                     Organization = new BaseBriefModel()
+                                                     {
+                                                         Id = o.Id,
+                                                         Name = o.Name,
+                                                         NativeName = o.NativeName,
+                                                     },
+                                                     Status = (StatusCatalog)dro.Status,
+                                                 },
+                                                 Note = dr.Note,
+                                                 Date = dr.Date,
+                                                 PrefferedCollectionTime = dr.PrefferedCollectionTime,
+                                                 Address = dr.Address,
+                                                 AddressLatLong = dr.AddressLatLong,
+                                                 Type = (DonationRequestTypeCatalog)dr.Type,
+                                             }).FirstOrDefaultAsync();
+                donationRequest.Items = await (from dri in context.DonationRequestItems
+                                               join uom in context.UOMs on dri.QuantityUOM equals uom.Id
+                                               join i in context.Items on dri.ItemId equals i.Id
+                                               where dri.DonationRequestId == donationRequest.Id
+                                               select new DonationRequestItemModel()
+                                               {
+                                                   Item = new BaseBriefModel()
+                                                   {
+                                                       Id = i.Id,
+                                                       Name = i.Name,
+                                                       NativeName = i.NativeName,
+                                                   },
+                                                   Quantity = dri.Quantity,
+                                                   QuantityUOM = new UOMBriefModel()
+                                                   {
+                                                       Id = uom.Id,
+                                                       Name = uom.Name,
+                                                       NativeName = uom.NativeName
+                                                   },
+                                               }
+                                       ).ToListAsync();
+
+
+                return donationRequest;
+            }
+        }
+        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequests(DonationRequestSearchModel filters)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var memberOrganizations = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
+
+                List<int> memberModeratorOrgz = new List<int>();
+                List<int> memberVolunteerOrgz = new List<int>();
+                if (memberModeratorOrgz != null)
+                {
+                    foreach (var memberOrg in memberOrganizations)
+                    {
+                        if (IsOrganizationMemberModerator(memberOrg))
+                        {
+                            memberModeratorOrgz.Add(memberOrg.Organization.Id);
+                        }
+                        if (IsOrganizationMemberVolunteer(memberOrg))
+                        {
+                            memberVolunteerOrgz.Add(memberOrg.Organization.Id);
                         }
                     }
                 }
@@ -134,7 +260,8 @@ namespace DataProvider
                                              o.OwnedBy == _loggedInMemberId
                                              ||
                                              memberModeratorOrgz.Any(x => x == o.Id)
-                                        )
+                                             
+                                         )
                                         select new PaginatedDonationRequestModel
                                         {
                                             Id = dr.Id,
@@ -168,7 +295,7 @@ namespace DataProvider
                                                 },
                                                 Status = (StatusCatalog)dro.Status,
                                             },
-                                            Type=(DonationRequestTypeCatalog)dr.Type,
+                                            Type = (DonationRequestTypeCatalog)dr.Type,
                                             LoggedInMemberId = _loggedInMemberId,
                                             CreatedDate = dr.CreatedDate
                                         }).AsQueryable();

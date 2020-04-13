@@ -17,6 +17,14 @@ namespace BusinessLogic
         {
             return await _dataAccess.UpdateDonationRequest(model);
         }
+        public async Task<bool> AssignDonationRequest(int organizationId, int donationRequestId, int? moderatorId)
+        {
+            return await _dataAccess.AssignDonationRequest(organizationId, donationRequestId, moderatorId);
+        }
+        public async Task<DonationRequestModel> GetBriefDonationRequest(int organizationRequestId)
+        {
+            return await _dataAccess.GetBriefDonationRequest(organizationRequestId);
+        }
         public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequests(DonationRequestSearchModel filters)
         {
             return await _dataAccess.GetDonationRequests(filters);

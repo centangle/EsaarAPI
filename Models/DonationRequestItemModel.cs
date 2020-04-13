@@ -9,12 +9,11 @@ namespace Models
         public DonationRequestItemModel()
         {
             Item = new BaseBriefModel();
-            SelectedUnit = new UOMBriefModel();
+            QuantityUOM = new UOMBriefModel();
         }
-        public int DonationRequestId { get; set; }
         public BaseBriefModel Item { get; set; }
-        public int Quantity { get; set; }
-        public UOMBriefModel SelectedUnit { get; set; }
+        public double Quantity { get; set; }
+        public UOMBriefModel QuantityUOM { get; set; }
         public DateTime DueDate { get; set; }
         public string Note { get; set; }
     }

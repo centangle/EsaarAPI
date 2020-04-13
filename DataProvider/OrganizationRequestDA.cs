@@ -14,7 +14,7 @@ namespace DataProvider
 {
     public partial class DataAccess
     {
-        public async Task<bool> AssignRequest(int organizationId, int requestId, int? moderatorId)
+        public async Task<bool> AssignOrganizationRequest(int organizationId, int requestId, int? moderatorId)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -25,8 +25,6 @@ namespace DataProvider
                     {
                         if (organizationRequest != null)
                         {
-
-
                             if (organizationRequest.IsDeleted)
                             {
                                 throw new KnownException("This request has been deleted");
@@ -45,7 +43,7 @@ namespace DataProvider
                         }
                     }
                 }
-                return false;
+                throw new KnownException("You are not authorized to perform this action");
             }
 
         }
@@ -93,18 +91,30 @@ namespace DataProvider
             var organizationRequest = await context.OrganizationRequests.Where(x => x.Id == model.Entity.Id).FirstOrDefaultAsync();
             if (organizationRequest != null)
             {
-                if (organizationRequest.IsDeleted == true)
+                var organizationMember = (await GetMemberRoleForOrganization(context, organizationRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(organizationMember))
                 {
-                    return false;
+                    if (organizationRequest.IsDeleted == true)
+                    {
+                        return false;
+                    }
+                    organizationRequest.Status = (int)model.Status;
+                    if (model.Status == StatusCatalog.Approved)
+                    {
+                        await AddOrganizationMemberForRequest(context, model);
+                    }
+                    return true;
                 }
-                organizationRequest.Status = (int)model.Status;
-                if (model.Status == StatusCatalog.Approved)
+                else
                 {
-                    await AddOrganizationMemberForRequest(context, model);
+                    throw new KnownException("You are not authorized to change status.");
                 }
-                return true;
             }
-            return false;
+            else
+            {
+                return false;
+            }
+
         }
         private RequestThreadModel GetRequestThreadModel(OrganizationRequestModel model)
         {

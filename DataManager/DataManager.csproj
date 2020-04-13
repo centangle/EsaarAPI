@@ -204,6 +204,7 @@
     <Compile Include="Controllers\OrganizationRequestController.cs" />
     <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="Controllers\RequestThreadController.cs" />
+    <Compile Include="Controllers\VolunteerController.cs" />
     <Compile Include="GlobalFaultExceptionHandler\ApiExceptionHandelling.cs" />
     <Compile Include="SwaggerFilters\AuthorizationOpertationFilter.cs" />
     <Compile Include="SwaggerFilters\AuthTokenOperation.cs" />

@@ -30,5 +30,11 @@ namespace DataProvider
         public System.DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
+        public Nullable<int> CollectionVolunteerId { get; set; }
+        public Nullable<System.DateTime> CollectionDate { get; set; }
+        public Nullable<int> DeliveryVolunteerId { get; set; }
+        public Nullable<System.DateTime> DeliveryDate { get; set; }
+        public string CollectionLatLong { get; set; }
+        public string DeliveryLatLong { get; set; }
     }
 }

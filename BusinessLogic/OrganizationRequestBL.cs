@@ -5,9 +5,9 @@ namespace BusinessLogic
 {
     public partial class Logic
     {
-        public async Task<bool> AssignRequest(int organizationId, int requestId, int? moderatorId)
+        public async Task<bool> AssignOrganizationRequest(int organizationId, int requestId, int? moderatorId)
         {
-            return await _dataAccess.AssignRequest(organizationId, requestId, moderatorId);
+            return await _dataAccess.AssignOrganizationRequest(organizationId, requestId, moderatorId);
         }
         public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
         {

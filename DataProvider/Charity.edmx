@@ -152,15 +152,12 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrganizationRequestId" Type="int" />
           <Property Name="MemberId" Type="int" Nullable="false" />
           <Property Name="Type" Type="int" />
           <Property Name="Note" Type="nvarchar(max)" />
           <Property Name="Date" Type="date" Nullable="false" />
           <Property Name="DueDate" Type="datetime" />
-          <Property Name="IsApproved" Type="bit" Nullable="false" />
-          <Property Name="ApprovedDate" Type="datetime" />
-          <Property Name="IsCollected" Type="bit" Nullable="false" />
-          <Property Name="CollectionDate" Type="datetime" />
           <Property Name="PrefferedCollectionTime" Type="nvarchar" MaxLength="100" />
           <Property Name="Address" Type="nvarchar(max)" />
           <Property Name="AddressLatLong" Type="varchar" MaxLength="500" />
@@ -185,7 +182,7 @@
           <Property Name="DonationRequestId" Type="int" Nullable="false" />
           <Property Name="ItemId" Type="int" Nullable="false" />
           <Property Name="Quantity" Type="float" Nullable="false" />
-          <Property Name="SelectedUnit" Type="int" Nullable="false" />
+          <Property Name="QuantityUOM" Type="int" Nullable="false" />
           <Property Name="Note" Type="nvarchar(max)" />
           <Property Name="DueDate" Type="datetime" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
@@ -231,6 +228,12 @@
           <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="UpdatedBy" Type="int" Nullable="false" />
           <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="CollectionVolunteerId" Type="int" />
+          <Property Name="CollectionDate" Type="datetime2" Precision="7" />
+          <Property Name="DeliveryVolunteerId" Type="int" />
+          <Property Name="DeliveryDate" Type="datetime2" Precision="7" />
+          <Property Name="CollectionLatLong" Type="varchar" MaxLength="500" />
+          <Property Name="DeliveryLatLong" Type="varchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="DonationRequestVolunteer">
           <Key>
@@ -849,7 +852,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="DonationRequestItem">
-              <PropertyRef Name="SelectedUnit" />
+              <PropertyRef Name="QuantityUOM" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1485,15 +1488,12 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrganizationRequestId" Type="Int32" />
           <Property Name="MemberId" Type="Int32" Nullable="false" />
           <Property Name="Type" Type="Int32" />
           <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="DueDate" Type="DateTime" Precision="3" />
-          <Property Name="IsApproved" Type="Boolean" Nullable="false" />
-          <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
-          <Property Name="IsCollected" Type="Boolean" Nullable="false" />
-          <Property Name="CollectionDate" Type="DateTime" Precision="3" />
           <Property Name="PrefferedCollectionTime" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="AddressLatLong" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
@@ -1527,7 +1527,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="DonationRequestId" Type="Int32" Nullable="false" />
           <Property Name="ItemId" Type="Int32" Nullable="false" />
           <Property Name="Quantity" Type="Double" Nullable="false" />
-          <Property Name="SelectedUnit" Type="Int32" Nullable="false" />
+          <Property Name="QuantityUOM" Type="Int32" Nullable="false" />
           <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DueDate" Type="DateTime" Precision="3" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
@@ -1580,6 +1580,12 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="CollectionVolunteerId" Type="Int32" />
+          <Property Name="CollectionDate" Type="DateTime" Precision="7" />
+          <Property Name="DeliveryVolunteerId" Type="Int32" />
+          <Property Name="DeliveryDate" Type="DateTime" Precision="7" />
+          <Property Name="CollectionLatLong" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="DeliveryLatLong" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="DonationRequestVolunteer">
           <Key>
@@ -2145,7 +2151,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="DonationRequestItem">
-              <PropertyRef Name="SelectedUnit" />
+              <PropertyRef Name="QuantityUOM" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2463,15 +2469,12 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="AddressLatLong" ColumnName="AddressLatLong" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="PrefferedCollectionTime" ColumnName="PrefferedCollectionTime" />
-                <ScalarProperty Name="CollectionDate" ColumnName="CollectionDate" />
-                <ScalarProperty Name="IsCollected" ColumnName="IsCollected" />
-                <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
-                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
                 <ScalarProperty Name="DueDate" ColumnName="DueDate" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Note" ColumnName="Note" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="OrganizationRequestId" ColumnName="OrganizationRequestId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2487,7 +2490,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="DueDate" ColumnName="DueDate" />
                 <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="SelectedUnit" ColumnName="SelectedUnit" />
+                <ScalarProperty Name="QuantityUOM" ColumnName="QuantityUOM" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="ItemId" ColumnName="ItemId" />
                 <ScalarProperty Name="DonationRequestId" ColumnName="DonationRequestId" />
@@ -2515,6 +2518,12 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySetMapping Name="DonationRequestOrganizationItems">
             <EntityTypeMapping TypeName="CharityModel.DonationRequestOrganizationItem">
               <MappingFragment StoreEntitySet="DonationRequestOrganizationItem">
+                <ScalarProperty Name="DeliveryLatLong" ColumnName="DeliveryLatLong" />
+                <ScalarProperty Name="CollectionLatLong" ColumnName="CollectionLatLong" />
+                <ScalarProperty Name="DeliveryDate" ColumnName="DeliveryDate" />
+                <ScalarProperty Name="DeliveryVolunteerId" ColumnName="DeliveryVolunteerId" />
+                <ScalarProperty Name="CollectionDate" ColumnName="CollectionDate" />
+                <ScalarProperty Name="CollectionVolunteerId" ColumnName="CollectionVolunteerId" />
                 <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
                 <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />

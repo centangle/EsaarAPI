@@ -23,15 +23,12 @@ namespace DataProvider
         }
     
         public int Id { get; set; }
+        public Nullable<int> OrganizationRequestId { get; set; }
         public int MemberId { get; set; }
         public Nullable<int> Type { get; set; }
         public string Note { get; set; }
         public System.DateTime Date { get; set; }
         public Nullable<System.DateTime> DueDate { get; set; }
-        public bool IsApproved { get; set; }
-        public Nullable<System.DateTime> ApprovedDate { get; set; }
-        public bool IsCollected { get; set; }
-        public Nullable<System.DateTime> CollectionDate { get; set; }
         public string PrefferedCollectionTime { get; set; }
         public string Address { get; set; }
         public string AddressLatLong { get; set; }

@@ -18,7 +18,7 @@ namespace DataProvider
         public int DonationRequestId { get; set; }
         public int ItemId { get; set; }
         public double Quantity { get; set; }
-        public int SelectedUnit { get; set; }
+        public int QuantityUOM { get; set; }
         public string Note { get; set; }
         public Nullable<System.DateTime> DueDate { get; set; }
         public bool IsActive { get; set; }

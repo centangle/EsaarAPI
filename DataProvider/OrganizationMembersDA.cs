@@ -287,6 +287,17 @@ namespace DataProvider
                 return false;
             }
         }
+        private bool IsOrganizationMemberVolunteer(OrganizationMemberModel organizationMember)
+        {
+            if (organizationMember != null && organizationMember.Roles.Contains(OrganizationMemberRolesCatalog.Volunteer))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         #endregion
 
 

@@ -10,9 +10,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.AddDonationRequestOrganizationItems(items, donationRequestOrganizationId);
         }
-        public async Task<bool> UpdateDonationRequestOrganizationItems(List<DonationRequestOrganizationItemModel> items, int donationRequestOrganizationId)
+        public async Task<bool> UpdateDonationRequestOrganizationItems(List<DonationRequestOrganizationItemModel> requestItems, int donationRequestOrganizationId)
         {
-            return await _dataAccess.UpdateDonationRequestOrganizationItems(items, donationRequestOrganizationId);
+            return await _dataAccess.UpdateDonationRequestOrganizationItems(requestItems, donationRequestOrganizationId);
         }
     }
 }

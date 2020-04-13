@@ -36,36 +36,36 @@ namespace Models
         public int LoggedInMemberId { get; set; }
         public DonationRequestOrganizationModel DonationRequestOrganization { get; set; }
 
-        //public bool IsOpenRequest
-        //{
-        //    get
-        //    {
-        //        if (AssignedTo == null || AssignedTo.Id == 0)
-        //            return true;
-        //        else
-        //            return false;
-        //    }
-        //}
-        //public bool CanAccessRequestThread
-        //{
-        //    get
-        //    {
-        //        if (LoggedInMemberId != 0 && ((AssignedTo != null && AssignedTo.Id == LoggedInMemberId) || (CreatedBy == LoggedInMemberId)))
-        //            return true;
-        //        else
-        //            return false;
-        //    }
-        //}
-        //public bool CanUpdateStatus
-        //{
-        //    get
-        //    {
-        //        if (Status == OrganizationStatusCatalog.Approved || Status == OrganizationStatusCatalog.Rejected)
-        //            return false;
-        //        else
-        //            return true;
-        //    }
-        //}
+        public bool IsOpenRequest
+        {
+            get
+            {
+                if (DonationRequestOrganization != null && DonationRequestOrganization.AssignedTo == null || DonationRequestOrganization.AssignedTo.Id == 0)
+                    return true;
+                else
+                    return false;
+            }
+        }
+        public bool CanAccessRequestThread
+        {
+            get
+            {
+                if (LoggedInMemberId != 0 && ((DonationRequestOrganization != null && DonationRequestOrganization.AssignedTo != null && DonationRequestOrganization.AssignedTo.Id == LoggedInMemberId) || (CreatedBy == LoggedInMemberId)))
+                    return true;
+                else
+                    return false;
+            }
+        }
+        public bool CanUpdateStatus
+        {
+            get
+            {
+                if (DonationRequestOrganization != null && (DonationRequestOrganization.Status == StatusCatalog.Delivered || DonationRequestOrganization.Status == StatusCatalog.Rejected))
+                    return false;
+                else
+                    return true;
+            }
+        }
     }
 
     public class DonationRequestSearchModel : BaseSearchModel

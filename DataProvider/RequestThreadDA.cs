@@ -28,9 +28,19 @@ namespace DataProvider
                         {
                             try
                             {
+                                int? currentStatus = null;
+                                if (model.Status == null)
+                                {
+                                    var lastThread = await context.RequestThreads.Where(x => x.EntityId == model.Entity.Id && x.IsDeleted == false).OrderByDescending(x => x.CreatedDate).FirstOrDefaultAsync();
+                                    if (lastThread != null)
+                                    {
+                                        currentStatus = lastThread.Status;
+                                        model.Status = (StatusCatalog)currentStatus;
+                                    }
+                                }
                                 var modelId = await AddRequestThread(context, model);
                                 await AssignAttachments(context, model.Attachments, modelId, true);
-                                bool statusUpdated = await CheckStatusUpdation(context, null, model);
+                                bool statusUpdated = await CheckStatusUpdation(context, currentStatus, model);
                                 await context.SaveChangesAsync();
                                 transaction.Commit();
                                 return modelId;
@@ -205,6 +215,20 @@ namespace DataProvider
                                              o.OwnedBy == _loggedInMemberId
                                              ||
                                              ort.AssignedTo == _loggedInMemberId
+                                        select rt).AsQueryable();
+                }
+                else if (filters.EntityType == RequestThreadEntityTypeCatalog.Donation)
+                {
+                    requestQueryable = (from rt in requestQueryable
+                                        join dro in context.DonationRequestOrganizations on rt.EntityId equals dro.Id
+                                        join dr in context.DonationRequests on dro.DonationRequestId equals dr.Id
+                                        join o in context.Organizations on dro.OrganizationId equals o.Id
+                                        where
+                                             dr.MemberId == _loggedInMemberId
+                                             ||
+                                             o.OwnedBy == _loggedInMemberId
+                                             ||
+                                             dro.AssignedTo == _loggedInMemberId
                                         select rt).AsQueryable();
                 }
                 var requestThreadQueryable = (from rt in requestQueryable
