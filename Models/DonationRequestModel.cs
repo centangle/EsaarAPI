@@ -36,11 +36,21 @@ namespace Models
         public int LoggedInMemberId { get; set; }
         public DonationRequestOrganizationModel DonationRequestOrganization { get; set; }
 
-        public bool IsOpenRequest
+        public bool IsOpenRequestForModerator
         {
             get
             {
                 if (DonationRequestOrganization != null && DonationRequestOrganization.Moderator == null || DonationRequestOrganization.Moderator.Id == 0)
+                    return true;
+                else
+                    return false;
+            }
+        }
+        public bool IsOpenRequestForVolunteer
+        {
+            get
+            {
+                if (DonationRequestOrganization != null && DonationRequestOrganization.Volunteer == null || DonationRequestOrganization.Volunteer.Id == 0)
                     return true;
                 else
                     return false;

@@ -22,6 +22,16 @@ namespace DataManager.Controllers
             return await _logic.GetDonationRequests(filters);
         }
         [HttpGet]
+        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetPaginatedRequestsForVolunteer(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, DonationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
+        {
+            var _logic = new Logic(LoggedInMemberId);
+            DonationRequestSearchModel filters = new DonationRequestSearchModel();
+            filters.OrganizationId = organizationId;
+            filters.Type = type;
+            SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
+            return await _logic.GetDonationRequestsForVolunteer(filters);
+        }
+        [HttpGet]
         public async Task<DonationRequestModel> Get(int organizationRequestId)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -34,10 +44,10 @@ namespace DataManager.Controllers
             return await _logic.AssignModeratorToDonationRequest(organizationId, donationRequestId, moderatorId);
         }
         [HttpPut]
-        public async Task<bool> AssignVolunteerToRequest(int organizationId, int donationRequestId, int? moderatorId = null)
+        public async Task<bool> AssignVolunteerToRequest(int organizationId, int donationRequestId, int? volunteerId = null)
         {
             var _logic = new Logic(LoggedInMemberId);
-            return await _logic.AssignModeratorToDonationRequest(organizationId, donationRequestId, moderatorId);
+            return await _logic.AssignVolunteerToDonationRequest(organizationId, donationRequestId, volunteerId);
         }
         [HttpPost]
         public async Task<int> Create(DonationRequestModel model)
