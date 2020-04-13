@@ -29,7 +29,7 @@ namespace DataProvider
                             {
                                 throw new KnownException("This request has been deleted");
                             }
-                            else if (organizationRequest.AssignedTo != null && organizationRequest.AssignedTo > 0)
+                            else if (organizationRequest.ModeratorId != null && organizationRequest.ModeratorId > 0)
                             {
                                 throw new KnownException("This request has already been assigned");
                             }
@@ -37,7 +37,7 @@ namespace DataProvider
                             {
                                 moderatorId = _loggedInMemberId;
                             }
-                            organizationRequest.AssignedTo = moderatorId;
+                            organizationRequest.ModeratorId = moderatorId;
                             await context.SaveChangesAsync();
                             return true;
                         }
@@ -147,7 +147,7 @@ namespace DataProvider
                 var requestQueryable = (from ort in context.OrganizationRequests
                                         join o in context.Organizations on ort.OrganizationId equals o.Id
                                         join m in context.Members on ort.CreatedBy equals m.Id
-                                        join am in context.Members on ort.AssignedTo equals am.Id into tam
+                                        join am in context.Members on ort.ModeratorId equals am.Id into tam
                                         from am in tam.DefaultIfEmpty()
                                         where
                                         (filters.OrganizationId == null || ort.OrganizationId == filters.OrganizationId)
@@ -176,7 +176,7 @@ namespace DataProvider
                                                 Name = m.Name,
                                                 NativeName = m.NativeName,
                                             },
-                                            AssignedTo = new BaseBriefModel()
+                                            Moderator = new BaseBriefModel()
                                             {
                                                 Id = am == null ? 0 : am.Id,
                                                 Name = am == null ? "" : am.Name,

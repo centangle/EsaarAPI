@@ -259,10 +259,17 @@ namespace DataProvider
                 }
                 else
                 {
-                    var organizationMember = (await GetMemberRoleForOrganization(context, orgRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
-                    if (IsOrganizationMemberModerator(organizationMember))
+                    if (orgRequest.ModeratorId == _loggedInMemberId)
                     {
                         return true;
+                    }
+                    else
+                    {
+                        var organizationMember = (await GetMemberRoleForOrganization(context, orgRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                        if (IsOrganizationMemberOwner(organizationMember))
+                        {
+                            return true;
+                        }
                     }
                 }
                 throw new KnownException("You are not authorized to perform this action");
@@ -290,6 +297,17 @@ namespace DataProvider
         private bool IsOrganizationMemberVolunteer(OrganizationMemberModel organizationMember)
         {
             if (organizationMember != null && organizationMember.Roles.Contains(OrganizationMemberRolesCatalog.Volunteer))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private bool IsOrganizationMemberOwner(OrganizationMemberModel organizationMember)
+        {
+            if (organizationMember != null && organizationMember.Roles.Contains(OrganizationMemberRolesCatalog.Owner))
             {
                 return true;
             }

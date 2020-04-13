@@ -23,7 +23,6 @@ namespace DataProvider
         }
     
         public int Id { get; set; }
-        public Nullable<int> OrganizationRequestId { get; set; }
         public int MemberId { get; set; }
         public Nullable<int> Type { get; set; }
         public string Note { get; set; }

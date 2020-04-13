@@ -40,7 +40,7 @@ namespace Models
         {
             get
             {
-                if (DonationRequestOrganization != null && DonationRequestOrganization.AssignedTo == null || DonationRequestOrganization.AssignedTo.Id == 0)
+                if (DonationRequestOrganization != null && DonationRequestOrganization.Moderator == null || DonationRequestOrganization.Moderator.Id == 0)
                     return true;
                 else
                     return false;
@@ -50,7 +50,7 @@ namespace Models
         {
             get
             {
-                if (LoggedInMemberId != 0 && ((DonationRequestOrganization != null && DonationRequestOrganization.AssignedTo != null && DonationRequestOrganization.AssignedTo.Id == LoggedInMemberId) || (CreatedBy == LoggedInMemberId)))
+                if (LoggedInMemberId != 0 && ((DonationRequestOrganization != null && DonationRequestOrganization.Moderator != null && DonationRequestOrganization.Moderator.Id == LoggedInMemberId) || (CreatedBy == LoggedInMemberId)))
                     return true;
                 else
                     return false;

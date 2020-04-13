@@ -9,10 +9,10 @@ namespace Models
         public DonationRequestOrganizationModel()
         {
             Organization = new BaseBriefModel();
-            AssignedTo = new BaseBriefModel();
+            Moderator = new BaseBriefModel();
         }
         public BaseBriefModel Organization { get; set; }
-        public BaseBriefModel AssignedTo { get; set; }
+        public BaseBriefModel Moderator { get; set; }
         public StatusCatalog? Status { get; set; }
     }
 }

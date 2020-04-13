@@ -11,14 +11,14 @@ namespace Models
         {
             Organization = new BaseBriefModel();
             Entity = new BaseBriefModel();
-            AssignedTo = new BaseBriefModel();
+            Moderator = new BaseBriefModel();
         }
         public BaseBriefModel Organization { get; set; }
         public BaseBriefModel Entity { get; set; }
         public OrganizationRequestEntityTypeCatalog EntityType { get; set; } = OrganizationRequestEntityTypeCatalog.Member;
         public OrganizationRequestTypeCatalog Type { get; set; } = OrganizationRequestTypeCatalog.Volunteer;
         public StatusCatalog Status { get; set; }
-        public BaseBriefModel AssignedTo { get; set; }
+        public BaseBriefModel Moderator { get; set; }
         public string Note { get; set; }
     }
 
@@ -31,7 +31,7 @@ namespace Models
         {
             get
             {
-                if (AssignedTo == null || AssignedTo.Id == 0)
+                if (Moderator == null || Moderator.Id == 0)
                     return true;
                 else
                     return false;
@@ -41,7 +41,7 @@ namespace Models
         {
             get
             {
-                if (LoggedInMemberId != 0 && ((AssignedTo != null && AssignedTo.Id == LoggedInMemberId) || (CreatedBy == LoggedInMemberId)))
+                if (LoggedInMemberId != 0 && ((Moderator != null && Moderator.Id == LoggedInMemberId) || (CreatedBy == LoggedInMemberId)))
                     return true;
                 else
                     return false;

@@ -152,7 +152,6 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="OrganizationRequestId" Type="int" />
           <Property Name="MemberId" Type="int" Nullable="false" />
           <Property Name="Type" Type="int" />
           <Property Name="Note" Type="nvarchar(max)" />
@@ -205,7 +204,8 @@
           <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="UpdatedBy" Type="int" Nullable="false" />
           <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="AssignedTo" Type="int" />
+          <Property Name="ModeratorId" Type="int" />
+          <Property Name="VolunteerId" Type="int" />
           <Property Name="Status" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="DonationRequestOrganizationItem">
@@ -366,7 +366,7 @@
           <Property Name="OrganizationId" Type="int" Nullable="false" />
           <Property Name="EntityId" Type="int" Nullable="false" />
           <Property Name="EntityType" Type="int" Nullable="false" />
-          <Property Name="AssignedTo" Type="int" />
+          <Property Name="ModeratorId" Type="int" />
           <Property Name="Status" Type="int" Nullable="false" />
           <Property Name="Type" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
@@ -1488,7 +1488,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrganizationRequestId" Type="Int32" />
           <Property Name="MemberId" Type="Int32" Nullable="false" />
           <Property Name="Type" Type="Int32" />
           <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -1553,7 +1552,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="AssignedTo" Type="Int32" />
+          <Property Name="ModeratorId" Type="Int32" />
+          <Property Name="VolunteerId" Type="Int32" />
           <Property Name="Status" Type="Int32" Nullable="false" />
           <NavigationProperty Name="DonationRequest" Relationship="CharityModel.FK_RequestOrganization_Request" FromRole="DonationRequestOrganization" ToRole="DonationRequest" />
           <NavigationProperty Name="DonationRequestOrganization1" Relationship="CharityModel.FK_DonationRequestOrganization_DonationRequestOrganization" FromRole="DonationRequestOrganization" ToRole="DonationRequestOrganization1" />
@@ -1739,7 +1739,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="OrganizationId" Type="Int32" Nullable="false" />
           <Property Name="EntityId" Type="Int32" Nullable="false" />
           <Property Name="EntityType" Type="Int32" Nullable="false" />
-          <Property Name="AssignedTo" Type="Int32" />
+          <Property Name="ModeratorId" Type="Int32" />
           <Property Name="Status" Type="Int32" Nullable="false" />
           <Property Name="Type" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
@@ -2474,7 +2474,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="Note" ColumnName="Note" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="MemberId" ColumnName="MemberId" />
-                <ScalarProperty Name="OrganizationRequestId" ColumnName="OrganizationRequestId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2502,7 +2501,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <EntityTypeMapping TypeName="CharityModel.DonationRequestOrganization">
               <MappingFragment StoreEntitySet="DonationRequestOrganization">
                 <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="AssignedTo" ColumnName="AssignedTo" />
+                <ScalarProperty Name="VolunteerId" ColumnName="VolunteerId" />
+                <ScalarProperty Name="ModeratorId" ColumnName="ModeratorId" />
                 <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
                 <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
@@ -2685,7 +2685,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="AssignedTo" ColumnName="AssignedTo" />
+                <ScalarProperty Name="ModeratorId" ColumnName="ModeratorId" />
                 <ScalarProperty Name="EntityType" ColumnName="EntityType" />
                 <ScalarProperty Name="EntityId" ColumnName="EntityId" />
                 <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />

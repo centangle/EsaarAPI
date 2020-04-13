@@ -68,6 +68,10 @@
     <Compile Include="UOMBL.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Catalogs\Catalogs.csproj">
+      <Project>{2B92D596-BC79-4A45-87E7-00B2744880F6}</Project>
+      <Name>Catalogs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataProvider\DataProvider.csproj">
       <Project>{706085f7-fe9d-4c48-a317-4e500cd8cafb}</Project>
       <Name>DataProvider</Name>

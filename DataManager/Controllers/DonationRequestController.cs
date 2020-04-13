@@ -1,5 +1,6 @@
 ﻿using BusinessLogic;
 using Catalogs;
+using Helpers;
 using Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,10 +28,16 @@ namespace DataManager.Controllers
             return await _logic.GetBriefDonationRequest(organizationRequestId);
         }
         [HttpPut]
-        public async Task<bool> AssignRequest(int organizationId, int donationRequestId, int? moderatorId = null)
+        public async Task<bool> AssignModeratorToRequest(int organizationId, int donationRequestId, int? moderatorId = null)
         {
             var _logic = new Logic(LoggedInMemberId);
-            return await _logic.AssignDonationRequest(organizationId, donationRequestId, moderatorId);
+            return await _logic.AssignModeratorToDonationRequest(organizationId, donationRequestId, moderatorId);
+        }
+        [HttpPut]
+        public async Task<bool> AssignVolunteerToRequest(int organizationId, int donationRequestId, int? moderatorId = null)
+        {
+            var _logic = new Logic(LoggedInMemberId);
+            return await _logic.AssignModeratorToDonationRequest(organizationId, donationRequestId, moderatorId);
         }
         [HttpPost]
         public async Task<int> Create(DonationRequestModel model)
@@ -45,22 +52,23 @@ namespace DataManager.Controllers
             return await _logic.UpdateDonationRequest(model);
         }
         [HttpPost]
-        public async Task<bool> Approve(List<DonationRequestOrganizationItemModel> items, int donationRequestOrganizationId)
+        public async Task<bool> UpdateStatus(int donationRequestOrganizationId, List<DonationRequestOrganizationItemModel> items, DonationRequestUpdateStatusCatalog status, string note = null)
         {
+            StatusCatalog updatedStatus;
+            if (status == DonationRequestUpdateStatusCatalog.Approved)
+            {
+                updatedStatus = StatusCatalog.Approved;
+            }
+            else if (status == DonationRequestUpdateStatusCatalog.Collected)
+            {
+                updatedStatus = StatusCatalog.Collected;
+            }
+            else
+            {
+                updatedStatus = StatusCatalog.Delivered;
+            }
             var _logic = new Logic(LoggedInMemberId);
-            return await _logic.AddDonationRequestOrganizationItems(items, donationRequestOrganizationId);
-        }
-        [HttpPut]
-        public async Task<bool> Collect(List<DonationRequestOrganizationItemModel> items, int donationRequestOrganizationId)
-        {
-            var _logic = new Logic(LoggedInMemberId);
-            return await _logic.UpdateDonationRequestOrganizationItems(items, donationRequestOrganizationId);
-        }
-        [HttpPut]
-        public async Task<bool> Deliver(List<DonationRequestOrganizationItemModel> items, int donationRequestOrganizationId)
-        {
-            var _logic = new Logic(LoggedInMemberId);
-            return await _logic.UpdateDonationRequestOrganizationItems(items, donationRequestOrganizationId);
+            return await _logic.UpdateDonationRequestStatus(donationRequestOrganizationId, note, items, updatedStatus);
         }
     }
 }

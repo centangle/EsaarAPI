@@ -23,7 +23,8 @@ namespace DataProvider
         public System.DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
-        public Nullable<int> AssignedTo { get; set; }
+        public Nullable<int> ModeratorId { get; set; }
+        public Nullable<int> VolunteerId { get; set; }
         public int Status { get; set; }
     
         public virtual DonationRequest DonationRequest { get; set; }

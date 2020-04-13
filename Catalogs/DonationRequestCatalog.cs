@@ -5,4 +5,10 @@
         Beneficiary,
         Donor
     }
+    public enum DonationRequestUpdateStatusCatalog : int
+    {
+        Approved,
+        Collected,
+        Delivered
+    }
 }

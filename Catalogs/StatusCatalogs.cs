@@ -3,12 +3,13 @@
     public enum StatusCatalog : int
     {
         Initiated = 0,
-        InProcess = 5,
-        Approved = 10,
-        VolunteerAssigned = 15,
-        Collected = 20,
-        Delivered = 25,
-        Rejected = 30,
+        ModeratorAssigned = 10,
+        InProcess = 20,
+        Approved = 30,
+        VolunteerAssigned = 40,
+        Collected = 50,
+        Delivered = 60,
+        Rejected = 100,
     }
 
 }

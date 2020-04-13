@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using Catalogs;
+using Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,13 +7,9 @@ namespace BusinessLogic
 {
     public partial class Logic
     {
-        public async Task<bool> AddDonationRequestOrganizationItems(List<DonationRequestOrganizationItemModel> items, int donationRequestOrganizationId)
+        public async Task<bool> UpdateDonationRequestStatus(int donationRequestOrganizationId, string note, List<DonationRequestOrganizationItemModel> items, StatusCatalog status)
         {
-            return await _dataAccess.AddDonationRequestOrganizationItems(items, donationRequestOrganizationId);
-        }
-        public async Task<bool> UpdateDonationRequestOrganizationItems(List<DonationRequestOrganizationItemModel> requestItems, int donationRequestOrganizationId)
-        {
-            return await _dataAccess.UpdateDonationRequestOrganizationItems(requestItems, donationRequestOrganizationId);
+            return await _dataAccess.UpdateDonationRequestStatus(donationRequestOrganizationId, note, items, status);
         }
     }
 }
