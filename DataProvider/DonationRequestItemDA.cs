@@ -50,7 +50,7 @@ namespace DataProvider
             dbModel.Note = model.Note;
             if (model.DueDate > System.DateTime.Now.AddYears(-1))
                 dbModel.DueDate = model.DueDate;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
         }
     }
 }

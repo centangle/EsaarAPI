@@ -6,6 +6,7 @@ using Models;
 using System;
 using System.Data.Entity;
 using DataProvider.Helpers;
+using Models.BriefModel;
 
 namespace DataProvider
 {
@@ -83,6 +84,39 @@ namespace DataProvider
             }
         }
 
+        public async Task<UOMModel> GetUOM(int id)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                PaginatedResultModel<UOMModel> searchResult = new PaginatedResultModel<UOMModel>();
+                UOMModel uom = await (from u in context.UOMs
+                                      where u.Id == id
+                                       && (u.ParentId == null)
+                                       && u.IsDeleted == false
+                                      select new UOMModel
+                                      {
+                                          Id = u.Id,
+                                          Name = u.Name,
+                                          Abbreviation = u.Abbreviation,
+                                          NoOfBaseUnit = u.NoOfBaseUnit,
+                                          ParentId = null,
+                                      }).FirstOrDefaultAsync();
+                if (uom != null)
+                {
+                    uom.children = await (from u in context.UOMs
+                                          where u.ParentId == uom.Id
+                                          select new UOMModel
+                                          {
+                                              Id = u.Id,
+                                              Name = u.Name,
+                                              Abbreviation = u.Abbreviation,
+                                              NoOfBaseUnit = u.NoOfBaseUnit,
+                                              ParentId = u.ParentId,
+                                          }).ToListAsync();
+                }
+                return uom;
+            }
+        }
         public async Task<PaginatedResultModel<UOMModel>> GetUOM(UOMSearchModel filters)
         {
             using (CharityEntities context = new CharityEntities())
@@ -209,8 +243,30 @@ namespace DataProvider
             dbModel.NoOfBaseUnit = model.NoOfBaseUnit;
             dbModel.Type = (int)model.Type;
             dbModel.ParentId = parentId;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
+        }
+
+        private List<UOMBriefModel> GetUOMTreeFlatList(UOMModel uom)
+        {
+            List<UOMBriefModel> uomtreeFlatList = new List<UOMBriefModel>();
+            UOMBriefModel uomBM = new UOMBriefModel
+            {
+                Id = uom.Id,
+                Name = uom.Name,
+                NativeName = uom.NativeName,
+                NoOfBaseUnit = uom.NoOfBaseUnit,
+            };
+            uomtreeFlatList.Add(uomBM);
+            uomtreeFlatList.AddRange((from u in uom.children
+                                      select new UOMBriefModel
+                                      {
+                                          Id = u.Id,
+                                          Name = u.Name,
+                                          NativeName = u.NativeName,
+                                          NoOfBaseUnit = u.NoOfBaseUnit,
+                                      }).ToList());
+            return uomtreeFlatList;
         }
     }
 }

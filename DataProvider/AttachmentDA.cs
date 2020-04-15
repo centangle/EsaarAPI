@@ -59,7 +59,7 @@ namespace DataProvider
         }
         private Attachment SetAttachment(Attachment dbModel, AttachmentModel model)
         {
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             if (dbModel.Id != 0)
             {
                 if (model.Entity == null || model.Entity.Id < 1)

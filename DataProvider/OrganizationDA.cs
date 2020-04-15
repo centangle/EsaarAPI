@@ -190,7 +190,7 @@ namespace DataProvider
             dbModel.OwnedBy = model.OwnedBy.Id;
             dbModel.IsVerified = model.IsVerified;
             dbModel.IsPeripheral = model.IsPeripheral;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
 
         }

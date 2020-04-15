@@ -102,7 +102,7 @@ namespace DataProvider
                     dbModel.DeliveredQuantityUOM = model.DeliveredQuantityUOM.Id;
                 }
             }
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
         }
     }

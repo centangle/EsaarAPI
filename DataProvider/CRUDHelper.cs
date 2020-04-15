@@ -11,7 +11,7 @@ namespace DataProvider
 {
     public partial class DataAccess
     {
-        public void SetBaseProperties<T, M>(T dbModel, M model)
+        public void SetAndValidateBaseProperties<T, M>(T dbModel, M model)
             where T : IBase
             where M : IBase
         {
@@ -30,6 +30,10 @@ namespace DataProvider
             }
             dbModel.UpdatedBy = _loggedInMemberId;
             dbModel.UpdatedDate = model.UpdatedDate;
+            if (typeof(M) == typeof(IName))
+            {
+                VerifyNameIsNotNull(model as IName);
+            }
         }
         public M SetEntityId<M>(M model, string errorMessage)
             where M : BaseBriefModel, new()
@@ -47,6 +51,15 @@ namespace DataProvider
                     model = new M();
                 model.Id = _loggedInMemberId;
                 return model;
+            }
+
+        }
+
+        public void VerifyNameIsNotNull(IName model)
+        {
+            if (string.IsNullOrEmpty(model.Name))
+            {
+                throw new KnownException("Name can not be null");
             }
 
         }

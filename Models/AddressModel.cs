@@ -1,10 +1,11 @@
 ﻿using Catalogs;
 using Models.Base;
 using Models.BriefModel;
+using Models.Interfaces;
 
 namespace Models
 {
-    public class AddressModel : BaseModel
+    public class AddressModel : BaseModel, IName
     {
         public AddressModel()
         {

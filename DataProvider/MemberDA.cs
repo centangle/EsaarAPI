@@ -76,7 +76,7 @@ namespace DataProvider
             dbModel.NativeName = model.NativeName;
             dbModel.Type = 0;
             dbModel.IdentificationNo = model.IdentificationNo;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             if (dbModel.Id == 0)
             {
                 dbModel.AuthUserId = model.AuthUserId;

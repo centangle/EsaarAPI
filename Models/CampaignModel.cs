@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 
 namespace Models
 {
-    public class CampaignModel : BaseModel,IImage
+    public class CampaignModel : BaseModel,IImage, IName
     {
         [Required]
         public string Name { get; set; }

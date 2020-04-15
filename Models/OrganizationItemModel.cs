@@ -1,6 +1,7 @@
 ﻿using Models.Base;
 using Models.BriefModel;
 using System.CodeDom;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Models
@@ -27,6 +28,8 @@ namespace Models
         public string ItemName { get; set; }
         [IgnoreDataMember]
         public string ItemNativeName { get; set; }
+        public UOMBriefParentModel ItemDefaultUOM { get; set; }
+        public List<UOMBriefModel> ItemUOMs { get; set; }
     }
     public class OrganizationItemSearchModel : BaseSearchModel
     {

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Catalogs;
 using DataProvider.Helpers;
+using Helpers;
 using Models;
 using Models.BriefModel;
 using Models.Interfaces;
@@ -71,7 +72,7 @@ namespace DataProvider
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        return false;
+                        throw ex;
                     }
                 }
             }
@@ -96,7 +97,7 @@ namespace DataProvider
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        return false;
+                        throw ex;
                     }
                 }
             }
@@ -118,7 +119,7 @@ namespace DataProvider
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        return false;
+                        throw ex;
                     }
                 }
             }
@@ -140,7 +141,7 @@ namespace DataProvider
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        return false;
+                        throw ex;
                     }
                 }
             }
@@ -166,6 +167,13 @@ namespace DataProvider
         {
             dbModel.Name = model.Name;
             dbModel.NativeName = model.NativeName;
+            if (model.IsPeripheral)
+            {
+                if (model.DefaultUOM == null || model.DefaultUOM.Id == 0)
+                {
+                    throw new KnownException("Peripheral Items UOM must be set.");
+                }
+            }
             //Set UOM
             if (model.DefaultUOM == null || model.DefaultUOM.Id == 0)
                 dbModel.DefaultUOM = null;
@@ -184,7 +192,7 @@ namespace DataProvider
             dbModel.Type = (int)model.Type;
             dbModel.Description = model.Description;
             dbModel.IsPeripheral = model.IsPeripheral;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             ImageHelper.Save(model);
             dbModel.ImageUrl = model.ImageUrl;
             return dbModel;
@@ -294,7 +302,7 @@ namespace DataProvider
                                       Id = uom == null ? 0 : uom.Id,
                                       Name = uom == null ? "" : uom.Name,
                                       NativeName = uom == null ? "" : uom.NativeName,
-                                      NoOfBaseUnit= uom == null ?0 : uom.NoOfBaseUnit,
+                                      NoOfBaseUnit = uom == null ? 0 : uom.NoOfBaseUnit,
                                   },
                                   Type = (ItemTypeCatalog)i.Type,
                                   Description = i.Description,

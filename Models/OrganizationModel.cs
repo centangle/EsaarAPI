@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 
 namespace Models
 {
-    public class OrganizationModel : BaseModel, IImage, ITree<OrganizationModel>, IPeripheral
+    public class OrganizationModel : BaseModel, IImage, IName, ITree<OrganizationModel>, IPeripheral
     {
         public OrganizationModel()
         {

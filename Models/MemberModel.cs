@@ -1,4 +1,5 @@
 ﻿using Models.Base;
+using Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class MemberModel : BaseModel
+    public class MemberModel : BaseModel, IName
     {
         public MemberModel()
         {

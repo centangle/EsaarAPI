@@ -141,7 +141,7 @@ namespace DataProvider
             dbModel.OrganizationId = model.Organization.Id;
             dbModel.MemberId = model.Member.Id;
             dbModel.Type = (int)model.Role;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
         }
         private OrganizationMemberModel GetOrganizationMembershipModel(OrganizationRequestModel model)

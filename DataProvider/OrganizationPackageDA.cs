@@ -196,7 +196,7 @@ namespace DataProvider
             dbModel.ItemId = model.Item.Id;
             dbModel.ItemQuantity = model.ItemQuantity;
             dbModel.ItemUOM = model.ItemUOM.Id;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
         }
         private async Task<bool> IsPackgeValidated(CharityEntities context, PackageModel model)

@@ -207,7 +207,7 @@ namespace DataProvider
                 dbModel.CampaignId = null;
             }
             dbModel.Date = DateTime.UtcNow;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
         }
         public async Task<bool> UpdateDonationRequestStatus(int donationRequestOrganizationId, string note, List<DonationRequestOrganizationItemModel> items, StatusCatalog status)

@@ -139,7 +139,7 @@ namespace DataProvider
             }
             dbModel.CampaignItemTarget = model.CampaignItemTarget;
             dbModel.IsCampaignItemOnly = model.IsCampaignItemOnly;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
         }
         public async Task<bool> DeleteOrganizationItems(List<int> ids)
@@ -220,6 +220,7 @@ namespace DataProvider
                 var orgItemQueryable = (from oi in context.OrganizationItems
                                         join o in context.Organizations on oi.OrganizationId equals o.Id
                                         join i in context.Items on oi.ItemId equals i.Id
+                                        join iuom in context.UOMs on i.DefaultUOM equals iuom.Id
                                         where o.Id == filters.OrganizationId
                                         && (string.IsNullOrEmpty(filters.ItemName) || i.Name.Contains(filters.ItemName))
                                         && oi.IsDeleted == false
@@ -240,9 +241,37 @@ namespace DataProvider
                                                 Name = i.Name,
                                                 NativeName = i.NativeName,
                                             },
+                                            ItemDefaultUOM = new UOMBriefParentModel()
+                                            {
+                                                Id = iuom.Id,
+                                                Name = iuom.Name,
+                                                NativeName = iuom.NativeName,
+                                                ParentId = iuom.ParentId,
+                                            },
                                             IsActive = oi.IsActive,
                                         }).AsQueryable();
-                return await orgItemQueryable.Paginate(filters);
+                var paginatedResult = await orgItemQueryable.Paginate(filters);
+
+                // Fill UOM From UI DropDown
+                List<UOMModel> availableUOM = new List<UOMModel>();
+                foreach (var paginatedItem in paginatedResult.Items)
+                {
+                    int itemDefaultUOMRootId = (paginatedItem.ItemDefaultUOM.ParentId == null ?
+                        paginatedItem.ItemDefaultUOM.Id :
+                        (paginatedItem.ItemDefaultUOM.ParentId ?? 0));
+                    var existingUOM = availableUOM.Where(x => x.Id == itemDefaultUOMRootId).FirstOrDefault();
+                    if (existingUOM == null)
+                    {
+                        var uom = await GetUOM(itemDefaultUOMRootId);
+                        if (uom != null)
+                        {
+                            availableUOM.Add(uom);
+                            paginatedItem.ItemUOMs.AddRange(GetUOMTreeFlatList(uom));
+                        }
+                    }
+
+                }
+                return paginatedResult;
             }
 
         }

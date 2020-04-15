@@ -99,7 +99,7 @@ namespace DataProvider
             dbModel.Type = (int)model.Type;
             if (dbModel.Id == 0)
                 dbModel.Status = (int)StatusCatalog.Initiated;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
         }
         private async Task<bool> ChangeOrganizationRequestStatus(CharityEntities context, RequestThreadModel model)

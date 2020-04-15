@@ -30,7 +30,7 @@ namespace DataProvider
                 dbModel.Status = (int)StatusCatalog.Initiated;
                 dbModel.ModeratorId = null;
             }
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
         }
         private List<DonationRequestOrganizationModel> GetDonationRequestOrganization(DonationRequestModel model)

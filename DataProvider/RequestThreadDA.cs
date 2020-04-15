@@ -165,7 +165,7 @@ namespace DataProvider
             if (model.Status != null)
                 dbModel.Status = (int)model.Status;
             dbModel.Note = model.Note;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
         }
         public async Task<RequestThreadModel> GetRequestThread(int id)

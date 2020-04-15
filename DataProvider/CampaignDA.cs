@@ -52,7 +52,7 @@ namespace DataProvider
             dbModel.EndDate = model.EndDate;
             ImageHelper.Save(model);
             dbModel.ImageUrl = model.ImageUrl;
-            SetBaseProperties(dbModel, model);
+            SetAndValidateBaseProperties(dbModel, model);
             if (dbModel.Id == 0)
             {
                 dbModel.IsActive = false;

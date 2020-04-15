@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 
 namespace Models
 {
-    public class ItemBaseModel : BaseModel, IImage
+    public class ItemBaseModel : BaseModel, IImage, IName
     {
         [Required]
         public string Name { get; set; }

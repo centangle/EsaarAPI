@@ -55,6 +55,7 @@
     <Compile Include="DonationRequestOrganizationModel.cs" />
     <Compile Include="Interfaces\IBase.cs" />
     <Compile Include="Interfaces\IImage.cs" />
+    <Compile Include="Interfaces\IName.cs" />
     <Compile Include="Interfaces\ITree.cs" />
     <Compile Include="OrganizationItemModel.cs" />
     <Compile Include="OrganizationRequestModel.cs" />
