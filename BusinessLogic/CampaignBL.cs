@@ -17,5 +17,17 @@ namespace BusinessLogic
         {
             return await _dataAccess.UpdateCampaign(model);
         }
+        public async Task<bool> DeleteCampaign(int id)
+        {
+            return await _dataAccess.DeleteCampaign(id);
+        }
+        public async Task<CampaignModel> GetCampaign(int id)
+        {
+            return await _dataAccess.GetCampaign(id);
+        }
+        public async Task<PaginatedResultModel<CampaignModel>> GetCampaigns(CampaignSearchModel filters)
+        {
+            return await _dataAccess.GetCampaigns(filters);
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace DataProvider
                             if (result)
                             {
                                 model.Id = dbModel.Id;
-                                AddPackageItems(context, model.children, model.Id);
+                                AddPackageItems(context, model.Items, model.Id);
                                 await context.SaveChangesAsync();
                             }
                             transaction.Commit();
@@ -125,7 +125,7 @@ namespace DataProvider
                                      }).FirstOrDefaultAsync();
                 if (package != null)
                 {
-                    package.children = await (from pi in context.PackageItems
+                    package.Items = await (from pi in context.PackageItems
                                               join i in context.Items on pi.ItemId equals i.Id
                                               join uom in context.UOMs on pi.ItemUOM equals uom.Id
                                               where pi.PackageId == package.Id
@@ -179,11 +179,11 @@ namespace DataProvider
         private async Task ModifyPackageItems(CharityEntities context, PackageModel model)
         {
             var masterList = await context.PackageItems.Where(x => x.PackageId == model.Id).ToListAsync();
-            var newItems = model.children.Where(x => x.Id == 0).ToList();
-            var updatedItems = masterList.Where(m => model.children.Any(s => m.Id == s.Id));
-            var deletedItems = masterList.Where(m => !model.children.Any(s => m.Id == s.Id));
+            var newItems = model.Items.Where(x => x.Id == 0).ToList();
+            var updatedItems = masterList.Where(m => model.Items.Any(s => m.Id == s.Id));
+            var deletedItems = masterList.Where(m => !model.Items.Any(s => m.Id == s.Id));
             AddPackageItems(context, newItems, model.Id);
-            UpdatePackageItems(updatedItems, model.children, model.Id);
+            UpdatePackageItems(updatedItems, model.Items, model.Id);
             DeletePackageItems(deletedItems);
         }
         private PackageItem SetPackageItem(PackageItem dbModel, PackageItemModel model, int packageId)

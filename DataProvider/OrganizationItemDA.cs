@@ -191,6 +191,10 @@ namespace DataProvider
                 return await (from oi in context.OrganizationItems
                               join o in context.Organizations on oi.OrganizationId equals o.Id
                               join i in context.Items on oi.ItemId equals i.Id
+                              join c in context.Campaigns on oi.CampaignId equals c.Id into tc
+                              from c in tc.DefaultIfEmpty()
+                              join ciuom in context.UOMs on oi.CampaignItemUOM equals ciuom.Id into tci
+                              from ciuom in tci.DefaultIfEmpty()
                               where oi.Id == id
                               && oi.IsDeleted == false
                               select new OrganizationItemModel
@@ -202,12 +206,27 @@ namespace DataProvider
                                       Name = o.Name,
                                       NativeName = o.NativeName,
                                   },
+                                  Campaign = new BaseBriefModel()
+                                  {
+                                      Id = c == null ? 0 : c.Id,
+                                      Name = c == null ? "" : c.Name,
+                                      NativeName = c == null ? "" : c.NativeName,
+                                  },
                                   Item = new BaseBriefModel()
                                   {
                                       Id = i.Id,
                                       Name = i.Name,
                                       NativeName = i.NativeName,
                                   },
+                                  CampaignItemTarget = oi.CampaignItemTarget ?? 0,
+                                  CampaignItemUOM = new UOMBriefModel()
+                                  {
+                                      Id = ciuom == null ? 0 : ciuom.Id,
+                                      Name = ciuom == null ? "" : ciuom.Name,
+                                      NativeName = ciuom == null ? "" : ciuom.NativeName,
+                                      NoOfBaseUnit = ciuom == null ? 0 : ciuom.NoOfBaseUnit,
+                                  },
+                                  IsCampaignItemOnly = oi.IsCampaignItemOnly,
                                   IsActive = oi.IsActive,
                               }).FirstOrDefaultAsync();
             }
@@ -222,6 +241,7 @@ namespace DataProvider
                                         join i in context.Items on oi.ItemId equals i.Id
                                         join iuom in context.UOMs on i.DefaultUOM equals iuom.Id
                                         where o.Id == filters.OrganizationId
+                                        && (oi.CampaignId == filters.CampaignId)
                                         && (string.IsNullOrEmpty(filters.ItemName) || i.Name.Contains(filters.ItemName))
                                         && oi.IsDeleted == false
                                         select new OrganizationItemPaginationModel

@@ -24,6 +24,10 @@ namespace Models
     }
     public class OrganizationItemPaginationModel : OrganizationItemModel
     {
+        public OrganizationItemPaginationModel()
+        {
+            ItemUOMs = new List<UOMBriefModel>();
+        }
         [IgnoreDataMember]
         public string ItemName { get; set; }
         [IgnoreDataMember]
@@ -38,6 +42,7 @@ namespace Models
             OrderByColumn = "ItemName";
         }
         public int OrganizationId { get; set; }
+        public int? CampaignId { get; set; }
         public string ItemName { get; set; }
     }
 }

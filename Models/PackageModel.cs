@@ -14,6 +14,6 @@ namespace Models
             Type = ItemTypeCatalog.Package;
             IsPeripheral = true;
         }
-        public List<PackageItemModel> children { get; set; }
+        public List<PackageItemModel> Items { get; set; }
     }
 }
