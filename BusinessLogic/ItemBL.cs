@@ -14,21 +14,21 @@ namespace BusinessLogic
         {
             return await _dataAccess.UpdateItem(model);
         }
-        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model, int? organizationId = null)
+        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model)
         {
-            return await _dataAccess.CreateSingleItemWithChildrens(model, organizationId);
+            return await _dataAccess.CreateSingleItemWithChildrens(model);
         }
-        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model, int? organizationId = null)
+        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model)
         {
-            return await _dataAccess.UpdateSingleItemWithChildren(model, organizationId);
+            return await _dataAccess.UpdateSingleItemWithChildren(model);
         }
-        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items, int? organizationId = null)
+        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
         {
-            return await _dataAccess.CreateMultipleItemsWithChildrens(items, organizationId);
+            return await _dataAccess.CreateMultipleItemsWithChildrens(items);
         }
-        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items, int? organizationId = null)
+        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
         {
-            return await _dataAccess.UpdateMultipleItemsWithChildrens(items, organizationId);
+            return await _dataAccess.UpdateMultipleItemsWithChildrens(items);
         }
         public async Task<ItemModel> GetItem(int id)
         {
@@ -38,9 +38,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.GetSingleTreeItem(id, getHierarchicalData);
         }
-        public async Task<IEnumerable<ItemModel>> GetPeripheralItems()
+        public async Task<IEnumerable<ItemModel>> GetPeripheralItems(int? organizationId = null)
         {
-            return await _dataAccess.GetPeripheralItems();
+            return await _dataAccess.GetPeripheralItems(organizationId);
         }
         public async Task<IEnumerable<ItemModel>> GetRootItems()
         {

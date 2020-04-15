@@ -37,6 +37,7 @@ namespace DataProvider
         }
         public async Task<List<OrganizationMemberModel>> GetMemberRoleForOrganization(int organizationId, int? memberId)
         {
+
             using (CharityEntities context = new CharityEntities())
             {
                 return await GetMemberRoleForOrganization(context, organizationId, memberId);

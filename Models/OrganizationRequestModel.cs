@@ -51,6 +51,16 @@ namespace Models
         {
             get
             {
+                if ((Moderator != null && Moderator.Id == LoggedInMemberId) && (Status == StatusCatalog.Approved || Status == StatusCatalog.Rejected))
+                    return false;
+                else
+                    return true;
+            }
+        }
+        public bool CanAddMessageToThread
+        {
+            get
+            {
                 if (Status == StatusCatalog.Approved || Status == StatusCatalog.Rejected)
                     return false;
                 else

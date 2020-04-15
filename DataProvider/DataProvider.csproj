@@ -82,6 +82,10 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="AttachmentDA.cs" />
+    <Compile Include="Campaign.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CampaignDA.cs" />
     <Compile Include="Charity.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -167,6 +171,9 @@
     </Compile>
     <Compile Include="MemberDA.cs" />
     <Compile Include="OrganizationRequestDA.cs" />
+    <Compile Include="PackageItem.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
     <Compile Include="RefreshToken.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>

@@ -33,13 +33,29 @@ namespace DataProvider
                             {
                                 throw new KnownException("This request has already been assigned");
                             }
-                            if (moderatorId == null || moderatorId < 1)
+                            using (var transaction = context.Database.BeginTransaction())
                             {
-                                moderatorId = _loggedInMemberId;
+                                try
+                                {
+                                    var requestThreadModel = GetRequestThreadModelForOrganization(organizationRequest.Id, "Moderator Assigned");
+                                    requestThreadModel.Status = StatusCatalog.ModeratorAssigned;
+                                    await AddRequestThread(context, requestThreadModel);
+                                    if (moderatorId == null || moderatorId < 1)
+                                    {
+                                        moderatorId = _loggedInMemberId;
+                                    }
+                                    organizationRequest.ModeratorId = moderatorId;
+                                    await context.SaveChangesAsync();
+                                    transaction.Commit();
+                                    return true;
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    transaction.Rollback();
+                                    throw ex;
+                                }
                             }
-                            organizationRequest.ModeratorId = moderatorId;
-                            await context.SaveChangesAsync();
-                            return true;
                         }
                     }
                 }
@@ -57,7 +73,7 @@ namespace DataProvider
                     context.OrganizationRequests.Add(dbModel);
                     await context.SaveChangesAsync();
                     model.Id = dbModel.Id;
-                    var requestThreadModel = GetRequestThreadModel(model);
+                    var requestThreadModel = GetRequestThreadModelForOrganization(model.Id, model.Note);
                     await AddRequestThread(context, requestThreadModel);
                     transaction.Commit();
                     return model.Id;
@@ -116,13 +132,13 @@ namespace DataProvider
             }
 
         }
-        private RequestThreadModel GetRequestThreadModel(OrganizationRequestModel model)
+        private RequestThreadModel GetRequestThreadModelForOrganization(int id, string note)
         {
             RequestThreadModel requestThreadModel = new RequestThreadModel();
-            requestThreadModel.Entity.Id = model.Id;
+            requestThreadModel.Entity.Id = id;
             requestThreadModel.EntityType = RequestThreadEntityTypeCatalog.Organization;
             requestThreadModel.Status = StatusCatalog.Initiated;
-            requestThreadModel.Note = model.Note;
+            requestThreadModel.Note = note;
             requestThreadModel.Type = RequestThreadTypeCatalog.General;
             requestThreadModel.IsSystemGenerated = true;
             return requestThreadModel;

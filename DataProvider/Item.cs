@@ -20,6 +20,8 @@ namespace DataProvider
             this.DonationRequestItems = new HashSet<DonationRequestItem>();
             this.Item1 = new HashSet<Item>();
             this.OrganizationItems = new HashSet<OrganizationItem>();
+            this.PackageItems = new HashSet<PackageItem>();
+            this.PackageItems1 = new HashSet<PackageItem>();
         }
     
         public int Id { get; set; }
@@ -33,7 +35,6 @@ namespace DataProvider
         public Nullable<int> Type { get; set; }
         public string ImageUrl { get; set; }
         public bool IsPeripheral { get; set; }
-        public Nullable<bool> IsCartItem { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }
@@ -48,5 +49,9 @@ namespace DataProvider
         public virtual Item Item2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrganizationItem> OrganizationItems { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PackageItem> PackageItems { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PackageItem> PackageItems1 { get; set; }
     }
 }

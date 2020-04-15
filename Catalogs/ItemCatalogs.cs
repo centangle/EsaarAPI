@@ -8,6 +8,7 @@ namespace Catalogs
 {
     public enum ItemTypeCatalog : int
     {
-        General
+        General,
+        Package
     }
 }

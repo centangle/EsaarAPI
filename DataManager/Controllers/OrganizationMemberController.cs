@@ -37,7 +37,7 @@ namespace DataManager.Controllers
             return await _logic.GetOrganizationMembers(filters);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<List<OrganizationMemberRolesCatalog>> GetMemberRole(int organizationId)
         {
             var _logic = new Logic(LoggedInMemberId);

@@ -14,6 +14,7 @@ namespace Models
         public OrganizationModel()
         {
             children = new List<OrganizationModel>();
+            CurrentMemberRoles = new List<OrganizationMemberRolesCatalog>();
         }
         [Required]
         public string Name { get; set; }
@@ -60,5 +61,6 @@ namespace Models
         public bool IsPeripheral { get; set; }
         public bool IsVerified { get; set; }
         public ICollection<OrganizationModel> children { get; set; }
+        public List<OrganizationMemberRolesCatalog> CurrentMemberRoles { get; set; }
     }
 }

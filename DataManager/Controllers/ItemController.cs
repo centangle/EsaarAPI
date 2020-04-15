@@ -26,10 +26,10 @@ namespace DataManager.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ItemModel>> GetPeripheralItems()
+        public async Task<IEnumerable<ItemModel>> GetPeripheralItems(int? organizationId = null)
         {
             var _logic = new Logic(LoggedInMemberId);
-            return await _logic.GetPeripheralItems();
+            return await _logic.GetPeripheralItems(organizationId);
         }
 
         [HttpGet]

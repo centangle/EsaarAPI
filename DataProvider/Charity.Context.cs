@@ -34,6 +34,7 @@ namespace DataProvider
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<Attachment> Attachments { get; set; }
+        public virtual DbSet<Campaign> Campaigns { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<District> Districts { get; set; }
         public virtual DbSet<DonationRequest> DonationRequests { get; set; }
@@ -49,6 +50,7 @@ namespace DataProvider
         public virtual DbSet<OrganizationItem> OrganizationItems { get; set; }
         public virtual DbSet<OrganizationMember> OrganizationMembers { get; set; }
         public virtual DbSet<OrganizationRequest> OrganizationRequests { get; set; }
+        public virtual DbSet<PackageItem> PackageItems { get; set; }
         public virtual DbSet<RequestThread> RequestThreads { get; set; }
         public virtual DbSet<State> States { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }

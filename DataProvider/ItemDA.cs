@@ -54,13 +54,12 @@ namespace DataProvider
             }
 
         }
-        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model, int? organizationId = null)
+        public async Task<bool> CreateSingleItemWithChildrens(ItemModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
                 var currentDbNodes = new List<Item>();
                 var allNodes = TreeHelper.TreeToList(new List<ItemModel> { model });
-                UpdateRequiredTreeValues(allNodes, organizationId);
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
@@ -77,13 +76,12 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model, int? organizationId = null)
+        public async Task<bool> UpdateSingleItemWithChildren(ItemModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
 
                 var allNodes = TreeHelper.TreeToList(new List<ItemModel> { model });
-                UpdateRequiredTreeValues(allNodes, organizationId);
                 var currentRootNode = allNodes.Where(x => x.Node.ParentId == null || x.Node.ParentId == 0).Select(x => x.Node.Id).FirstOrDefault();
                 var currentDbNodes = (await GetSingleItemTree<Item, Item>(context, currentRootNode, false, false)).ToList();
 
@@ -103,13 +101,12 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items, int? organizationId = null)
+        public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
         {
             using (CharityEntities context = new CharityEntities())
             {
                 var currentDbNodes = new List<Item>();
                 var allNodes = TreeHelper.TreeToList(items);
-                UpdateRequiredTreeValues(allNodes, organizationId);
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
@@ -126,13 +123,12 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items, int? organizationId = null)
+        public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
         {
             using (CharityEntities context = new CharityEntities())
             {
                 var currentDbNodes = (await GetAllItems<Item, Item>(context, false, false)).ToList();
                 var allNodes = TreeHelper.TreeToList(items);
-                UpdateRequiredTreeValues(allNodes, organizationId);
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
@@ -166,7 +162,7 @@ namespace DataProvider
                 return false;
             }
         }
-        private Item SetItem(Item dbModel, ItemModel model)
+        private Item SetItem(Item dbModel, ItemBaseModel model)
         {
             dbModel.Name = model.Name;
             dbModel.NativeName = model.NativeName;
@@ -185,9 +181,9 @@ namespace DataProvider
                 dbModel.RootId = null;
             else
                 dbModel.RootId = model.Root.Id;
+            dbModel.Type = (int)model.Type;
             dbModel.Description = model.Description;
             dbModel.IsPeripheral = model.IsPeripheral;
-            dbModel.IsCartItem = model.IsCartItem;
             SetBaseProperties(dbModel, model);
             ImageHelper.Save(model);
             dbModel.ImageUrl = model.ImageUrl;
@@ -217,22 +213,22 @@ namespace DataProvider
                                   },
                                   Name = i.Name,
                                   NativeName = i.NativeName,
-                                  DefaultUOM = new BaseBriefModel()
+                                  DefaultUOM = new UOMBriefModel()
                                   {
                                       Id = uom == null ? 0 : uom.Id,
                                       Name = uom == null ? "" : uom.Name,
-                                      NativeName = uom == null ? "" : uom.NativeName
+                                      NativeName = uom == null ? "" : uom.NativeName,
+                                      NoOfBaseUnit = uom == null ? 0 : uom.NoOfBaseUnit,
                                   },
-
+                                  Type = (ItemTypeCatalog)i.Type,
                                   Description = i.Description,
-                                  Type = (ItemTypeCatalog)(i.Type ?? 0),
                                   ImageUrl = i.ImageUrl,
                                   IsPeripheral = i.IsPeripheral,
                                   IsActive = i.IsActive,
                               }).FirstOrDefaultAsync();
             }
         }
-        public async Task<List<ItemModel>> GetPeripheralItems()
+        public async Task<List<ItemModel>> GetPeripheralItems(int? organizationId = null)
         {
             using (CharityEntities context = new CharityEntities())
             {
@@ -242,7 +238,7 @@ namespace DataProvider
                               join uom in context.UOMs on i.DefaultUOM equals uom.Id into tuom
                               from uom in tuom.DefaultIfEmpty()
                               where i.IsPeripheral == true
-                              && i.OrganizationId == null
+                              && (i.OrganizationId == null || i.OrganizationId == organizationId)
                               && i.IsDeleted == false
                               select new ItemModel
                               {
@@ -255,15 +251,15 @@ namespace DataProvider
                                   },
                                   Name = i.Name,
                                   NativeName = i.NativeName,
-                                  DefaultUOM = new BaseBriefModel()
+                                  DefaultUOM = new UOMBriefModel()
                                   {
                                       Id = uom == null ? 0 : uom.Id,
                                       Name = uom == null ? "" : uom.Name,
-                                      NativeName = uom == null ? "" : uom.NativeName
+                                      NativeName = uom == null ? "" : uom.NativeName,
+                                      NoOfBaseUnit = uom == null ? 0 : uom.NoOfBaseUnit,
                                   },
-
+                                  Type = (ItemTypeCatalog)i.Type,
                                   Description = i.Description,
-                                  Type = (ItemTypeCatalog)(i.Type ?? 0),
                                   ImageUrl = i.ImageUrl,
                                   IsPeripheral = i.IsPeripheral,
                                   IsActive = i.IsActive,
@@ -293,15 +289,15 @@ namespace DataProvider
                                   },
                                   Name = i.Name,
                                   NativeName = i.NativeName,
-                                  DefaultUOM = new BaseBriefModel()
+                                  DefaultUOM = new UOMBriefModel()
                                   {
                                       Id = uom == null ? 0 : uom.Id,
                                       Name = uom == null ? "" : uom.Name,
-                                      NativeName = uom == null ? "" : uom.NativeName
+                                      NativeName = uom == null ? "" : uom.NativeName,
+                                      NoOfBaseUnit= uom == null ?0 : uom.NoOfBaseUnit,
                                   },
-
+                                  Type = (ItemTypeCatalog)i.Type,
                                   Description = i.Description,
-                                  Type = (ItemTypeCatalog)(i.Type ?? 0),
                                   ImageUrl = i.ImageUrl,
                                   IsPeripheral = i.IsPeripheral,
                                   IsActive = i.IsActive,
@@ -395,30 +391,6 @@ namespace DataProvider
                .ForMember(s => s.children, m => m.Ignore())
                );
 
-        }
-        private void UpdateRequiredTreeValues(List<TreeTraversal<ItemModel>> allNodes, int? organizationId = null)
-        {
-            foreach (var traversedNode in allNodes)
-            {
-                traversedNode.Node.Organization = new BaseBriefModel
-                {
-                    Id = organizationId ?? 0
-                };
-                if (organizationId == null || organizationId == 0)
-                {
-                    if (traversedNode.Node.children == null || traversedNode.Node.children.Count() == 0)
-                    {
-                        traversedNode.Node.IsCartItem = true;
-                    }
-                }
-                else
-                {
-                    if (traversedNode.RootId == null)
-                    {
-                        traversedNode.Node.IsCartItem = true;
-                    }
-                }
-            }
         }
     }
 }

@@ -50,6 +50,7 @@
     <Compile Include="BriefModel\BaseBriefModel.cs" />
     <Compile Include="BriefModel\MemberBriefModel.cs" />
     <Compile Include="BriefModel\UOMBriefModel.cs" />
+    <Compile Include="CampaignModel.cs" />
     <Compile Include="DonationRequestOrganizationItemModel.cs" />
     <Compile Include="DonationRequestOrganizationModel.cs" />
     <Compile Include="Interfaces\IBase.cs" />
@@ -60,6 +61,8 @@
     <Compile Include="OrganizationMemberModel.cs" />
     <Compile Include="OrganizationModel.cs" />
     <Compile Include="ItemModel.cs" />
+    <Compile Include="PackageItemModel.cs" />
+    <Compile Include="PackageModel.cs" />
     <Compile Include="PaginatedResultModel.cs" />
     <Compile Include="MemberModel.cs" />
     <Compile Include="DonationRequestItemModel.cs" />

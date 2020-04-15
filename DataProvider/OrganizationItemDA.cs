@@ -121,6 +121,24 @@ namespace DataProvider
             }
             dbModel.OrganizationId = model.Organization.Id;
             dbModel.ItemId = model.Item.Id;
+            if (model.Campaign == null || model.Campaign.Id == 0)
+            {
+                dbModel.CampaignId = null;
+            }
+            else
+            {
+                dbModel.CampaignId = model.Campaign.Id;
+            }
+            if (model.CampaignItemUOM == null || model.CampaignItemUOM.Id == 0)
+            {
+                dbModel.CampaignItemUOM = null;
+            }
+            else
+            {
+                dbModel.CampaignItemUOM = model.CampaignItemUOM.Id;
+            }
+            dbModel.CampaignItemTarget = model.CampaignItemTarget;
+            dbModel.IsCampaignItemOnly = model.IsCampaignItemOnly;
             SetBaseProperties(dbModel, model);
             return dbModel;
         }

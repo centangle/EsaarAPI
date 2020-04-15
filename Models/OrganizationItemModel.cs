@@ -11,9 +11,15 @@ namespace Models
         {
             Organization = new BaseBriefModel();
             Item = new BaseBriefModel();
+            Campaign = new BaseBriefModel();
+            CampaignItemUOM = new UOMBriefModel();
         }
         public BaseBriefModel Organization { get; set; }
         public BaseBriefModel Item { get; set; }
+        public BaseBriefModel Campaign { get; set; }
+        public double CampaignItemTarget { get; set; }
+        public UOMBriefModel CampaignItemUOM { get; set; }
+        public bool IsCampaignItemOnly { get; set; }
     }
     public class OrganizationItemPaginationModel : OrganizationItemModel
     {

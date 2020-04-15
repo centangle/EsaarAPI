@@ -114,6 +114,25 @@
           <Property Name="UpdatedBy" Type="int" Nullable="false" />
           <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
+        <EntityType Name="Campaign">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrganizationId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="500" />
+          <Property Name="StartDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="EndDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
         <EntityType Name="Country">
           <Key>
             <PropertyRef Name="Id" />
@@ -275,7 +294,6 @@
           <Property Name="Type" Type="int" />
           <Property Name="ImageUrl" Type="varchar" MaxLength="200" />
           <Property Name="IsPeripheral" Type="bit" Nullable="false" />
-          <Property Name="IsCartItem" Type="bit" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -340,6 +358,10 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="OrganizationId" Type="int" Nullable="false" />
           <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="CampaignItemTarget" Type="float" />
+          <Property Name="CampaignItemUOM" Type="int" />
+          <Property Name="CampaignId" Type="int" />
+          <Property Name="IsCampaignItemOnly" Type="bit" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -373,6 +395,22 @@
           <Property Name="ModeratorId" Type="int" />
           <Property Name="Status" Type="int" Nullable="false" />
           <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PackageItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PackageId" Type="int" Nullable="false" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="ItemQuantity" Type="float" Nullable="false" />
+          <Property Name="ItemUOM" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -562,6 +600,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Campaign_Organization">
+          <End Role="Organization" Type="Self.Organization" Multiplicity="1" />
+          <End Role="Campaign" Type="Self.Campaign" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Campaign">
+              <PropertyRef Name="OrganizationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ChildItem_ParentItem">
           <End Role="Item" Type="Self.Item" Multiplicity="0..1" />
           <End Role="Item1" Type="Self.Item" Multiplicity="*" />
@@ -725,6 +775,42 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="OrganizationRequest">
               <PropertyRef Name="OrganizationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PackageItems_Item">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="PackageItem" Type="Self.PackageItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PackageItem">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PackageItems_Package">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="PackageItem" Type="Self.PackageItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PackageItem">
+              <PropertyRef Name="PackageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PackageItems_UOM">
+          <End Role="UOM" Type="Self.UOM" Multiplicity="1" />
+          <End Role="PackageItem" Type="Self.PackageItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UOM">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PackageItem">
+              <PropertyRef Name="ItemUOM" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -945,6 +1031,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Attachment" EntityType="Self.Attachment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Campaign" EntityType="Self.Campaign" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Country" EntityType="Self.Country" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="District" EntityType="Self.District" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DonationRequest" EntityType="Self.DonationRequest" Schema="dbo" store:Type="Tables" />
@@ -960,6 +1047,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="OrganizationItem" EntityType="Self.OrganizationItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganizationMember" EntityType="Self.OrganizationMember" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganizationRequest" EntityType="Self.OrganizationRequest" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PackageItem" EntityType="Self.PackageItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestThread" EntityType="Self.RequestThread" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="State" EntityType="Self.State" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
@@ -999,6 +1087,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_Address_UnionCouncil" Association="Self.FK_Address_UnionCouncil">
             <End Role="UnionCouncil" EntitySet="UnionCouncil" />
             <End Role="Address" EntitySet="Address" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Campaign_Organization" Association="Self.FK_Campaign_Organization">
+            <End Role="Organization" EntitySet="Organization" />
+            <End Role="Campaign" EntitySet="Campaign" />
           </AssociationSet>
           <AssociationSet Name="FK_ChildItem_ParentItem" Association="Self.FK_ChildItem_ParentItem">
             <End Role="Item" EntitySet="Item" />
@@ -1051,6 +1143,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_OrganizationRequest_Organization" Association="Self.FK_OrganizationRequest_Organization">
             <End Role="Organization" EntitySet="Organization" />
             <End Role="OrganizationRequest" EntitySet="OrganizationRequest" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PackageItems_Item" Association="Self.FK_PackageItems_Item">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="PackageItem" EntitySet="PackageItem" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PackageItems_Package" Association="Self.FK_PackageItems_Package">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="PackageItem" EntitySet="PackageItem" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PackageItems_UOM" Association="Self.FK_PackageItems_UOM">
+            <End Role="UOM" EntitySet="UOM" />
+            <End Role="PackageItem" EntitySet="PackageItem" />
           </AssociationSet>
           <AssociationSet Name="FK_People_AspNetUsers" Association="Self.FK_People_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -1136,6 +1240,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="AspNetUserLogins" EntityType="CharityModel.AspNetUserLogin" />
           <EntitySet Name="AspNetUsers" EntityType="CharityModel.AspNetUser" />
           <EntitySet Name="Attachments" EntityType="CharityModel.Attachment" />
+          <EntitySet Name="Campaigns" EntityType="CharityModel.Campaign" />
           <EntitySet Name="Countries" EntityType="CharityModel.Country" />
           <EntitySet Name="Districts" EntityType="CharityModel.District" />
           <EntitySet Name="DonationRequests" EntityType="CharityModel.DonationRequest" />
@@ -1151,6 +1256,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="OrganizationItems" EntityType="CharityModel.OrganizationItem" />
           <EntitySet Name="OrganizationMembers" EntityType="CharityModel.OrganizationMember" />
           <EntitySet Name="OrganizationRequests" EntityType="CharityModel.OrganizationRequest" />
+          <EntitySet Name="PackageItems" EntityType="CharityModel.PackageItem" />
           <EntitySet Name="RequestThreads" EntityType="CharityModel.RequestThread" />
           <EntitySet Name="States" EntityType="CharityModel.State" />
           <EntitySet Name="sysdiagrams" EntityType="CharityModel.sysdiagram" />
@@ -1193,6 +1299,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_People_AspNetUsers" Association="CharityModel.FK_People_AspNetUsers">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Member" EntitySet="Members" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Campaign_Organization" Association="CharityModel.FK_Campaign_Organization">
+            <End Role="Organization" EntitySet="Organizations" />
+            <End Role="Campaign" EntitySet="Campaigns" />
           </AssociationSet>
           <AssociationSet Name="FK_Request_Country" Association="CharityModel.FK_Request_Country">
             <End Role="Country" EntitySet="Countries" />
@@ -1270,6 +1380,14 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="Item" EntitySet="Items" />
             <End Role="OrganizationItem" EntitySet="OrganizationItems" />
           </AssociationSet>
+          <AssociationSet Name="FK_PackageItems_Item" Association="CharityModel.FK_PackageItems_Item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="PackageItem" EntitySet="PackageItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PackageItems_Package" Association="CharityModel.FK_PackageItems_Package">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="PackageItem" EntitySet="PackageItems" />
+          </AssociationSet>
           <AssociationSet Name="FK_OrganizationMember_Member" Association="CharityModel.FK_OrganizationMember_Member">
             <End Role="Member" EntitySet="Members" />
             <End Role="OrganizationMember" EntitySet="OrganizationMembers" />
@@ -1289,6 +1407,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_OrganizationRequest_Organization" Association="CharityModel.FK_OrganizationRequest_Organization">
             <End Role="Organization" EntitySet="Organizations" />
             <End Role="OrganizationRequest" EntitySet="OrganizationRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PackageItems_UOM" Association="CharityModel.FK_PackageItems_UOM">
+            <End Role="UOM" EntitySet="UOMs" />
+            <End Role="PackageItem" EntitySet="PackageItems" />
           </AssociationSet>
           <AssociationSet Name="FK_UnionCouncil_Tehsil" Association="CharityModel.FK_UnionCouncil_Tehsil">
             <End Role="Tehsil" EntitySet="Tehsils" />
@@ -1426,6 +1548,26 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+        </EntityType>
+        <EntityType Name="Campaign">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrganizationId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ImageUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Organization" Relationship="CharityModel.FK_Campaign_Organization" FromRole="Campaign" ToRole="Organization" />
         </EntityType>
         <EntityType Name="Country">
           <Key>
@@ -1613,7 +1755,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Type" Type="Int32" />
           <Property Name="ImageUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="IsPeripheral" Type="Boolean" Nullable="false" />
-          <Property Name="IsCartItem" Type="Boolean" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -1624,6 +1765,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <NavigationProperty Name="Item1" Relationship="CharityModel.FK_ChildItem_ParentItem" FromRole="Item" ToRole="Item1" />
           <NavigationProperty Name="Item2" Relationship="CharityModel.FK_ChildItem_ParentItem" FromRole="Item1" ToRole="Item" />
           <NavigationProperty Name="OrganizationItems" Relationship="CharityModel.FK_OrganizationItem_Item" FromRole="Item" ToRole="OrganizationItem" />
+          <NavigationProperty Name="PackageItems" Relationship="CharityModel.FK_PackageItems_Item" FromRole="Item" ToRole="PackageItem" />
+          <NavigationProperty Name="PackageItems1" Relationship="CharityModel.FK_PackageItems_Package" FromRole="Item" ToRole="PackageItem" />
         </EntityType>
         <EntityType Name="Log">
           <Key>
@@ -1678,6 +1821,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Campaigns" Relationship="CharityModel.FK_Campaign_Organization" FromRole="Organization" ToRole="Campaign" />
           <NavigationProperty Name="DonationRequestOrganizations" Relationship="CharityModel.FK_RequestOrganization_Organization" FromRole="Organization" ToRole="DonationRequestOrganization" />
           <NavigationProperty Name="Organization1" Relationship="CharityModel.FK_Organization_Organization" FromRole="Organization" ToRole="Organization1" />
           <NavigationProperty Name="Organization2" Relationship="CharityModel.FK_Organization_Organization" FromRole="Organization1" ToRole="Organization" />
@@ -1692,6 +1836,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="OrganizationId" Type="Int32" Nullable="false" />
           <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="CampaignItemTarget" Type="Double" />
+          <Property Name="CampaignItemUOM" Type="Int32" />
+          <Property Name="CampaignId" Type="Int32" />
+          <Property Name="IsCampaignItemOnly" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -1736,6 +1884,25 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Organization" Relationship="CharityModel.FK_OrganizationRequest_Organization" FromRole="OrganizationRequest" ToRole="Organization" />
+        </EntityType>
+        <EntityType Name="PackageItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PackageId" Type="Int32" Nullable="false" />
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="ItemQuantity" Type="Double" Nullable="false" />
+          <Property Name="ItemUOM" Type="Int32" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Item" Relationship="CharityModel.FK_PackageItems_Item" FromRole="PackageItem" ToRole="Item" />
+          <NavigationProperty Name="Item1" Relationship="CharityModel.FK_PackageItems_Package" FromRole="PackageItem" ToRole="Item" />
+          <NavigationProperty Name="UOM" Relationship="CharityModel.FK_PackageItems_UOM" FromRole="PackageItem" ToRole="UOM" />
         </EntityType>
         <EntityType Name="RequestThread">
           <Key>
@@ -1845,6 +2012,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="DonationRequestItems" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="UOM" ToRole="DonationRequestItem" />
+          <NavigationProperty Name="PackageItems" Relationship="CharityModel.FK_PackageItems_UOM" FromRole="UOM" ToRole="PackageItem" />
         </EntityType>
         <EntityType Name="RefreshToken">
           <Key>
@@ -1966,6 +2134,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="Member">
               <PropertyRef Name="AuthUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Campaign_Organization">
+          <End Type="CharityModel.Organization" Role="Organization" Multiplicity="1" />
+          <End Type="CharityModel.Campaign" Role="Campaign" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organization">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Campaign">
+              <PropertyRef Name="OrganizationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2201,6 +2381,30 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PackageItems_Item">
+          <End Type="CharityModel.Item" Role="Item" Multiplicity="1" />
+          <End Type="CharityModel.PackageItem" Role="PackageItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PackageItem">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PackageItems_Package">
+          <End Type="CharityModel.Item" Role="Item" Multiplicity="1" />
+          <End Type="CharityModel.PackageItem" Role="PackageItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PackageItem">
+              <PropertyRef Name="PackageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_OrganizationMember_Member">
           <End Type="CharityModel.Member" Role="Member" Multiplicity="1" />
           <End Type="CharityModel.OrganizationMember" Role="OrganizationMember" Multiplicity="*" />
@@ -2258,6 +2462,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="OrganizationRequest">
               <PropertyRef Name="OrganizationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PackageItems_UOM">
+          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="1" />
+          <End Type="CharityModel.PackageItem" Role="PackageItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UOM">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PackageItem">
+              <PropertyRef Name="ItemUOM" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2386,6 +2602,26 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="Url" ColumnName="Url" />
                 <ScalarProperty Name="EntityType" ColumnName="EntityType" />
                 <ScalarProperty Name="EntityId" ColumnName="EntityId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Campaigns">
+            <EntityTypeMapping TypeName="CharityModel.Campaign">
+              <MappingFragment StoreEntitySet="Campaign">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2553,7 +2789,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsCartItem" ColumnName="IsCartItem" />
                 <ScalarProperty Name="IsPeripheral" ColumnName="IsPeripheral" />
                 <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
@@ -2630,6 +2865,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsCampaignItemOnly" ColumnName="IsCampaignItemOnly" />
+                <ScalarProperty Name="CampaignId" ColumnName="CampaignId" />
+                <ScalarProperty Name="CampaignItemUOM" ColumnName="CampaignItemUOM" />
+                <ScalarProperty Name="CampaignItemTarget" ColumnName="CampaignItemTarget" />
                 <ScalarProperty Name="ItemId" ColumnName="ItemId" />
                 <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -2667,6 +2906,23 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="EntityType" ColumnName="EntityType" />
                 <ScalarProperty Name="EntityId" ColumnName="EntityId" />
                 <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PackageItems">
+            <EntityTypeMapping TypeName="CharityModel.PackageItem">
+              <MappingFragment StoreEntitySet="PackageItem">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ItemUOM" ColumnName="ItemUOM" />
+                <ScalarProperty Name="ItemQuantity" ColumnName="ItemQuantity" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="PackageId" ColumnName="PackageId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

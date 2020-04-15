@@ -25,7 +25,7 @@ namespace DataProvider
                         if (result)
                         {
                             model.Id = dbModel.Id;
-                            AddChildUOM(context, model);
+                            AddChildUOM(context, model.children, model.Id);
                             await context.SaveChangesAsync();
                         }
                         transaction.Commit();
@@ -52,7 +52,7 @@ namespace DataProvider
                         if (dbModel != null)
                         {
                             SetUOM(dbModel, model, null);
-                            var childModified = await ModifyChildItems(context, model);
+                            var childModified = await ModifyChildUOMS(context, model);
                             bool result = (await context.SaveChangesAsync() > 0 && childModified);
                             transaction.Commit();
                             return result;
@@ -164,22 +164,22 @@ namespace DataProvider
             }
         }
 
-        private async Task<bool> ModifyChildItems(CharityEntities context, UOMModel model)
+        private async Task<bool> ModifyChildUOMS(CharityEntities context, UOMModel model)
         {
             var masterList = await context.UOMs.Where(x => x.ParentId == model.Id).ToListAsync();
             var newItems = UpdatedListItem.NewItems(model.children);
             var updatedItems = UpdatedListItem.UpdatedItems(masterList, model.children);
             var deletedItems = UpdatedListItem.DeletedItems(masterList, model.children);
-            AddChildUOM(context, model);
+            AddChildUOM(context, newItems, model.Id);
             UpdateChildUOM(updatedItems, model.children);
             DeleteChildUOM(deletedItems);
             return await context.SaveChangesAsync() > 0;
         }
-        private void AddChildUOM(CharityEntities context, UOMModel model)
+        private void AddChildUOM(CharityEntities context, ICollection<UOMModel> childUOMS, int parentId)
         {
-            foreach (var item in model.children)
+            foreach (var item in childUOMS)
             {
-                var dbModel = SetUOM(new UOM(), item, model.Id);
+                var dbModel = SetUOM(new UOM(), item, parentId);
                 context.UOMs.Add(dbModel);
             }
         }

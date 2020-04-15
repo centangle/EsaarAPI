@@ -12,15 +12,16 @@ namespace DataProvider
     using System;
     using System.Collections.Generic;
     
-    public partial class OrganizationItem
+    public partial class Campaign
     {
         public int Id { get; set; }
         public int OrganizationId { get; set; }
-        public int ItemId { get; set; }
-        public Nullable<double> CampaignItemTarget { get; set; }
-        public Nullable<int> CampaignItemUOM { get; set; }
-        public Nullable<int> CampaignId { get; set; }
-        public bool IsCampaignItemOnly { get; set; }
+        public string Name { get; set; }
+        public string NativeName { get; set; }
+        public string Description { get; set; }
+        public string ImageUrl { get; set; }
+        public System.DateTime StartDate { get; set; }
+        public System.DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }
@@ -28,7 +29,6 @@ namespace DataProvider
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
     
-        public virtual Item Item { get; set; }
         public virtual Organization Organization { get; set; }
     }
 }

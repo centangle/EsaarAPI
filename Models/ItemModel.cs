@@ -8,15 +8,8 @@ using System.Runtime.Serialization;
 
 namespace Models
 {
-    public class ItemModel : BaseModel, IImage, ITree<ItemModel>, IPeripheral
+    public class ItemBaseModel : BaseModel, IImage
     {
-        public ItemModel()
-        {
-            children = new List<ItemModel>();
-            Organization = new BaseBriefModel();
-            DefaultUOM = new BaseBriefModel();
-            Root = new BaseBriefModel();
-        }
         [Required]
         public string Name { get; set; }
         public string NativeName { get; set; }
@@ -46,10 +39,13 @@ namespace Models
         }
         public BaseBriefModel Parent { get; set; }
         public BaseBriefModel Root { get; set; }
-        public BaseBriefModel DefaultUOM { get; set; }
+        public UOMBriefModel DefaultUOM { get; set; }
         public BaseBriefModel Organization { get; set; }
         [IgnoreDataMember]
-        public ItemTypeCatalog Type { get; set; }
+        public ItemTypeCatalog Type
+        {
+            get;set;
+        }
         [IgnoreDataMember]
         public string BaseFolder
         {
@@ -62,8 +58,17 @@ namespace Models
         public string ImageUrl { get; set; }
         public string ImageInBase64 { get; set; }
         public bool IsPeripheral { get; set; }
-        public bool IsCartItem { get; set; }
-
+    }
+    public class ItemModel : ItemBaseModel, ITree<ItemModel>, IPeripheral
+    {
+        public ItemModel()
+        {
+            children = new List<ItemModel>();
+            Organization = new BaseBriefModel();
+            DefaultUOM = new UOMBriefModel();
+            Root = new BaseBriefModel();
+            Type = ItemTypeCatalog.General;
+        }
         public ICollection<ItemModel> children { get; set; }
     }
 }

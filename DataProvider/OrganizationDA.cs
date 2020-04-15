@@ -198,6 +198,12 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
+                List<OrganizationMemberRolesCatalog> currentMemberRoles = new List<OrganizationMemberRolesCatalog>();
+                var memberOrganization = (await GetMemberRoleForOrganization(id, _loggedInMemberId)).FirstOrDefault();
+                if (memberOrganization != null)
+                {
+                    currentMemberRoles = memberOrganization.Roles;
+                }
                 return await (from o in context.Organizations
                               join ob in context.Members on o.OwnedBy equals ob.Id
                               join po in context.Organizations on o.ParentId equals po.Id into tpo
@@ -224,6 +230,7 @@ namespace DataProvider
                                       Name = ob == null ? "" : ob.Name,
                                       NativeName = ob == null ? "" : ob.NativeName
                                   },
+                                  CurrentMemberRoles = currentMemberRoles,
                                   IsVerified = o.IsVerified,
                                   IsPeripheral = o.IsPeripheral,
                                   IsActive = o.IsActive,

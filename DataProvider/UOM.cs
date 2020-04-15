@@ -18,6 +18,7 @@ namespace DataProvider
         public UOM()
         {
             this.DonationRequestItems = new HashSet<DonationRequestItem>();
+            this.PackageItems = new HashSet<PackageItem>();
         }
     
         public int Id { get; set; }
@@ -36,5 +37,7 @@ namespace DataProvider
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DonationRequestItem> DonationRequestItems { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PackageItem> PackageItems { get; set; }
     }
 }
