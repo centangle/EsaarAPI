@@ -14,6 +14,6 @@ namespace DataProvider
     public partial class DonationRequestOrganization : IBase { }
     public partial class DonationRequestOrganizationItem : IBase { }
     public partial class Campaign : IBase { }
-
     public partial class PackageItem : IBase { }
+    public partial class EntityRegion : IBase { }
 }

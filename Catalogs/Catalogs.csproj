@@ -42,12 +42,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttachmentCatalog.cs" />
+    <Compile Include="EntityRegionCatalog.cs" />
     <Compile Include="GeneralCatalogs.cs" />
     <Compile Include="MemberCatalogs.cs" />
     <Compile Include="ItemCatalogs.cs" />
     <Compile Include="OrganizationCatalogs.cs" />
     <Compile Include="PaginationCatalogs.cs" />
     <Compile Include="DonationRequestCatalog.cs" />
+    <Compile Include="RegionCatalog.cs" />
     <Compile Include="RequestThreadCatalogs.cs" />
     <Compile Include="StatusCatalogs.cs" />
     <Compile Include="UOMCatalogs.cs" />

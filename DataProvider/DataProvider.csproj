@@ -132,6 +132,10 @@
     <Compile Include="EDMXPartialClasses\Item.cs" />
     <Compile Include="EDMXPartialClasses\Organization.cs" />
     <Compile Include="EDMXPartialClasses\IBaseClasses.cs" />
+    <Compile Include="EntityRegion.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EntityRegionDA.cs" />
     <Compile Include="ExceptionLog.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -181,6 +185,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DonationRequestDA.cs" />
     <Compile Include="DonationRequestItemDA.cs" />
+    <Compile Include="RegionDA.cs" />
     <Compile Include="RequestThread.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>

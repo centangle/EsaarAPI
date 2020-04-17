@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -18,7 +19,11 @@ namespace DataManager.GlobalFaultExceptionHandler
                              HttpStatusCode.BadRequest);
             }
 
-            throw getError("An error occurred, please try again later or contact the administrator.",
+            //throw getError("An error occurred, please try again later or contact the administrator.",
+            //                "Critical Exception",
+            //                HttpStatusCode.InternalServerError);
+
+            throw getError((context.Exception as Exception).Message,
                             "Critical Exception",
                             HttpStatusCode.InternalServerError);
         }

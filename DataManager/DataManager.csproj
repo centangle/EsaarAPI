@@ -202,8 +202,10 @@
   <ItemGroup>
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\DonationRequestController.cs" />
+    <Compile Include="Controllers\EntityRegionController.cs" />
     <Compile Include="Controllers\OrganizationPackageController.cs" />
     <Compile Include="Controllers\OrganizationRequestController.cs" />
+    <Compile Include="Controllers\RegionController.cs" />
     <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="Controllers\RequestThreadController.cs" />
     <Compile Include="Controllers\VolunteerController.cs" />

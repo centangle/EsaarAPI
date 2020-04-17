@@ -137,11 +137,10 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
-          <Property Name="Longitude" Type="varchar" MaxLength="500" />
-          <Property Name="Latitude" Type="varchar" MaxLength="500" />
+          <Property Name="Geometry" Type="geometry" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -153,12 +152,11 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
           <Property Name="StateId" Type="int" Nullable="false" />
-          <Property Name="Longitude" Type="varchar" MaxLength="500" />
-          <Property Name="Latitude" Type="varchar" MaxLength="500" />
+          <Property Name="Geometry" Type="geometry" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -262,6 +260,24 @@
           <Property Name="DonationRequestId" Type="int" Nullable="false" />
           <Property Name="VolunteerId" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EntityRegion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EntityId" Type="int" Nullable="false" />
+          <Property Name="EntityType" Type="int" Nullable="false" />
+          <Property Name="RegionLevel" Type="int" Nullable="false" />
+          <Property Name="RegionId" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsApproved" Type="bit" Nullable="false" />
+          <Property Name="ApprovedBy" Type="int" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
@@ -453,12 +469,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" />
           <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
           <Property Name="CountryId" Type="int" Nullable="false" />
-          <Property Name="Longitude" Type="varchar" MaxLength="500" />
-          <Property Name="Latitude" Type="varchar" MaxLength="500" />
+          <Property Name="Geometry" Type="geometry" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -480,12 +495,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" />
           <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
           <Property Name="DistrictId" Type="int" Nullable="false" />
-          <Property Name="Longitude" Type="varchar" MaxLength="500" />
-          <Property Name="Latitude" Type="varchar" MaxLength="500" />
+          <Property Name="Geometry" Type="geometry" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -497,12 +511,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" />
           <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
           <Property Name="TehsilId" Type="int" Nullable="false" />
-          <Property Name="Longitude" Type="varchar" MaxLength="500" />
-          <Property Name="Latitude" Type="varchar" MaxLength="500" />
+          <Property Name="Geometry" Type="geometry" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -1039,6 +1052,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="DonationRequestOrganization" EntityType="Self.DonationRequestOrganization" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DonationRequestOrganizationItem" EntityType="Self.DonationRequestOrganizationItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DonationRequestVolunteer" EntityType="Self.DonationRequestVolunteer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EntityRegion" EntityType="Self.EntityRegion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExceptionLog" EntityType="Self.ExceptionLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Item" EntityType="Self.Item" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Log" EntityType="Self.Log" Schema="dbo" store:Type="Tables" />
@@ -1248,6 +1262,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="DonationRequestOrganizations" EntityType="CharityModel.DonationRequestOrganization" />
           <EntitySet Name="DonationRequestOrganizationItems" EntityType="CharityModel.DonationRequestOrganizationItem" />
           <EntitySet Name="DonationRequestVolunteers" EntityType="CharityModel.DonationRequestVolunteer" />
+          <EntitySet Name="EntityRegions" EntityType="CharityModel.EntityRegion" />
           <EntitySet Name="ExceptionLogs" EntityType="CharityModel.ExceptionLog" />
           <EntitySet Name="Items" EntityType="CharityModel.Item" />
           <EntitySet Name="Logs" EntityType="CharityModel.Log" />
@@ -1573,11 +1588,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Geometry" Type="Geometry" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -1592,12 +1606,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="StateId" Type="Int32" Nullable="false" />
-          <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Geometry" Type="Geometry" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -1728,6 +1741,24 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="DonationRequest" Relationship="CharityModel.FK_RequestVolunteer_RequestVolunteer" FromRole="DonationRequestVolunteer" ToRole="DonationRequest" />
           <NavigationProperty Name="Member" Relationship="CharityModel.FK_RequestVolunteer_Member" FromRole="DonationRequestVolunteer" ToRole="Member" />
+        </EntityType>
+        <EntityType Name="EntityRegion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EntityId" Type="Int32" Nullable="false" />
+          <Property Name="EntityType" Type="Int32" Nullable="false" />
+          <Property Name="RegionLevel" Type="Int32" Nullable="false" />
+          <Property Name="RegionId" Type="Int32" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsApproved" Type="Boolean" Nullable="false" />
+          <Property Name="ApprovedBy" Type="Int32" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
         </EntityType>
         <EntityType Name="ExceptionLog">
           <Key>
@@ -1926,12 +1957,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="CountryId" Type="Int32" Nullable="false" />
-          <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Geometry" Type="Geometry" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -1957,12 +1987,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="DistrictId" Type="Int32" Nullable="false" />
-          <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Geometry" Type="Geometry" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -1978,12 +2007,11 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="TehsilId" Type="Int32" Nullable="false" />
-          <Property Name="Longitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Latitude" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Geometry" Type="Geometry" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
@@ -2635,8 +2663,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Geometry" ColumnName="Geometry" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -2652,8 +2679,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Geometry" ColumnName="Geometry" />
                 <ScalarProperty Name="StateId" ColumnName="StateId" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2764,6 +2790,25 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="VolunteerId" ColumnName="VolunteerId" />
                 <ScalarProperty Name="DonationRequestId" ColumnName="DonationRequestId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EntityRegions">
+            <EntityTypeMapping TypeName="CharityModel.EntityRegion">
+              <MappingFragment StoreEntitySet="EntityRegion">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
+                <ScalarProperty Name="RegionLevel" ColumnName="RegionLevel" />
+                <ScalarProperty Name="EntityType" ColumnName="EntityType" />
+                <ScalarProperty Name="EntityId" ColumnName="EntityId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2955,8 +3000,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Geometry" ColumnName="Geometry" />
                 <ScalarProperty Name="CountryId" ColumnName="CountryId" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2984,8 +3028,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Geometry" ColumnName="Geometry" />
                 <ScalarProperty Name="DistrictId" ColumnName="DistrictId" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -3002,8 +3045,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Geometry" ColumnName="Geometry" />
                 <ScalarProperty Name="TehsilId" ColumnName="TehsilId" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />

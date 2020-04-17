@@ -25,8 +25,7 @@ namespace DataProvider
         public int Id { get; set; }
         public string Name { get; set; }
         public string NativeName { get; set; }
-        public string Longitude { get; set; }
-        public string Latitude { get; set; }
+        public System.Data.Entity.Spatial.DbGeometry Geometry { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }

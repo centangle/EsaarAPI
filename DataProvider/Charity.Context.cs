@@ -42,6 +42,7 @@ namespace DataProvider
         public virtual DbSet<DonationRequestOrganization> DonationRequestOrganizations { get; set; }
         public virtual DbSet<DonationRequestOrganizationItem> DonationRequestOrganizationItems { get; set; }
         public virtual DbSet<DonationRequestVolunteer> DonationRequestVolunteers { get; set; }
+        public virtual DbSet<EntityRegion> EntityRegions { get; set; }
         public virtual DbSet<ExceptionLog> ExceptionLogs { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Log> Logs { get; set; }

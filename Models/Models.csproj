@@ -49,10 +49,12 @@
     <Compile Include="Base\BaseSearchModel.cs" />
     <Compile Include="BriefModel\BaseBriefModel.cs" />
     <Compile Include="BriefModel\MemberBriefModel.cs" />
+    <Compile Include="BriefModel\RegionBriefModel.cs" />
     <Compile Include="BriefModel\UOMBriefModel.cs" />
     <Compile Include="CampaignModel.cs" />
     <Compile Include="DonationRequestOrganizationItemModel.cs" />
     <Compile Include="DonationRequestOrganizationModel.cs" />
+    <Compile Include="EntityRegionModel.cs" />
     <Compile Include="Interfaces\IBase.cs" />
     <Compile Include="Interfaces\IImage.cs" />
     <Compile Include="Interfaces\IName.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="MemberModel.cs" />
     <Compile Include="DonationRequestItemModel.cs" />
     <Compile Include="DonationRequestModel.cs" />
+    <Compile Include="RegionSearchModel.cs" />
     <Compile Include="RequestThreadModel.cs" />
     <Compile Include="UOMModel.cs" />
     <Compile Include="UserModel.cs" />
