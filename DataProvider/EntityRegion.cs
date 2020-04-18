@@ -32,5 +32,11 @@ namespace DataProvider
         public System.DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
         public System.DateTime UpdatedDate { get; set; }
+    
+        public virtual Country Country { get; set; }
+        public virtual District District { get; set; }
+        public virtual State State { get; set; }
+        public virtual Tehsil Tehsil { get; set; }
+        public virtual UnionCouncil UnionCouncil { get; set; }
     }
 }

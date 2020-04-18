@@ -18,6 +18,7 @@ namespace DataProvider
         public Country()
         {
             this.Addresses = new HashSet<Address>();
+            this.EntityRegions = new HashSet<EntityRegion>();
             this.DonationRequests = new HashSet<DonationRequest>();
             this.States = new HashSet<State>();
         }
@@ -35,6 +36,8 @@ namespace DataProvider
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Address> Addresses { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EntityRegion> EntityRegions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DonationRequest> DonationRequests { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -136,6 +136,9 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="EntityRegionDA.cs" />
+    <Compile Include="Event.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
     <Compile Include="ExceptionLog.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>

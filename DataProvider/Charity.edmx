@@ -126,6 +126,7 @@
           <Property Name="ImageUrl" Type="varchar" MaxLength="500" />
           <Property Name="StartDate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="EndDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="EventId" Type="int" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -283,6 +284,24 @@
           <Property Name="DistrictId" Type="int" />
           <Property Name="TehsilId" Type="int" />
           <Property Name="UnionCouncilId" Type="int" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="ImageUrl" Type="varchar" MaxLength="500" />
+          <Property Name="StartDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="EndDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
@@ -619,6 +638,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Campaign_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="0..1" />
+          <End Role="Campaign" Type="Self.Campaign" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Campaign">
+              <PropertyRef Name="EventId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Campaign_Organization">
           <End Role="Organization" Type="Self.Organization" Multiplicity="1" />
           <End Role="Campaign" Type="Self.Campaign" Multiplicity="*" />
@@ -722,6 +753,66 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="DonationRequestOrganization1">
               <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntityRegion_Country">
+          <End Role="Country" Type="Self.Country" Multiplicity="0..1" />
+          <End Role="EntityRegion" Type="Self.EntityRegion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntityRegion">
+              <PropertyRef Name="CountryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntityRegion_District">
+          <End Role="District" Type="Self.District" Multiplicity="0..1" />
+          <End Role="EntityRegion" Type="Self.EntityRegion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="District">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntityRegion">
+              <PropertyRef Name="DistrictId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntityRegion_State">
+          <End Role="State" Type="Self.State" Multiplicity="0..1" />
+          <End Role="EntityRegion" Type="Self.EntityRegion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="State">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntityRegion">
+              <PropertyRef Name="StateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntityRegion_Tehsil">
+          <End Role="Tehsil" Type="Self.Tehsil" Multiplicity="0..1" />
+          <End Role="EntityRegion" Type="Self.EntityRegion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tehsil">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntityRegion">
+              <PropertyRef Name="TehsilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntityRegion_UnionCouncil">
+          <End Role="UnionCouncil" Type="Self.UnionCouncil" Multiplicity="0..1" />
+          <End Role="EntityRegion" Type="Self.EntityRegion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnionCouncil">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntityRegion">
+              <PropertyRef Name="UnionCouncilId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1059,6 +1150,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="DonationRequestOrganizationItem" EntityType="Self.DonationRequestOrganizationItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DonationRequestVolunteer" EntityType="Self.DonationRequestVolunteer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EntityRegion" EntityType="Self.EntityRegion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Event" EntityType="Self.Event" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExceptionLog" EntityType="Self.ExceptionLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Item" EntityType="Self.Item" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Log" EntityType="Self.Log" Schema="dbo" store:Type="Tables" />
@@ -1108,6 +1200,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="UnionCouncil" EntitySet="UnionCouncil" />
             <End Role="Address" EntitySet="Address" />
           </AssociationSet>
+          <AssociationSet Name="FK_Campaign_Event" Association="Self.FK_Campaign_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="Campaign" EntitySet="Campaign" />
+          </AssociationSet>
           <AssociationSet Name="FK_Campaign_Organization" Association="Self.FK_Campaign_Organization">
             <End Role="Organization" EntitySet="Organization" />
             <End Role="Campaign" EntitySet="Campaign" />
@@ -1139,6 +1235,26 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_DonationRequestOrganization_DonationRequestOrganization" Association="Self.FK_DonationRequestOrganization_DonationRequestOrganization">
             <End Role="DonationRequestOrganization" EntitySet="DonationRequestOrganization" />
             <End Role="DonationRequestOrganization1" EntitySet="DonationRequestOrganization" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntityRegion_Country" Association="Self.FK_EntityRegion_Country">
+            <End Role="Country" EntitySet="Country" />
+            <End Role="EntityRegion" EntitySet="EntityRegion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntityRegion_District" Association="Self.FK_EntityRegion_District">
+            <End Role="District" EntitySet="District" />
+            <End Role="EntityRegion" EntitySet="EntityRegion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntityRegion_State" Association="Self.FK_EntityRegion_State">
+            <End Role="State" EntitySet="State" />
+            <End Role="EntityRegion" EntitySet="EntityRegion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntityRegion_Tehsil" Association="Self.FK_EntityRegion_Tehsil">
+            <End Role="Tehsil" EntitySet="Tehsil" />
+            <End Role="EntityRegion" EntitySet="EntityRegion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntityRegion_UnionCouncil" Association="Self.FK_EntityRegion_UnionCouncil">
+            <End Role="UnionCouncil" EntitySet="UnionCouncil" />
+            <End Role="EntityRegion" EntitySet="EntityRegion" />
           </AssociationSet>
           <AssociationSet Name="FK_Organization_Organization" Association="Self.FK_Organization_Organization">
             <End Role="Organization" EntitySet="Organization" />
@@ -1269,6 +1385,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="DonationRequestOrganizationItems" EntityType="CharityModel.DonationRequestOrganizationItem" />
           <EntitySet Name="DonationRequestVolunteers" EntityType="CharityModel.DonationRequestVolunteer" />
           <EntitySet Name="EntityRegions" EntityType="CharityModel.EntityRegion" />
+          <EntitySet Name="Events" EntityType="CharityModel.Event" />
           <EntitySet Name="ExceptionLogs" EntityType="CharityModel.ExceptionLog" />
           <EntitySet Name="Items" EntityType="CharityModel.Item" />
           <EntitySet Name="Logs" EntityType="CharityModel.Log" />
@@ -1321,9 +1438,17 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Member" EntitySet="Members" />
           </AssociationSet>
+          <AssociationSet Name="FK_Campaign_Event" Association="CharityModel.FK_Campaign_Event">
+            <End Role="Event" EntitySet="Events" />
+            <End Role="Campaign" EntitySet="Campaigns" />
+          </AssociationSet>
           <AssociationSet Name="FK_Campaign_Organization" Association="CharityModel.FK_Campaign_Organization">
             <End Role="Organization" EntitySet="Organizations" />
             <End Role="Campaign" EntitySet="Campaigns" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntityRegion_Country" Association="CharityModel.FK_EntityRegion_Country">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="EntityRegion" EntitySet="EntityRegions" />
           </AssociationSet>
           <AssociationSet Name="FK_Request_Country" Association="CharityModel.FK_Request_Country">
             <End Role="Country" EntitySet="Countries" />
@@ -1336,6 +1461,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_District_State" Association="CharityModel.FK_District_State">
             <End Role="State" EntitySet="States" />
             <End Role="District" EntitySet="Districts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntityRegion_District" Association="CharityModel.FK_EntityRegion_District">
+            <End Role="District" EntitySet="Districts" />
+            <End Role="EntityRegion" EntitySet="EntityRegions" />
           </AssociationSet>
           <AssociationSet Name="FK_Request_District" Association="CharityModel.FK_Request_District">
             <End Role="District" EntitySet="Districts" />
@@ -1392,6 +1521,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_RequestVolunteer_Member" Association="CharityModel.FK_RequestVolunteer_Member">
             <End Role="Member" EntitySet="Members" />
             <End Role="DonationRequestVolunteer" EntitySet="DonationRequestVolunteers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntityRegion_State" Association="CharityModel.FK_EntityRegion_State">
+            <End Role="State" EntitySet="States" />
+            <End Role="EntityRegion" EntitySet="EntityRegions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntityRegion_Tehsil" Association="CharityModel.FK_EntityRegion_Tehsil">
+            <End Role="Tehsil" EntitySet="Tehsils" />
+            <End Role="EntityRegion" EntitySet="EntityRegions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntityRegion_UnionCouncil" Association="CharityModel.FK_EntityRegion_UnionCouncil">
+            <End Role="UnionCouncil" EntitySet="UnionCouncils" />
+            <End Role="EntityRegion" EntitySet="EntityRegions" />
           </AssociationSet>
           <AssociationSet Name="FK_ChildItem_ParentItem" Association="CharityModel.FK_ChildItem_ParentItem">
             <End Role="Item" EntitySet="Items" />
@@ -1582,12 +1723,14 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="ImageUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="EventId" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedBy" Type="Int32" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Event" Relationship="CharityModel.FK_Campaign_Event" FromRole="Campaign" ToRole="Event" />
           <NavigationProperty Name="Organization" Relationship="CharityModel.FK_Campaign_Organization" FromRole="Campaign" ToRole="Organization" />
         </EntityType>
         <EntityType Name="Country">
@@ -1605,6 +1748,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_Country" FromRole="Country" ToRole="Address" />
+          <NavigationProperty Name="EntityRegions" Relationship="CharityModel.FK_EntityRegion_Country" FromRole="Country" ToRole="EntityRegion" />
           <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_Country" FromRole="Country" ToRole="DonationRequest" />
           <NavigationProperty Name="States" Relationship="CharityModel.FK_State_Country" FromRole="Country" ToRole="State" />
         </EntityType>
@@ -1625,6 +1769,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_District" FromRole="District" ToRole="Address" />
           <NavigationProperty Name="State" Relationship="CharityModel.FK_District_State" FromRole="District" ToRole="State" />
+          <NavigationProperty Name="EntityRegions" Relationship="CharityModel.FK_EntityRegion_District" FromRole="District" ToRole="EntityRegion" />
           <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_District" FromRole="District" ToRole="DonationRequest" />
           <NavigationProperty Name="Tehsils" Relationship="CharityModel.FK_Tehsil_District" FromRole="District" ToRole="Tehsil" />
         </EntityType>
@@ -1770,6 +1915,30 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Country" Relationship="CharityModel.FK_EntityRegion_Country" FromRole="EntityRegion" ToRole="Country" />
+          <NavigationProperty Name="District" Relationship="CharityModel.FK_EntityRegion_District" FromRole="EntityRegion" ToRole="District" />
+          <NavigationProperty Name="State" Relationship="CharityModel.FK_EntityRegion_State" FromRole="EntityRegion" ToRole="State" />
+          <NavigationProperty Name="Tehsil" Relationship="CharityModel.FK_EntityRegion_Tehsil" FromRole="EntityRegion" ToRole="Tehsil" />
+          <NavigationProperty Name="UnionCouncil" Relationship="CharityModel.FK_EntityRegion_UnionCouncil" FromRole="EntityRegion" ToRole="UnionCouncil" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ImageUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Campaigns" Relationship="CharityModel.FK_Campaign_Event" FromRole="Event" ToRole="Campaign" />
         </EntityType>
         <EntityType Name="ExceptionLog">
           <Key>
@@ -1984,6 +2153,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <NavigationProperty Name="Country" Relationship="CharityModel.FK_State_Country" FromRole="State" ToRole="Country" />
           <NavigationProperty Name="Districts" Relationship="CharityModel.FK_District_State" FromRole="State" ToRole="District" />
           <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_State" FromRole="State" ToRole="DonationRequest" />
+          <NavigationProperty Name="EntityRegions" Relationship="CharityModel.FK_EntityRegion_State" FromRole="State" ToRole="EntityRegion" />
         </EntityType>
         <EntityType Name="sysdiagram">
           <Key>
@@ -2013,6 +2183,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_Tehsil" FromRole="Tehsil" ToRole="Address" />
           <NavigationProperty Name="District" Relationship="CharityModel.FK_Tehsil_District" FromRole="Tehsil" ToRole="District" />
           <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_Tehsil" FromRole="Tehsil" ToRole="DonationRequest" />
+          <NavigationProperty Name="EntityRegions" Relationship="CharityModel.FK_EntityRegion_Tehsil" FromRole="Tehsil" ToRole="EntityRegion" />
           <NavigationProperty Name="UnionCouncils" Relationship="CharityModel.FK_UnionCouncil_Tehsil" FromRole="Tehsil" ToRole="UnionCouncil" />
         </EntityType>
         <EntityType Name="UnionCouncil">
@@ -2032,6 +2203,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Addresses" Relationship="CharityModel.FK_Address_UnionCouncil" FromRole="UnionCouncil" ToRole="Address" />
           <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_UnionCouncil" FromRole="UnionCouncil" ToRole="DonationRequest" />
+          <NavigationProperty Name="EntityRegions" Relationship="CharityModel.FK_EntityRegion_UnionCouncil" FromRole="UnionCouncil" ToRole="EntityRegion" />
           <NavigationProperty Name="Tehsil" Relationship="CharityModel.FK_UnionCouncil_Tehsil" FromRole="UnionCouncil" ToRole="Tehsil" />
         </EntityType>
         <EntityType Name="UOM">
@@ -2177,6 +2349,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Campaign_Event">
+          <End Type="CharityModel.Event" Role="Event" Multiplicity="0..1" />
+          <End Type="CharityModel.Campaign" Role="Campaign" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Campaign">
+              <PropertyRef Name="EventId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Campaign_Organization">
           <End Type="CharityModel.Organization" Role="Organization" Multiplicity="1" />
           <End Type="CharityModel.Campaign" Role="Campaign" Multiplicity="*" />
@@ -2186,6 +2370,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="Campaign">
               <PropertyRef Name="OrganizationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntityRegion_Country">
+          <End Type="CharityModel.Country" Role="Country" Multiplicity="0..1" />
+          <End Type="CharityModel.EntityRegion" Role="EntityRegion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntityRegion">
+              <PropertyRef Name="CountryId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2226,6 +2422,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="District">
               <PropertyRef Name="StateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntityRegion_District">
+          <End Type="CharityModel.District" Role="District" Multiplicity="0..1" />
+          <End Type="CharityModel.EntityRegion" Role="EntityRegion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="District">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntityRegion">
+              <PropertyRef Name="DistrictId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2394,6 +2602,42 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="DonationRequestVolunteer">
               <PropertyRef Name="VolunteerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntityRegion_State">
+          <End Type="CharityModel.State" Role="State" Multiplicity="0..1" />
+          <End Type="CharityModel.EntityRegion" Role="EntityRegion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="State">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntityRegion">
+              <PropertyRef Name="StateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntityRegion_Tehsil">
+          <End Type="CharityModel.Tehsil" Role="Tehsil" Multiplicity="0..1" />
+          <End Type="CharityModel.EntityRegion" Role="EntityRegion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tehsil">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntityRegion">
+              <PropertyRef Name="TehsilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntityRegion_UnionCouncil">
+          <End Type="CharityModel.UnionCouncil" Role="UnionCouncil" Multiplicity="0..1" />
+          <End Type="CharityModel.EntityRegion" Role="EntityRegion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnionCouncil">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntityRegion">
+              <PropertyRef Name="UnionCouncilId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2655,6 +2899,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
                 <ScalarProperty Name="EndDate" ColumnName="EndDate" />
                 <ScalarProperty Name="StartDate" ColumnName="StartDate" />
                 <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
@@ -2826,6 +3071,25 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="RegionLevel" ColumnName="RegionLevel" />
                 <ScalarProperty Name="EntityType" ColumnName="EntityType" />
                 <ScalarProperty Name="EntityId" ColumnName="EntityId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Events">
+            <EntityTypeMapping TypeName="CharityModel.Event">
+              <MappingFragment StoreEntitySet="Event">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

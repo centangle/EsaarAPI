@@ -19,6 +19,7 @@ namespace DataProvider
         {
             this.Addresses = new HashSet<Address>();
             this.DonationRequests = new HashSet<DonationRequest>();
+            this.EntityRegions = new HashSet<EntityRegion>();
         }
     
         public int Id { get; set; }
@@ -37,6 +38,8 @@ namespace DataProvider
         public virtual ICollection<Address> Addresses { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DonationRequest> DonationRequests { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EntityRegion> EntityRegions { get; set; }
         public virtual Tehsil Tehsil { get; set; }
     }
 }
