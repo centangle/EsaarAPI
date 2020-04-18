@@ -22,6 +22,11 @@ namespace DataProvider
         public bool IsActive { get; set; }
         public bool IsApproved { get; set; }
         public Nullable<int> ApprovedBy { get; set; }
+        public Nullable<int> CountryId { get; set; }
+        public Nullable<int> StateId { get; set; }
+        public Nullable<int> DistrictId { get; set; }
+        public Nullable<int> TehsilId { get; set; }
+        public Nullable<int> UnionCouncilId { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }
         public System.DateTime CreatedDate { get; set; }

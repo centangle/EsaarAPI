@@ -65,14 +65,22 @@ namespace DataProvider
         }
         private async Task<bool> ModifyMultipleEntityRegion(CharityEntities context, List<EntityRegionModel> entityRegions)
         {
-            await ModifyEntityRegions(context, entityRegions);
-            return await context.SaveChangesAsync() > 0;
+            var organizationMember = await GetMemberRoleForOrganization(context, entityRegions.FirstOrDefault().Entity.Id, _loggedInMemberId);
+            if (IsOrganizationMemberModerator(organizationMember.FirstOrDefault()))
+            {
+                await ModifyEntityRegions(context, entityRegions);
+                return await context.SaveChangesAsync() > 0;
+            }
+            else
+            {
+                throw new KnownException("You are not authorized to perform this action.");
+            }
         }
         private async Task<List<EntityRegion>> GetCurrentEntityRegions(CharityEntities context, EntityRegionModel entityRegion)
         {
-            return await context.EntityRegions.Where(x => x.EntityId == entityRegion.Id && x.EntityType == (int)entityRegion.EntityType && x.IsDeleted == false).ToListAsync();
+            return await context.EntityRegions.Where(x => x.EntityId == entityRegion.Entity.Id && x.EntityType == (int)entityRegion.EntityType && x.IsDeleted == false).ToListAsync();
         }
-        private EntityRegion SetEntityRegion(EntityRegion dbModel, EntityRegionModel model)
+        private async Task<EntityRegion> SetEntityRegion(CharityEntities context, EntityRegion dbModel, EntityRegionModel model)
         {
             if (model.Entity == null || model.Entity.Id == 0)
             {
@@ -92,23 +100,67 @@ namespace DataProvider
                 dbModel.ApprovedBy = _loggedInMemberId;
             }
             SetAndValidateBaseProperties(dbModel, model);
+            await SetAllParentRegionLevel(context, dbModel, model);
             return dbModel;
 
         }
-        private void AddEntityRegions(CharityEntities context, ICollection<EntityRegionModel> entityRegions)
+        private async Task SetAllParentRegionLevel(CharityEntities context, EntityRegion dbModel, EntityRegionModel model)
+        {
+            RegionBriefModel country = null;
+            RegionBriefModel state = null;
+            RegionBriefModel district = null;
+            RegionBriefModel tehsil = null;
+            RegionBriefModel uc = null;
+            if (model.RegionLevel == RegionLevelTypeCatalog.UnionCouncil)
+            {
+                uc = await GetUnionCouncil(context, model.Region.Id);
+                tehsil = await GetTehsil(context, uc.ParentId);
+                district = await GetDistrict(context, tehsil.ParentId);
+                state = await GetState(context, district.ParentId);
+                country = await GetCountry(context, state.ParentId);
+            }
+            else if (model.RegionLevel == RegionLevelTypeCatalog.Tehsil)
+            {
+                tehsil = await GetTehsil(context, model.Region.Id);
+                district = await GetDistrict(context, tehsil.ParentId);
+                state = await GetState(context, district.ParentId);
+                country = await GetCountry(context, state.ParentId);
+            }
+            else if (model.RegionLevel == RegionLevelTypeCatalog.District)
+            {
+                district = await GetDistrict(context, model.Region.Id);
+                state = await GetState(context, district.ParentId);
+                country = await GetCountry(context, state.ParentId);
+            }
+            else if (model.RegionLevel == RegionLevelTypeCatalog.State)
+            {
+                state = await GetState(context, model.Region.Id);
+                country = await GetCountry(context, state.ParentId);
+            }
+            else
+            {
+                country = await GetCountry(context, model.Region.Id);
+            }
+            dbModel.CountryId = country?.Id;
+            dbModel.StateId = state?.Id;
+            dbModel.DistrictId = district?.Id;
+            dbModel.TehsilId = tehsil?.Id;
+            dbModel.UnionCouncilId = uc?.Id;
+        }
+        private async Task AddEntityRegions(CharityEntities context, ICollection<EntityRegionModel> entityRegions)
         {
             foreach (var item in entityRegions)
             {
-                var dbModel = SetEntityRegion(new EntityRegion(), item);
+                var dbModel = await SetEntityRegion(context, new EntityRegion(), item);
                 context.EntityRegions.Add(dbModel);
             }
         }
-        private void UpdateEntityRegions(IEnumerable<EntityRegion> modfiedEntityRegions, IEnumerable<EntityRegionModel> entityRegion)
+        private async Task UpdateEntityRegions(CharityEntities context, IEnumerable<EntityRegion> modfiedEntityRegions, IEnumerable<EntityRegionModel> entityRegion)
         {
             foreach (var dbModel in modfiedEntityRegions)
             {
                 EntityRegionModel model = entityRegion.Where(x => x.Id == dbModel.Id).FirstOrDefault();
-                SetEntityRegion(dbModel, model);
+                await SetEntityRegion(context, dbModel, model);
             }
         }
         private void DeleteEntityRegions(IEnumerable<EntityRegion> deletedEntityRegions)
@@ -124,8 +176,8 @@ namespace DataProvider
             var newItems = enityRegions.Where(x => x.Id == 0).ToList();
             var updatedItems = masterList.Where(m => enityRegions.Any(s => m.Id == s.Id));
             var deletedItems = masterList.Where(m => !enityRegions.Any(s => m.Id == s.Id));
-            AddEntityRegions(context, newItems);
-            UpdateEntityRegions(updatedItems, enityRegions);
+            await AddEntityRegions(context, newItems);
+            await UpdateEntityRegions(context, updatedItems, enityRegions);
             DeleteEntityRegions(deletedItems);
         }
 

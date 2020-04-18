@@ -120,7 +120,7 @@ namespace DataProvider
                           {
                               Id = c.Id,
                               Name = c.Name,
-                              NativeName = c.NativeName
+                              NativeName = c.NativeName,
                           }).FirstOrDefaultAsync();
 
         }
@@ -133,7 +133,8 @@ namespace DataProvider
                           {
                               Id = s.Id,
                               Name = s.Name,
-                              NativeName = s.NativeName
+                              NativeName = s.NativeName,
+                              ParentId = s.CountryId,
                           }).FirstOrDefaultAsync();
 
         }
@@ -146,7 +147,8 @@ namespace DataProvider
                           {
                               Id = d.Id,
                               Name = d.Name,
-                              NativeName = d.NativeName
+                              NativeName = d.NativeName,
+                              ParentId = d.StateId,
                           }).FirstOrDefaultAsync();
 
         }
@@ -159,7 +161,8 @@ namespace DataProvider
                           {
                               Id = t.Id,
                               Name = t.Name,
-                              NativeName = t.NativeName
+                              NativeName = t.NativeName,
+                              ParentId = t.DistrictId,
                           }).FirstOrDefaultAsync();
 
         }
@@ -172,7 +175,8 @@ namespace DataProvider
                           {
                               Id = uc.Id,
                               Name = uc.Name,
-                              NativeName = uc.NativeName
+                              NativeName = uc.NativeName,
+                              ParentId = uc.TehsilId
                           }).FirstOrDefaultAsync();
 
         }
