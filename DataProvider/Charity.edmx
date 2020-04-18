@@ -310,6 +310,7 @@
           <Property Name="ParentId" Type="int" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="NativeName" Type="nvarchar" MaxLength="100" />
+          <Property Name="Worth" Type="float" />
           <Property Name="DefaultUOM" Type="int" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="Type" Type="int" />
@@ -1791,6 +1792,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="ParentId" Type="Int32" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="NativeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Worth" Type="Double" />
           <Property Name="DefaultUOM" Type="Int32" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Type" Type="Int32" />
@@ -2854,6 +2856,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="DefaultUOM" ColumnName="DefaultUOM" />
+                <ScalarProperty Name="Worth" ColumnName="Worth" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />

@@ -44,8 +44,9 @@ namespace Models
         [IgnoreDataMember]
         public ItemTypeCatalog Type
         {
-            get;set;
+            get; set;
         }
+        public double? Worth { get; set; }
         [IgnoreDataMember]
         public string BaseFolder
         {

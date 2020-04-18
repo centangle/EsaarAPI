@@ -192,6 +192,7 @@ namespace DataProvider
             dbModel.Type = (int)model.Type;
             dbModel.Description = model.Description;
             dbModel.IsPeripheral = model.IsPeripheral;
+            dbModel.Worth = model.Worth;
             SetAndValidateBaseProperties(dbModel, model);
             ImageHelper.Save(model);
             dbModel.ImageUrl = model.ImageUrl;
@@ -266,7 +267,7 @@ namespace DataProvider
                                       NativeName = uom == null ? "" : uom.NativeName,
                                       NoOfBaseUnit = uom == null ? 0 : uom.NoOfBaseUnit,
                                   },
-                                  Type = (ItemTypeCatalog)(i.Type??0),
+                                  Type = (ItemTypeCatalog)(i.Type ?? 0),
                                   Description = i.Description,
                                   ImageUrl = i.ImageUrl,
                                   IsPeripheral = i.IsPeripheral,

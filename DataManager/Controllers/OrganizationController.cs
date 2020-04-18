@@ -33,21 +33,18 @@ namespace DataManager.Controllers
             bool getHierarichalData = (dataStructure == DataStructureCatalog.List ? false : true);
             return await _logic.GetSingleOrganizationHierarchy(id, getHierarichalData);
         }
-
         [HttpGet]
         public async Task<IEnumerable<OrganizationModel>> GetPeripheralOrganizations()
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetPeripheralOrganizations();
         }
-
         [HttpGet]
         public async Task<IEnumerable<OrganizationModel>> GetRootOrganizations()
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetRootOrganizations();
         }
-
         [HttpGet]
         public async Task<IEnumerable<OrganizationModel>> GetAllOrganizations(DataStructureCatalog dataStructure)
         {
@@ -91,7 +88,6 @@ namespace DataManager.Controllers
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.UpdateMultipleOrganizationsWithChildrens(Organizations);
         }
-
         [HttpDelete]
         public async Task<bool> DeleteOrganizationWithChildren(int id)
         {
