@@ -63,4 +63,12 @@ namespace Models
         public ICollection<OrganizationModel> children { get; set; }
         public List<OrganizationMemberRolesCatalog> CurrentMemberRoles { get; set; }
     }
+    public class OrganizationSearchModel : BaseSearchModel
+    {
+        public OrganizationSearchModel()
+        {
+            OrderByColumn = "Name";
+        }
+        public string Name { get; set; }
+    }
 }

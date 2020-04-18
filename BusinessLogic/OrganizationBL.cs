@@ -37,6 +37,10 @@ namespace BusinessLogic
         {
             return await _dataAccess.GetOrganization(id);
         }
+        public async Task<PaginatedResultModel<OrganizationModel>> GetOrganizations(OrganizationSearchModel filters)
+        {
+            return await _dataAccess.GetOrganizations(filters);
+        }
         public async Task<IEnumerable<OrganizationModel>> GetSingleOrganizationHierarchy(int id, bool getHierarchicalData)
         {
             return await _dataAccess.GetSingleTreeOrganization(id, getHierarchicalData);

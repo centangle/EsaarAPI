@@ -238,6 +238,50 @@ namespace DataProvider
                               }).FirstOrDefaultAsync();
             }
         }
+        public async Task<PaginatedResultModel<OrganizationModel>> GetOrganizations(OrganizationSearchModel filters)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+
+                var organizationQueryable = (from o in context.Organizations
+                                             join ob in context.Members on o.OwnedBy equals ob.Id
+                                             join po in context.Organizations on o.ParentId equals po.Id into tpo
+                                             from po in tpo.DefaultIfEmpty()
+                                             where
+                                             (
+                                               string.IsNullOrEmpty(filters.Name)
+                                               || o.Name.Contains(filters.Name)
+                                               || o.NativeName.Contains(filters.Name)
+                                             )
+                                             && o.IsDeleted == false
+                                             select new OrganizationModel
+                                             {
+                                                 Id = o.Id,
+                                                 Parent = new BaseBriefModel()
+                                                 {
+                                                     Id = po == null ? 0 : po.Id,
+                                                     Name = po == null ? "" : po.Name,
+                                                     NativeName = po == null ? "" : po.NativeName
+                                                 },
+                                                 Name = o.Name,
+                                                 NativeName = o.NativeName,
+                                                 Description = o.Description,
+                                                 ImageUrl = o.LogoUrl,
+                                                 Type = (OrganizationTypeCatalog)(o.Type ?? 0),
+                                                 OwnedBy = new MemberBriefModel()
+                                                 {
+                                                     Id = ob == null ? 0 : ob.Id,
+                                                     Name = ob == null ? "" : ob.Name,
+                                                     NativeName = ob == null ? "" : ob.NativeName
+                                                 },
+                                                 IsVerified = o.IsVerified,
+                                                 IsPeripheral = o.IsPeripheral,
+                                                 IsActive = o.IsActive,
+                                                 CreatedDate = o.CreatedDate,
+                                             }).AsQueryable();
+                return await organizationQueryable.Paginate(filters);
+            }
+        }
         public async Task<List<OrganizationModel>> GetPeripheralOrganizations()
         {
             using (CharityEntities context = new CharityEntities())

@@ -9,13 +9,22 @@ using System.Web.Http;
 namespace DataManager.Controllers
 {
     [Authorize]
-    public class OrganizationController:BaseController
-    { 
+    public class OrganizationController : BaseController
+    {
         [HttpGet]
         public async Task<OrganizationModel> Get(int id)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetOrganization(id);
+        }
+        [HttpGet]
+        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, string orderByColumn = null, bool calculateTotal = true)
+        {
+            var _logic = new Logic(LoggedInMemberId);
+            OrganizationSearchModel filters = new OrganizationSearchModel();
+            filters.Name = name;
+            SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
+            return await _logic.GetOrganizations(filters);
         }
         [HttpGet]
         public async Task<IEnumerable<OrganizationModel>> GetSingleOrganizationTree(int id, DataStructureCatalog dataStructure)

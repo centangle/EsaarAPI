@@ -180,7 +180,6 @@ namespace DataProvider
             await UpdateEntityRegions(context, updatedItems, enityRegions);
             DeleteEntityRegions(deletedItems);
         }
-
         private async Task<BaseBriefModel> GetEntityRegionEntity(CharityEntities context, int entityId, EntityRegionTypeCatalog entityType)
         {
             if (entityType == EntityRegionTypeCatalog.Organization)
