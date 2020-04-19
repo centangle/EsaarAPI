@@ -11,4 +11,9 @@ namespace Catalogs
         Organization,
         OrganizationMember
     }
+    public enum EntityRegionRequestTypeCatalog : int
+    {
+        Organization,
+        OrganizationMember
+    }
 }

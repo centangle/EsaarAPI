@@ -54,31 +54,29 @@ namespace DataProvider
                 return paginatedResult;
             }
         }
-        public async Task<bool> ModifyMultipleEntityRegion(List<EntityRegionModel> entityRegions)
+        public async Task<bool> ModifyMultipleEntityRegion(List<EntityRegionModel> entityRegions, int organizationId, int? requestId)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                await ModifyMultipleEntityRegion(context, entityRegions);
+                await ModifyMultipleEntityRegion(context, entityRegions, organizationId, requestId);
                 return true;
             }
-
         }
-        private async Task<bool> ModifyMultipleEntityRegion(CharityEntities context, List<EntityRegionModel> entityRegions)
+        private async Task<bool> ModifyMultipleEntityRegion(CharityEntities context, List<EntityRegionModel> entityRegions, int organizationId, int? requestId)
         {
-            var organizationMember = await GetMemberRoleForOrganization(context, entityRegions.FirstOrDefault().Entity.Id, _loggedInMemberId);
-            if (IsOrganizationMemberModerator(organizationMember.FirstOrDefault()))
-            {
-                await ModifyEntityRegions(context, entityRegions);
-                return await context.SaveChangesAsync() > 0;
-            }
-            else
-            {
-                throw new KnownException("You are not authorized to perform this action.");
-            }
+            await ModifyEntityRegions(context, entityRegions, organizationId, requestId);
+            return await context.SaveChangesAsync() > 0;
         }
-        private async Task<List<EntityRegion>> GetCurrentEntityRegions(CharityEntities context, EntityRegionModel entityRegion)
+        private async Task<List<EntityRegion>> GetCurrentEntityRegions(CharityEntities context, EntityRegionModel entityRegion, int? requestId)
         {
-            return await context.EntityRegions.Where(x => x.EntityId == entityRegion.Entity.Id && x.EntityType == (int)entityRegion.EntityType && x.IsDeleted == false).ToListAsync();
+            var queryableRegions = context.EntityRegions.Where(x => x.EntityId == entityRegion.Entity.Id
+            && x.EntityType == (int)entityRegion.EntityType
+            && x.IsDeleted == false).AsQueryable();
+            if (requestId != null)
+            {
+                queryableRegions.Where(x => x.RequestId == entityRegion.RequestId);
+            }
+            return await queryableRegions.ToListAsync();
         }
         private async Task<EntityRegion> SetEntityRegion(CharityEntities context, EntityRegion dbModel, EntityRegionModel model)
         {
@@ -170,15 +168,23 @@ namespace DataProvider
                 item.IsDeleted = true;
             }
         }
-        private async Task ModifyEntityRegions(CharityEntities context, List<EntityRegionModel> enityRegions)
+        private async Task ModifyEntityRegions(CharityEntities context, List<EntityRegionModel> enityRegions, int organizationId, int? requestId, bool skipModeratorCheck = false)
         {
-            var masterList = await GetCurrentEntityRegions(context, enityRegions.FirstOrDefault());
-            var newItems = enityRegions.Where(x => x.Id == 0).ToList();
-            var updatedItems = masterList.Where(m => enityRegions.Any(s => m.Id == s.Id));
-            var deletedItems = masterList.Where(m => !enityRegions.Any(s => m.Id == s.Id));
-            await AddEntityRegions(context, newItems);
-            await UpdateEntityRegions(context, updatedItems, enityRegions);
-            DeleteEntityRegions(deletedItems);
+            var organizationMember = await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId);
+            if (IsOrganizationMemberModerator(organizationMember.FirstOrDefault()) || skipModeratorCheck)
+            {
+                var masterList = await GetCurrentEntityRegions(context, enityRegions.FirstOrDefault(), requestId);
+                var newItems = enityRegions.Where(x => x.Id == 0).ToList();
+                var updatedItems = masterList.Where(m => enityRegions.Any(s => m.Id == s.Id));
+                var deletedItems = masterList.Where(m => !enityRegions.Any(s => m.Id == s.Id));
+                await AddEntityRegions(context, newItems);
+                await UpdateEntityRegions(context, updatedItems, enityRegions);
+                DeleteEntityRegions(deletedItems);
+            }
+            else
+            {
+                throw new KnownException("You are not authorized to perform this action.");
+            }
         }
         private async Task<BaseBriefModel> GetEntityRegionEntity(CharityEntities context, int entityId, EntityRegionTypeCatalog entityType)
         {

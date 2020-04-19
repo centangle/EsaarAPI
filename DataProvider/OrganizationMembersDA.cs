@@ -3,6 +3,7 @@ using DataProvider.Helpers;
 using Helpers;
 using Models;
 using Models.BriefModel;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -29,10 +30,87 @@ namespace DataProvider
                 {
                     if (await IsOrganizationMembershipRequestAllowed(context, model, memberModel))
                     {
-                        return await AddOrganizationRequest(context, model);
+                        if (model.Regions == null || model.Regions.Count == 0)
+                        {
+                            throw new KnownException("Regions must be specified");
+                        }
+                        using (var transaction = context.Database.BeginTransaction())
+                        {
+                            try
+                            {
+                                var organizationRequestId = await AddOrganizationRequest(context, model);
+                                if (model.Type == OrganizationRequestTypeCatalog.Volunteer || model.Type == OrganizationRequestTypeCatalog.Moderator)
+                                {
+                                    foreach (var entityRegion in model.Regions)
+                                    {
+                                        entityRegion.Id = model.Entity.Id;
+                                        entityRegion.EntityType = EntityRegionTypeCatalog.OrganizationMember;
+                                        entityRegion.RequestId = organizationRequestId;
+                                        entityRegion.RequestType = entityRegion.RequestType;
+                                    }
+                                    await ModifyEntityRegions(context, model.Regions, model.Organization.Id, organizationRequestId);
+                                }
+                                transaction.Commit();
+                                return organizationRequestId;
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction.Rollback();
+                            }
+                        }
+
                     }
                     return 0;
                 }
+            }
+        }
+        public async Task<bool> UpdateOrganizationMembershipRegions(OrganizationRequestModel model)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var memberModel = GetOrganizationMembershipModel(model);
+                var organizationRequest = await context.OrganizationRequests.Where(
+                                                                x =>
+                                                                x.OrganizationId == model.Organization.Id
+                                                                && x.EntityId == _loggedInMemberId
+                                                                && x.EntityType == (int)model.EntityType
+                                                                && x.Type == (int)model.Type
+                                                                && x.IsDeleted == false).FirstOrDefaultAsync();
+                if (organizationRequest != null)
+                {
+                    if (model.Status == StatusCatalog.Approved)
+                    {
+                        throw new KnownException("This request is already approved by moderator. You cannot change this request anymore.");
+                    }
+                    else if (model.Status == StatusCatalog.Rejected)
+                    {
+                        throw new KnownException("This request is rejected by moderator. You cannot change this request anymore.");
+                    }
+                    else
+                    {
+                        using (var transaction = context.Database.BeginTransaction())
+                        {
+                            try
+                            {
+                                if (model.Regions == null || model.Regions.Count == 0)
+                                {
+                                    throw new KnownException("Regions must be specified");
+                                }
+                                await ModifyEntityRegions(context, model.Regions, organizationRequest.OrganizationId, organizationRequest.Id, true);
+                                var requestThreadModel = GetRequestThreadModelForOrganization(model.Id, "Regions has been updated");
+                                await AddRequestThread(context, requestThreadModel);
+                                transaction.Commit();
+                                return true;
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction.Rollback();
+                                throw ex;
+                            }
+                        }
+                    }
+                }
+                return false;
             }
         }
         public async Task<List<OrganizationMemberModel>> GetMemberRoleForOrganization(int organizationId, int? memberId)

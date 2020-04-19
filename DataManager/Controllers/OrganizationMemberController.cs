@@ -52,5 +52,11 @@ namespace DataManager.Controllers
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.RequestOrganizationMembership(model);
         }
+        [HttpPost]
+        public async Task<bool> UpdateOrganizationMembershipRegions(OrganizationRequestModel model)
+        {
+            var _logic = new Logic(LoggedInMemberId);
+            return await _logic.UpdateOrganizationMembershipRegions(model);
+        }
     }
 }

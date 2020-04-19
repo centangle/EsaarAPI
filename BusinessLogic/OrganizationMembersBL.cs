@@ -17,6 +17,10 @@ namespace BusinessLogic
         {
             return await _dataAccess.RequestOrganizationMembership(model);
         }
+        public async Task<bool> UpdateOrganizationMembershipRegions(OrganizationRequestModel model)
+        {
+            return await _dataAccess.UpdateOrganizationMembershipRegions(model);
+        }
         public async Task<PaginatedResultModel<OrganizationMemberModel>> GetOrganizationMembers(OrganizationMemberSearchModel filters)
         {
             return await _dataAccess.GetOrganizationMembers(filters);

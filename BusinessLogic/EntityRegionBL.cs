@@ -13,9 +13,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.GetEntityRegions(filters);
         }
-        public async Task<bool> ModifyMultipleEntityRegion(List<EntityRegionModel> entityRegions)
+        public async Task<bool> ModifyMultipleEntityRegion(List<EntityRegionModel> entityRegions, int organizationId, int? requestId)
         {
-            return await _dataAccess.ModifyMultipleEntityRegion(entityRegions);
+            return await _dataAccess.ModifyMultipleEntityRegion(entityRegions, organizationId, requestId);
         }
     }
 }

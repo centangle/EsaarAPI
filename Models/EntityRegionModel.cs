@@ -16,6 +16,8 @@ namespace Models
         public EntityRegionTypeCatalog EntityType { get; set; }
         public RegionLevelTypeCatalog RegionLevel { get; set; }
         public RegionBriefModel Region { get; set; }
+        public int? RequestId { get; set; }
+        public EntityRegionTypeCatalog RequestType { get; set; }
         public bool IsApproved { get; set; } = true;
     }
     public class PaginatedEntityRegionModel : EntityRegionModel

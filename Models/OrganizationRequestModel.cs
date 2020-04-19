@@ -1,6 +1,7 @@
 ﻿using Catalogs;
 using Models.Base;
 using Models.BriefModel;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Models
@@ -12,6 +13,7 @@ namespace Models
             Organization = new BaseBriefModel();
             Entity = new BaseBriefModel();
             Moderator = new BaseBriefModel();
+            Regions = new List<EntityRegionModel>();
         }
         public BaseBriefModel Organization { get; set; }
         public BaseBriefModel Entity { get; set; }
@@ -19,6 +21,7 @@ namespace Models
         public OrganizationRequestTypeCatalog Type { get; set; } = OrganizationRequestTypeCatalog.Volunteer;
         public StatusCatalog Status { get; set; }
         public BaseBriefModel Moderator { get; set; }
+        public List<EntityRegionModel> Regions { get; set; }
         public string Note { get; set; }
     }
 

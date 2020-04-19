@@ -27,6 +27,8 @@ namespace DataProvider
         public Nullable<int> DistrictId { get; set; }
         public Nullable<int> TehsilId { get; set; }
         public Nullable<int> UnionCouncilId { get; set; }
+        public Nullable<int> RequestId { get; set; }
+        public Nullable<int> RequestType { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }
         public System.DateTime CreatedDate { get; set; }
