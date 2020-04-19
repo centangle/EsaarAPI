@@ -1,4 +1,5 @@
-﻿using Models.Base;
+﻿using Catalogs;
+using Models.Base;
 using Models.BriefModel;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -44,5 +45,6 @@ namespace Models
         public int OrganizationId { get; set; }
         public int? CampaignId { get; set; }
         public string ItemName { get; set; }
+        public SearchItemTypeCatalog Type { get; set; }
     }
 }

@@ -11,4 +11,10 @@ namespace Catalogs
         General,
         Package
     }
+    public enum SearchItemTypeCatalog : int
+    {
+        General,
+        Package,
+        All
+    }
 }

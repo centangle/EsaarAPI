@@ -29,7 +29,7 @@ namespace DataManager.Controllers
             var _logic = new Logic(LoggedInMemberId);
             foreach (var entityRegion in entityRegions)
             {
-                entityRegion.Id = organizationId;
+                entityRegion.Entity.Id = organizationId;
                 entityRegion.EntityType = EntityRegionTypeCatalog.Organization;
 
             }

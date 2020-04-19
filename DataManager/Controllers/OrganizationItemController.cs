@@ -18,13 +18,14 @@ namespace DataManager.Controllers
             return await _logic.GetOrganizationItem(id);
         }
         [HttpGet]
-        public async Task<PaginatedResultModel<OrganizationItemPaginationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int organizationId, int? campaignId = null, string itemName = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<OrganizationItemPaginationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int organizationId, SearchItemTypeCatalog itemType, int? campaignId = null, string itemName = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
             OrganizationItemSearchModel filters = new OrganizationItemSearchModel();
             filters.ItemName = itemName;
             filters.CampaignId = campaignId;
             filters.OrganizationId = organizationId;
+            filters.Type = itemType;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetOrganizationItems(filters);
         }

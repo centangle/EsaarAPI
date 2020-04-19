@@ -43,10 +43,10 @@ namespace DataProvider
                                 {
                                     foreach (var entityRegion in model.Regions)
                                     {
-                                        entityRegion.Id = model.Entity.Id;
+                                        entityRegion.Entity.Id = model.Entity.Id;
                                         entityRegion.EntityType = EntityRegionTypeCatalog.OrganizationMember;
                                         entityRegion.RequestId = organizationRequestId;
-                                        entityRegion.RequestType = entityRegion.RequestType;
+                                        entityRegion.RequestType = EntityRegionRequestTypeCatalog.OrganizationMember;
                                     }
                                     await ModifyEntityRegions(context, model.Regions, model.Organization.Id, organizationRequestId);
                                 }
@@ -96,8 +96,15 @@ namespace DataProvider
                                 {
                                     throw new KnownException("Regions must be specified");
                                 }
+                                foreach (var entityRegion in model.Regions)
+                                {
+                                    entityRegion.Entity.Id = model.Entity.Id;
+                                    entityRegion.EntityType = EntityRegionTypeCatalog.OrganizationMember;
+                                    entityRegion.RequestId = organizationRequest.Id;
+                                    entityRegion.RequestType = EntityRegionRequestTypeCatalog.OrganizationMember;
+                                }
                                 await ModifyEntityRegions(context, model.Regions, organizationRequest.OrganizationId, organizationRequest.Id, true);
-                                var requestThreadModel = GetRequestThreadModelForOrganization(model.Id, "Regions has been updated");
+                                var requestThreadModel = GetRequestThreadModelForOrganization(organizationRequest.Id, "Regions has been updated");
                                 await AddRequestThread(context, requestThreadModel);
                                 transaction.Commit();
                                 return true;

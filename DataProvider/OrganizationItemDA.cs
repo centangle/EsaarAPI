@@ -1,4 +1,5 @@
-﻿using DataProvider.Helpers;
+﻿using Catalogs;
+using DataProvider.Helpers;
 using Helpers;
 using Models;
 using Models.BriefModel;
@@ -242,6 +243,7 @@ namespace DataProvider
                                         join iuom in context.UOMs on i.DefaultUOM equals iuom.Id
                                         where o.Id == filters.OrganizationId
                                         && (oi.CampaignId == filters.CampaignId)
+                                        && (filters.Type == SearchItemTypeCatalog.All || i.Type == (int)filters.Type)
                                         && (string.IsNullOrEmpty(filters.ItemName) || i.Name.Contains(filters.ItemName))
                                         && oi.IsDeleted == false
                                         select new OrganizationItemPaginationModel

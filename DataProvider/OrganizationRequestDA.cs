@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -105,6 +106,11 @@ namespace DataProvider
                     if (model.Status == StatusCatalog.Approved)
                     {
                         await AddOrganizationMemberForRequest(context, model);
+                        var entityRegions = await context.EntityRegions.Where(x => x.RequestId == organizationRequest.Id && x.RequestType == (int)EntityRegionRequestTypeCatalog.OrganizationMember && x.IsDeleted == false).ToListAsync();
+                        foreach (var entityRegion in entityRegions)
+                        {
+                            entityRegion.IsApproved = true;
+                        }
                     }
                     return true;
                 }

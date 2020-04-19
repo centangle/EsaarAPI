@@ -58,25 +58,39 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                await ModifyMultipleEntityRegion(context, entityRegions, organizationId, requestId);
-                return true;
+                var result = await ModifyMultipleEntityRegion(context, entityRegions, organizationId, requestId);
+                return result;
             }
         }
         private async Task<bool> ModifyMultipleEntityRegion(CharityEntities context, List<EntityRegionModel> entityRegions, int organizationId, int? requestId)
         {
-            await ModifyEntityRegions(context, entityRegions, organizationId, requestId);
-            return await context.SaveChangesAsync() > 0;
+            return await ModifyEntityRegions(context, entityRegions, organizationId, requestId);
+
         }
         private async Task<List<EntityRegion>> GetCurrentEntityRegions(CharityEntities context, EntityRegionModel entityRegion, int? requestId)
         {
-            var queryableRegions = context.EntityRegions.Where(x => x.EntityId == entityRegion.Entity.Id
-            && x.EntityType == (int)entityRegion.EntityType
-            && x.IsDeleted == false).AsQueryable();
-            if (requestId != null)
+            try
             {
-                queryableRegions.Where(x => x.RequestId == entityRegion.RequestId);
+                var queryableRegions = (from e in context.EntityRegions
+                                        where
+                                        e.EntityId == entityRegion.Entity.Id
+                                        && e.EntityType == (int)entityRegion.EntityType
+                                        && e.IsDeleted == false
+                                        select e
+                                        ).AsQueryable();
+                if (requestId != null)
+                {
+                    queryableRegions = (from q in queryableRegions
+                                        where q.RequestId == requestId
+                                        select q
+                                        ).AsQueryable();
+                }
+                return await queryableRegions.ToListAsync();
             }
-            return await queryableRegions.ToListAsync();
+            catch (Exception ex)
+            {
+                return new List<EntityRegion>();
+            }
         }
         private async Task<EntityRegion> SetEntityRegion(CharityEntities context, EntityRegion dbModel, EntityRegionModel model)
         {
@@ -92,6 +106,8 @@ namespace DataProvider
             }
             dbModel.RegionId = model.Region.Id;
             dbModel.RegionLevel = (int)model.RegionLevel;
+            dbModel.RequestId = model.RequestId;
+            dbModel.RequestType = (int)model.RequestType;
             dbModel.IsApproved = model.IsApproved;
             if (dbModel.IsApproved == true)
             {
@@ -168,7 +184,7 @@ namespace DataProvider
                 item.IsDeleted = true;
             }
         }
-        private async Task ModifyEntityRegions(CharityEntities context, List<EntityRegionModel> enityRegions, int organizationId, int? requestId, bool skipModeratorCheck = false)
+        private async Task<bool> ModifyEntityRegions(CharityEntities context, List<EntityRegionModel> enityRegions, int organizationId, int? requestId, bool skipModeratorCheck = false)
         {
             var organizationMember = await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId);
             if (IsOrganizationMemberModerator(organizationMember.FirstOrDefault()) || skipModeratorCheck)
@@ -180,6 +196,7 @@ namespace DataProvider
                 await AddEntityRegions(context, newItems);
                 await UpdateEntityRegions(context, updatedItems, enityRegions);
                 DeleteEntityRegions(deletedItems);
+                return await context.SaveChangesAsync() > 0;
             }
             else
             {

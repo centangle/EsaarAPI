@@ -153,6 +153,7 @@ namespace DataProvider
                 return package;
             }
         }
+
         private void AddPackageItems(CharityEntities context, ICollection<PackageItemModel> packageItems, int packageId)
         {
             foreach (var item in packageItems)

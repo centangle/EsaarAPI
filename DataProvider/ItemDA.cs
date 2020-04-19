@@ -394,7 +394,7 @@ namespace DataProvider
         {
             return new MapperConfiguration(cfg => cfg.CreateMap<Item, ItemModel>()
                .ForMember(dest => dest.DefaultUOM,
-               input => input.MapFrom(i => new BaseBriefModel { Id = i.DefaultUOM ?? 0 }))
+               input => input.MapFrom(i => new UOMBriefModel { Id = i.DefaultUOM ?? 0 }))
                .ForMember(dest => dest.Parent,
                input => input.MapFrom(i => new BaseBriefModel { Id = i.ParentId ?? 0 }))
                .ForMember(s => s.children, m => m.Ignore())
