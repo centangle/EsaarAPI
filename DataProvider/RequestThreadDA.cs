@@ -47,7 +47,7 @@ namespace DataProvider
                     {
                         int? currentStatus = await GetRequestThreadCurrentStatus(context, model);
                         model.Id = await AddRequestThread(context, model);
-                        await AssignAttachments(context, model.Attachments, model.Id, true);
+                        await AssignAttachments(context, model.Attachments, model.Id, AttachmentEntityTypeCatalog.Request, true);
                         bool statusUpdated = await CheckStatusUpdation(context, currentStatus, model);
                         await context.SaveChangesAsync();
                         return model.Id;
@@ -102,7 +102,7 @@ namespace DataProvider
                             {
                                 var currentStatus = dbModel.Status;
                                 SetRequestThread(dbModel, model);
-                                await AssignAttachments(context, model.Attachments, dbModel.Id, false);
+                                await AssignAttachments(context, model.Attachments, dbModel.Id, AttachmentEntityTypeCatalog.Request, false);
                                 bool statusUpdated = await CheckStatusUpdation(context, currentStatus, model);
                                 await context.SaveChangesAsync();
                             }

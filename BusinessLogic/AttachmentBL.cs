@@ -17,5 +17,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.DeleteAttachment(url);
         }
+        public async Task<PaginatedResultModel<AttachmentModel>> GetAttachments(AttachmentSearchModel filters)
+        {
+            return await _dataAccess.GetAttachments(filters);
+        }
     }
 }

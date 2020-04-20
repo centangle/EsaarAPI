@@ -1,4 +1,5 @@
 ﻿using Catalogs;
+using DataProvider.Helpers;
 using Helpers;
 using Models;
 using System;
@@ -82,7 +83,7 @@ namespace DataProvider
             dbModel.FileExtension = model.FileExtension;
             return dbModel;
         }
-        private async Task AssignAttachments(CharityEntities context, List<AttachmentModel> attachments, int entityId, bool isNew)
+        private async Task AssignAttachments(CharityEntities context, List<AttachmentModel> attachments, int entityId, AttachmentEntityTypeCatalog attachmentType, bool isNew)
         {
             if (attachments != null)
             {
@@ -97,7 +98,7 @@ namespace DataProvider
                             if (attachment != null)
                             {
                                 attachment.EntityId = entityId;
-                                attachment.EntityType = (int)AttachmentEntityTypeCatalog.Request;
+                                attachment.EntityType = (int)attachmentType;
                             }
                         }
                     }
@@ -113,7 +114,7 @@ namespace DataProvider
                         if (attachment != null)
                         {
                             attachment.EntityId = entityId;
-                            attachment.EntityType = (int)AttachmentEntityTypeCatalog.Request;
+                            attachment.EntityType = (int)attachmentType;
                         }
                     }
                     foreach (var attachment in deletedAttachments)
@@ -121,6 +122,32 @@ namespace DataProvider
                         attachment.IsDeleted = true;
                     }
                 }
+            }
+        }
+        public async Task<PaginatedResultModel<AttachmentModel>> GetAttachments(AttachmentSearchModel filters)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var attachmentsQueryable = (from a in context.Attachments
+                                            where
+                                            (filters.EntityId == null || a.EntityId == filters.EntityId)
+                                            && (filters.EntityType == null || a.EntityType == (int)filters.EntityType)
+                                            select new AttachmentModel
+                                            {
+                                                Id = a.Id,
+                                                Entity = new Models.BriefModel.BaseBriefModel
+                                                {
+                                                    Id = a.EntityId,
+                                                },
+                                                EntityType = (AttachmentEntityTypeCatalog)a.EntityType,
+                                                Url = a.Url,
+                                                Note = a.Note,
+                                                OriginalFileName = a.OriginalFileName,
+                                                SystemFileName = a.SystemFileName,
+                                                FileExtension = a.FileExtension,
+                                                CreatedDate = a.CreatedDate,
+                                            }).AsNoTracking().AsQueryable();
+                return await attachmentsQueryable.Paginate(filters);
             }
         }
     }

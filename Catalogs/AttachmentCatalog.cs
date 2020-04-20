@@ -9,5 +9,6 @@ namespace Catalogs
     public enum AttachmentEntityTypeCatalog : int
     {
         Request,
+        Organization
     }
 }
