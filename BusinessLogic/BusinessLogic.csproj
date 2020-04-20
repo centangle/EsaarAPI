@@ -53,6 +53,9 @@
   <ItemGroup>
     <Compile Include="AddressLogic.cs" />
     <Compile Include="AttachmentBL.cs" />
+    <Compile Include="EventBL.cs" />
+    <Compile Include="OrganizationAccountBL.cs" />
+    <Compile Include="OrganizationOfficeBL.cs" />
     <Compile Include="CampaignBL.cs" />
     <Compile Include="DonationRequestOrganizationItemBL.cs" />
     <Compile Include="EntityRegionBL.cs" />

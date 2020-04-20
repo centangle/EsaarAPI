@@ -179,6 +179,7 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="OrganizationAccountDA.cs" />
+    <Compile Include="EventDA.cs" />
     <Compile Include="OrganizationOfficeDA.cs" />
     <Compile Include="OrganizationPackageDA.cs" />
     <Compile Include="OrganizationRequest.cs">

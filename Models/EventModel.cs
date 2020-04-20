@@ -8,19 +8,17 @@ using System.Runtime.Serialization;
 
 namespace Models
 {
-    public class CampaignModel : BaseModel, IImage, IName
+    public class EventModel : BaseModel, IImage, IName
     {
         [Required]
         public string Name { get; set; }
         public string NativeName { get; set; }
-        public BaseBriefModel Organization { get; set; }
-        public BaseBriefModel Event { get; set; }
         [IgnoreDataMember]
         public string BaseFolder
         {
             get
             {
-                return "Campaigns";
+                return "Events";
             }
         }
         public string Description { get; set; }
@@ -31,15 +29,9 @@ namespace Models
 
         public List<OrganizationItemModel> Items { get; set; }
     }
-    public class CampaignSearchModel : BaseSearchModel
+    public class EventSearchModel : BaseSearchModel
     {
-        public CampaignSearchModel()
-        {
-            OrderByColumn = "Name";
-        }
         public string Name { get; set; }
-        public int? OrganizationId { get; set; }
-        public int? EventId { get; set; }
-
+        public bool? IsActive { get; set; }
     }
 }

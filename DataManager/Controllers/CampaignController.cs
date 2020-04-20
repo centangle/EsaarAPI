@@ -8,17 +8,18 @@ namespace DataManager.Controllers
 {
     public class CampaignController : BaseController
     {
-        public async Task<CampaignModel> GetCampaign(int id)
+        public async Task<CampaignModel> Get(int id)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetCampaign(id);
         }
-        public async Task<PaginatedResultModel<CampaignModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, string name = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<CampaignModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, int? eventId = null, string name = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
             CampaignSearchModel filters = new CampaignSearchModel();
             filters.Name = name;
             filters.OrganizationId = organizationId;
+            filters.EventId = eventId;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetCampaigns(filters);
         }

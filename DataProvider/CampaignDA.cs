@@ -91,6 +91,8 @@ namespace DataProvider
             {
                 return await (from c in context.Campaigns
                               join o in context.Organizations on c.OrganizationId equals o.Id
+                              join e in context.Events on c.EventId equals e.Id into le
+                              from e in le.DefaultIfEmpty()
                               where c.Id == id
                               && c.IsDeleted == false
                               select new CampaignModel
@@ -109,6 +111,12 @@ namespace DataProvider
                                       Name = o.Name,
                                       NativeName = o.NativeName,
                                   },
+                                  Event = new BaseBriefModel()
+                                  {
+                                      Id = e == null ? 0 : e.Id,
+                                      Name = e == null ? "" : e.Name,
+                                      NativeName = e == null ? "" : e.NativeName,
+                                  }
                               }).FirstOrDefaultAsync();
             }
         }
@@ -118,8 +126,11 @@ namespace DataProvider
             {
                 var campaignQueryable = (from c in context.Campaigns
                                          join o in context.Organizations on c.OrganizationId equals o.Id
+                                         join e in context.Events on c.EventId equals e.Id into le
+                                         from e in le.DefaultIfEmpty()
                                          where (string.IsNullOrEmpty(filters.Name) || c.Name.Contains(filters.Name) || c.NativeName.Contains(filters.Name))
                                          && (filters.OrganizationId == null || c.OrganizationId == filters.OrganizationId)
+                                         && (filters.EventId == null || c.EventId == filters.EventId)
                                          && c.IsDeleted == false
                                          select new CampaignModel
                                          {
@@ -137,6 +148,12 @@ namespace DataProvider
                                                  Name = o.Name,
                                                  NativeName = o.NativeName,
                                              },
+                                             Event = new BaseBriefModel()
+                                             {
+                                                 Id = e == null ? 0 : e.Id,
+                                                 Name = e == null ? "" : e.Name,
+                                                 NativeName = e == null ? "" : e.NativeName,
+                                             }
                                          }).AsQueryable();
                 return await campaignQueryable.Paginate(filters);
             }
@@ -150,9 +167,13 @@ namespace DataProvider
             dbModel.Name = model.Name;
             dbModel.NativeName = model.NativeName;
             dbModel.OrganizationId = model.Organization.Id;
-            dbModel.Description = model.Description;
+            if (model.Event != null && model.Event.Id > 0)
+            {
+                dbModel.EventId = model.Event.Id;
+            }
             dbModel.StartDate = model.StartDate;
             dbModel.EndDate = model.EndDate;
+            dbModel.Description = model.Description;
             ImageHelper.Save(model);
             dbModel.ImageUrl = model.ImageUrl;
             SetAndValidateBaseProperties(dbModel, model);

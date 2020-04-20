@@ -51,6 +51,7 @@
     <Compile Include="BriefModel\MemberBriefModel.cs" />
     <Compile Include="BriefModel\RegionBriefModel.cs" />
     <Compile Include="BriefModel\UOMBriefModel.cs" />
+    <Compile Include="EventModel.cs" />
     <Compile Include="CampaignModel.cs" />
     <Compile Include="DonationRequestOrganizationItemModel.cs" />
     <Compile Include="DonationRequestOrganizationModel.cs" />

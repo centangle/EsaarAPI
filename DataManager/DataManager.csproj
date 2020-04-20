@@ -200,6 +200,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\EventController.cs" />
+    <Compile Include="Controllers\OrganizationAccountController.cs" />
+    <Compile Include="Controllers\OrganizationOfficeController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\DonationRequestController.cs" />
     <Compile Include="Controllers\OrganizationPackageController.cs" />
