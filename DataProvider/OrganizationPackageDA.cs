@@ -29,6 +29,8 @@ namespace DataProvider
                             {
                                 model.Id = dbModel.Id;
                                 AddPackageItems(context, model.Items, model.Id);
+                                var organizationItemModel = GetOrganizationItemFromPackage(model);
+                                await CreateOrganizationItem(context, organizationItemModel);
                                 await context.SaveChangesAsync();
                             }
                             transaction.Commit();
@@ -37,7 +39,7 @@ namespace DataProvider
                         catch (Exception ex)
                         {
                             transaction.Rollback();
-                            return 0;
+                            throw ex;
                         }
                     }
                 }
@@ -60,7 +62,7 @@ namespace DataProvider
                                 model.IsPeripheral = true;
                                 SetItem(dbModel, model);
                                 await ModifyPackageItems(context, model);
-                                bool result = await context.SaveChangesAsync() > 0 ;
+                                bool result = await context.SaveChangesAsync() > 0;
                                 transaction.Commit();
                                 return result;
                             }
@@ -126,29 +128,29 @@ namespace DataProvider
                 if (package != null)
                 {
                     package.Items = await (from pi in context.PackageItems
-                                              join i in context.Items on pi.ItemId equals i.Id
-                                              join uom in context.UOMs on pi.ItemUOM equals uom.Id
-                                              where pi.PackageId == package.Id
-                                              && pi.IsDeleted == false
-                                              select new PackageItemModel
-                                              {
-                                                  Id = pi.Id,
-                                                  Item = new BaseBriefModel
-                                                  {
-                                                      Id = i.Id,
-                                                      Name = i.Name,
-                                                      NativeName = i.NativeName,
-                                                  },
-                                                  ItemUOM = new UOMBriefModel()
-                                                  {
-                                                      Id = uom.Id,
-                                                      Name = uom.Name,
-                                                      NativeName = uom.NativeName,
-                                                      NoOfBaseUnit = uom.NoOfBaseUnit,
-                                                  },
-                                                  ItemQuantity = pi.ItemQuantity,
-                                                  IsActive = pi.IsActive,
-                                              }).ToListAsync();
+                                           join i in context.Items on pi.ItemId equals i.Id
+                                           join uom in context.UOMs on pi.ItemUOM equals uom.Id
+                                           where pi.PackageId == package.Id
+                                           && pi.IsDeleted == false
+                                           select new PackageItemModel
+                                           {
+                                               Id = pi.Id,
+                                               Item = new BaseBriefModel
+                                               {
+                                                   Id = i.Id,
+                                                   Name = i.Name,
+                                                   NativeName = i.NativeName,
+                                               },
+                                               ItemUOM = new UOMBriefModel()
+                                               {
+                                                   Id = uom.Id,
+                                                   Name = uom.Name,
+                                                   NativeName = uom.NativeName,
+                                                   NoOfBaseUnit = uom.NoOfBaseUnit,
+                                               },
+                                               ItemQuantity = pi.ItemQuantity,
+                                               IsActive = pi.IsActive,
+                                           }).ToListAsync();
                 }
                 return package;
             }
@@ -162,7 +164,7 @@ namespace DataProvider
                 context.PackageItems.Add(dbModel);
             }
         }
-        private void UpdatePackageItems(IEnumerable<PackageItem> modfiedItems, IEnumerable<PackageItemModel> packageItems,int packageId)
+        private void UpdatePackageItems(IEnumerable<PackageItem> modfiedItems, IEnumerable<PackageItemModel> packageItems, int packageId)
         {
             foreach (var dbModel in modfiedItems)
             {
@@ -216,6 +218,13 @@ namespace DataProvider
                 throw new KnownException("Package UOM is required");
             }
             return true;
+        }
+        private OrganizationItemModel GetOrganizationItemFromPackage(PackageModel model)
+        {
+            OrganizationItemModel itemModel = new OrganizationItemModel();
+            itemModel.Item.Id = model.Id;
+            itemModel.Organization.Id = model.Organization.Id;
+            return itemModel;
         }
 
     }

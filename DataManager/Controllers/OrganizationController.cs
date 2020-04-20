@@ -1,6 +1,7 @@
 ﻿using BusinessLogic;
 using Catalogs;
 using Models;
+using Models.BriefModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -16,6 +17,12 @@ namespace DataManager.Controllers
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetOrganization(id);
+        }
+        [HttpGet]
+        public async Task<List<ItemBriefModel>> GetCategories(int id)
+        {
+            var _logic = new Logic(LoggedInMemberId);
+            return await _logic.GetOrganizationCategories(id);
         }
         [HttpGet]
         public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, string orderByColumn = null, bool calculateTotal = true)

@@ -17,17 +17,22 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var currentItems = await GetCurrentOrganizationItems(context, model.Organization.Id);
-                if (!DoesOrganizationItemBindingExist(model.Organization.Id, model.Item.Id, currentItems))
-                {
-                    var dbModel = SetOrganizationItem(new OrganizationItem(), model);
-                    context.OrganizationItems.Add(dbModel);
-                    await context.SaveChangesAsync();
-                    model.Id = dbModel.Id;
-                    return model.Id;
-                }
-                return 0;
+                var dbModel = await CreateOrganizationItem(context, model);
+                await context.SaveChangesAsync();
+                model.Id = dbModel.Id;
+                return model.Id;
             }
+        }
+        private async Task<OrganizationItem> CreateOrganizationItem(CharityEntities context, OrganizationItemModel model)
+        {
+            var currentItems = await GetCurrentOrganizationItems(context, model.Organization.Id);
+            if (!DoesOrganizationItemBindingExist(model.Organization.Id, model.Item.Id, currentItems))
+            {
+                var dbModel = SetOrganizationItem(new OrganizationItem(), model);
+                context.OrganizationItems.Add(dbModel);
+                return dbModel;
+            }
+            return null;
         }
         public async Task<bool> UpdateOrganizationItem(OrganizationItemModel model)
         {

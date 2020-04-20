@@ -56,6 +56,7 @@
     <Compile Include="EventBL.cs" />
     <Compile Include="OrganizationAccountBL.cs" />
     <Compile Include="OrganizationAttachmentBL.cs" />
+    <Compile Include="OrganizationCategoryBL.cs" />
     <Compile Include="OrganizationOfficeBL.cs" />
     <Compile Include="CampaignBL.cs" />
     <Compile Include="DonationRequestOrganizationItemBL.cs" />
