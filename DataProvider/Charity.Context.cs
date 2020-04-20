@@ -49,8 +49,10 @@ namespace DataProvider
         public virtual DbSet<Log> Logs { get; set; }
         public virtual DbSet<Member> Members { get; set; }
         public virtual DbSet<Organization> Organizations { get; set; }
+        public virtual DbSet<OrganizationAccount> OrganizationAccounts { get; set; }
         public virtual DbSet<OrganizationItem> OrganizationItems { get; set; }
         public virtual DbSet<OrganizationMember> OrganizationMembers { get; set; }
+        public virtual DbSet<OrganizationOffice> OrganizationOffices { get; set; }
         public virtual DbSet<OrganizationRequest> OrganizationRequests { get; set; }
         public virtual DbSet<PackageItem> PackageItems { get; set; }
         public virtual DbSet<RequestThread> RequestThreads { get; set; }

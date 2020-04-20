@@ -242,7 +242,7 @@ namespace DataProvider
                                         join i in context.Items on oi.ItemId equals i.Id
                                         join iuom in context.UOMs on i.DefaultUOM equals iuom.Id
                                         where o.Id == filters.OrganizationId
-                                        && (oi.CampaignId == filters.CampaignId)
+                                        && (filters.CampaignId == null || oi.CampaignId == filters.CampaignId)
                                         && (filters.Type == SearchItemTypeCatalog.All || i.Type == (int)filters.Type)
                                         && (string.IsNullOrEmpty(filters.ItemName) || i.Name.Contains(filters.ItemName))
                                         && oi.IsDeleted == false
@@ -299,7 +299,7 @@ namespace DataProvider
         }
         private async Task<List<OrganizationItem>> GetCurrentOrganizationItems(CharityEntities context, int organizationId)
         {
-            return await context.OrganizationItems.Where(x => x.OrganizationId == organizationId && x.IsDeleted == false).ToListAsync();
+            return await context.OrganizationItems.Where(x => x.OrganizationId == organizationId && (x.CampaignId == null || x.CampaignId == 0) && x.IsDeleted == false).ToListAsync();
         }
         private bool DoesOrganizationItemBindingExist(int organizationId, int itemId, List<OrganizationItem> currentItems)
         {

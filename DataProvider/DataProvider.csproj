@@ -160,6 +160,9 @@
     <Compile Include="Member.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
+    <Compile Include="OrganizationAccount.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
     <Compile Include="OrganizationMember.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -172,6 +175,11 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="OrganizationItemDA.cs" />
+    <Compile Include="OrganizationOffice.cs">
+      <DependentUpon>Charity.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OrganizationAccountDA.cs" />
+    <Compile Include="OrganizationOfficeDA.cs" />
     <Compile Include="OrganizationPackageDA.cs" />
     <Compile Include="OrganizationRequest.cs">
       <DependentUpon>Charity.tt</DependentUpon>

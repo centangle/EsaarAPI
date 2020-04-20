@@ -16,4 +16,7 @@ namespace DataProvider
     public partial class Campaign : IBase { }
     public partial class PackageItem : IBase { }
     public partial class EntityRegion : IBase { }
+    public partial class Event : IBase { }
+    public partial class OrganizationOffice : IBase { }
+    public partial class OrganizationAccount : IBase { }
 }

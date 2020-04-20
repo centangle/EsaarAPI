@@ -394,6 +394,23 @@
           <Property Name="UpdatedBy" Type="int" Nullable="false" />
           <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
+        <EntityType Name="OrganizationAccount">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrganizationId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="AccountNo" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
         <EntityType Name="OrganizationItem">
           <Key>
             <PropertyRef Name="Id" />
@@ -420,6 +437,24 @@
           <Property Name="MemberId" Type="int" Nullable="false" />
           <Property Name="OrganizationId" Type="int" Nullable="false" />
           <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="UpdatedBy" Type="int" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OrganizationOffice">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrganizationId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="NativeName" Type="nvarchar" MaxLength="250" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="Address" Type="nvarchar(max)" />
+          <Property Name="AddressLatLong" Type="varchar" MaxLength="500" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CreatedBy" Type="int" Nullable="false" />
@@ -1158,8 +1193,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="Log" EntityType="Self.Log" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Organization" EntityType="Self.Organization" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrganizationAccount" EntityType="Self.OrganizationAccount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganizationItem" EntityType="Self.OrganizationItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganizationMember" EntityType="Self.OrganizationMember" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrganizationOffice" EntityType="Self.OrganizationOffice" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganizationRequest" EntityType="Self.OrganizationRequest" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PackageItem" EntityType="Self.PackageItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestThread" EntityType="Self.RequestThread" Schema="dbo" store:Type="Tables" />
@@ -1393,8 +1430,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="Logs" EntityType="CharityModel.Log" />
           <EntitySet Name="Members" EntityType="CharityModel.Member" />
           <EntitySet Name="Organizations" EntityType="CharityModel.Organization" />
+          <EntitySet Name="OrganizationAccounts" EntityType="CharityModel.OrganizationAccount" />
           <EntitySet Name="OrganizationItems" EntityType="CharityModel.OrganizationItem" />
           <EntitySet Name="OrganizationMembers" EntityType="CharityModel.OrganizationMember" />
+          <EntitySet Name="OrganizationOffices" EntityType="CharityModel.OrganizationOffice" />
           <EntitySet Name="OrganizationRequests" EntityType="CharityModel.OrganizationRequest" />
           <EntitySet Name="PackageItems" EntityType="CharityModel.PackageItem" />
           <EntitySet Name="RequestThreads" EntityType="CharityModel.RequestThread" />
@@ -2045,6 +2084,23 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <NavigationProperty Name="OrganizationMembers" Relationship="CharityModel.FK_OrganizationMember_Organization" FromRole="Organization" ToRole="OrganizationMember" />
           <NavigationProperty Name="OrganizationRequests" Relationship="CharityModel.FK_OrganizationRequest_Organization" FromRole="Organization" ToRole="OrganizationRequest" />
         </EntityType>
+        <EntityType Name="OrganizationAccount">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrganizationId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="AccountNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
+        </EntityType>
         <EntityType Name="OrganizationItem">
           <Key>
             <PropertyRef Name="Id" />
@@ -2081,6 +2137,24 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Member" Relationship="CharityModel.FK_OrganizationMember_Member" FromRole="OrganizationMember" ToRole="Member" />
           <NavigationProperty Name="Organization" Relationship="CharityModel.FK_OrganizationMember_Organization" FromRole="OrganizationMember" ToRole="Organization" />
+        </EntityType>
+        <EntityType Name="OrganizationOffice">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrganizationId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="NativeName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AddressLatLong" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
         </EntityType>
         <EntityType Name="OrganizationRequest">
           <Key>
@@ -3189,6 +3263,24 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="OrganizationAccounts">
+            <EntityTypeMapping TypeName="CharityModel.OrganizationAccount">
+              <MappingFragment StoreEntitySet="OrganizationAccount">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="AccountNo" ColumnName="AccountNo" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="OrganizationItems">
             <EntityTypeMapping TypeName="CharityModel.OrganizationItem">
               <MappingFragment StoreEntitySet="OrganizationItem">
@@ -3220,6 +3312,25 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
                 <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrganizationOffices">
+            <EntityTypeMapping TypeName="CharityModel.OrganizationOffice">
+              <MappingFragment StoreEntitySet="OrganizationOffice">
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="AddressLatLong" ColumnName="AddressLatLong" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="NativeName" ColumnName="NativeName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
