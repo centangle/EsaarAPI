@@ -6,6 +6,7 @@ using System.Web.Http;
 
 namespace DataManager.Controllers
 {
+    [Authorize]
     public class CampaignController : BaseController
     {
         public async Task<CampaignModel> Get(int id)

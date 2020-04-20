@@ -6,6 +6,7 @@ using System.Web.Http;
 
 namespace DataManager.Controllers
 {
+    [Authorize]
     public class EventController : BaseController
     {
         public async Task<EventModel> Get(int id)

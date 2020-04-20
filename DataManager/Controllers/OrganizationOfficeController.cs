@@ -6,6 +6,7 @@ using System.Web.Http;
 
 namespace DataManager.Controllers
 {
+    [Authorize]
     public class OrganizationOfficeController : BaseController
     {
         public async Task<OrganizationOfficeModel> Get(int id)
