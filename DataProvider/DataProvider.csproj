@@ -184,6 +184,7 @@
     <Compile Include="EventDA.cs" />
     <Compile Include="OrganizationOfficeDA.cs" />
     <Compile Include="OrganizationPackageDA.cs" />
+    <Compile Include="OrganizationRegionDA.cs" />
     <Compile Include="OrganizationRequest.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>

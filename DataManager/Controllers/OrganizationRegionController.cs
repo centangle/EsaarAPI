@@ -24,6 +24,7 @@ namespace DataManager.Controllers
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetEntityRegions(filters);
         }
+
         [HttpPost]
         public async Task<bool> Modify(int organizationId, List<EntityRegionModel> entityRegions)
         {
@@ -35,6 +36,13 @@ namespace DataManager.Controllers
 
             }
             return await _logic.ModifyMultipleEntityRegion(entityRegions, organizationId, null);
+        }
+
+        [HttpGet]
+        public async Task<Array> Levels(int organizationId)
+        {
+            var _logic = new Logic(LoggedInMemberId);
+            return await _logic.GetOrganizationRegionAllowedLevels(organizationId);
         }
     }
 }

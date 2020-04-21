@@ -16,7 +16,7 @@ namespace DataManager.Controllers
     public class RegionController : BaseController
     {
         [HttpGet]
-        public async Task<PaginatedResultModel<RegionBriefModel>> Countries(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name=null, int? organizationId = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<RegionBriefModel>> Countries(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, int? organizationId = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
             RegionSearchModel filters = new RegionSearchModel();
@@ -73,6 +73,12 @@ namespace DataManager.Controllers
             filters.OrganizationId = organizationId;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetUnionCouncils(filters);
+        }
+
+        [HttpGet]
+        public Array Levels()
+        {
+            return Enum.GetValues(typeof(RegionLevelTypeCatalog)).Cast<RegionLevelTypeCatalog>().ToArray();
         }
 
     }
