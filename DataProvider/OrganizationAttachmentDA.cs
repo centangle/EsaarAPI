@@ -16,10 +16,21 @@ namespace DataProvider
             {
                 throw new KnownException("Organization is required");
             }
+            if(attachments==null|| attachments.Count==0)
+            {
+                throw new KnownException("Attachments are required");
+            }
             using (CharityEntities context = new CharityEntities())
             {
-                await AssignAttachments(context, attachments, organizationId, Catalogs.AttachmentEntityTypeCatalog.Organization, true);
-                return await context.SaveChangesAsync() > 0;
+                var organizationMember = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(organizationMember))
+                {
+                    await AssignAttachments(context, attachments, organizationId, Catalogs.AttachmentEntityTypeCatalog.Organization, true);
+                    return await context.SaveChangesAsync() > 0;
+                }
+                else
+                    throw new KnownException("You are not authorized to perform this action");
+
             }
         }
     }

@@ -18,10 +18,17 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 var dbModel = SetOrganizationOffice(new OrganizationOffice(), model);
-                context.OrganizationOffices.Add(dbModel);
-                await context.SaveChangesAsync();
-                model.Id = dbModel.Id;
-                return model.Id;
+                var organizationMember = (await GetMemberRoleForOrganization(context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(organizationMember))
+                {
+                    context.OrganizationOffices.Add(dbModel);
+                    await context.SaveChangesAsync();
+                    model.Id = dbModel.Id;
+                    return model.Id;
+                }
+                else
+                    throw new KnownException("You are not authorized to perform this action");
+                
             }
         }
         public async Task<bool> UpdateOrganizationOffice(OrganizationOfficeModel model)
@@ -114,6 +121,7 @@ namespace DataProvider
             {
                 throw new KnownException("Organization is required");
             }
+            dbModel.OrganizationId = model.Organization.Id;
             dbModel.Name = model.Name;
             dbModel.NativeName = model.NativeName;
             dbModel.Address = model.Address;

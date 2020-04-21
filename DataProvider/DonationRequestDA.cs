@@ -369,6 +369,7 @@ namespace DataProvider
                                         from am in tam.DefaultIfEmpty()
                                         join v in context.Members on dro.VolunteerId equals v.Id into tv
                                         from v in tam.DefaultIfEmpty()
+                                        let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == o.Id)
                                         where
                                         (filters.OrganizationId == null || dro.OrganizationId == filters.OrganizationId)
                                         && (filters.Type == null || dr.Type == (int)filters.Type.Value)
@@ -377,9 +378,7 @@ namespace DataProvider
                                         (
                                              dr.MemberId == _loggedInMemberId
                                              ||
-                                             o.OwnedBy == _loggedInMemberId
-                                             ||
-                                             memberModeratorOrgz.Any(x => x == o.Id)
+                                             isLoggedInMemberOrgModerator
 
                                          )
                                         select new PaginatedDonationRequestModel
@@ -423,6 +422,7 @@ namespace DataProvider
                                             },
                                             Type = (DonationRequestTypeCatalog)dr.Type,
                                             LoggedInMemberId = _loggedInMemberId,
+                                            IsLoggedInMemberOrganizationModerator = isLoggedInMemberOrgModerator,
                                             CreatedDate = dr.CreatedDate
                                         }).AsQueryable();
 

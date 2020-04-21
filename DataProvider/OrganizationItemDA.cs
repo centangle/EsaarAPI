@@ -218,11 +218,14 @@ namespace DataProvider
                                       Name = c == null ? "" : c.Name,
                                       NativeName = c == null ? "" : c.NativeName,
                                   },
-                                  Item = new BaseBriefModel()
+                                  Item = new ItemBriefModel()
                                   {
                                       Id = i.Id,
                                       Name = i.Name,
                                       NativeName = i.NativeName,
+                                      ImageUrl = i.ImageUrl,
+                                      Worth = i.Worth ?? 0,
+                                      Description = i.Description,
                                   },
                                   CampaignItemTarget = oi.CampaignItemTarget ?? 0,
                                   CampaignItemUOM = new UOMBriefModel()
@@ -262,11 +265,14 @@ namespace DataProvider
                                             },
                                             ItemName = i.Name,
                                             ItemNativeName = i.NativeName,
-                                            Item = new BaseBriefModel()
+                                            Item = new ItemBriefModel()
                                             {
                                                 Id = i.Id,
                                                 Name = i.Name,
                                                 NativeName = i.NativeName,
+                                                ImageUrl = i.ImageUrl,
+                                                Worth = i.Worth ?? 0,
+                                                Description = i.Description,
                                             },
                                             ItemDefaultUOM = new UOMBriefParentModel()
                                             {

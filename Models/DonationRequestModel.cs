@@ -34,6 +34,7 @@ namespace Models
         }
         [IgnoreDataMember]
         public int LoggedInMemberId { get; set; }
+        public bool IsLoggedInMemberOrganizationModerator { get; set; }
         public DonationRequestOrganizationModel DonationRequestOrganization { get; set; }
 
         public bool IsOpenRequestForModerator
@@ -50,7 +51,15 @@ namespace Models
         {
             get
             {
-                if (DonationRequestOrganization != null && DonationRequestOrganization.Volunteer == null || DonationRequestOrganization.Volunteer.Id == 0)
+                if (
+                        (DonationRequestOrganization != null && (DonationRequestOrganization.Volunteer == null || DonationRequestOrganization.Volunteer.Id == 0))
+                        &&
+                        (
+                            DonationRequestOrganization.Status == StatusCatalog.Approved
+                            ||
+                            DonationRequestOrganization.Status == StatusCatalog.VolunteerAssigned
+                        )
+                    )
                     return true;
                 else
                     return false;
@@ -60,7 +69,15 @@ namespace Models
         {
             get
             {
-                if (LoggedInMemberId != 0 && ((DonationRequestOrganization != null && DonationRequestOrganization.Moderator != null && DonationRequestOrganization.Moderator.Id == LoggedInMemberId) || (CreatedBy == LoggedInMemberId)))
+                if (
+                        LoggedInMemberId != 0
+                        &&
+                        (
+                            (DonationRequestOrganization != null && DonationRequestOrganization.Moderator != null && IsLoggedInMemberOrganizationModerator)
+                            ||
+                            (CreatedBy == LoggedInMemberId)
+                        )
+                    )
                     return true;
                 else
                     return false;
@@ -70,10 +87,15 @@ namespace Models
         {
             get
             {
-                if (DonationRequestOrganization != null && (DonationRequestOrganization.Status == StatusCatalog.Delivered || DonationRequestOrganization.Status == StatusCatalog.Rejected))
-                    return false;
-                else
+                if (
+                        DonationRequestOrganization != null
+                        && DonationRequestOrganization.Moderator != null
+                        && IsLoggedInMemberOrganizationModerator
+                        && (DonationRequestOrganization.Status != StatusCatalog.Delivered && DonationRequestOrganization.Status != StatusCatalog.Rejected)
+                  )
                     return true;
+                else
+                    return false;
             }
         }
     }

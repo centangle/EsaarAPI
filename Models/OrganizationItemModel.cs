@@ -12,12 +12,12 @@ namespace Models
         public OrganizationItemModel()
         {
             Organization = new BaseBriefModel();
-            Item = new BaseBriefModel();
+            Item = new ItemBriefModel();
             Campaign = new BaseBriefModel();
             CampaignItemUOM = new UOMBriefModel();
         }
         public BaseBriefModel Organization { get; set; }
-        public BaseBriefModel Item { get; set; }
+        public ItemBriefModel Item { get; set; }
         public BaseBriefModel Campaign { get; set; }
         public double CampaignItemTarget { get; set; }
         public UOMBriefModel CampaignItemUOM { get; set; }

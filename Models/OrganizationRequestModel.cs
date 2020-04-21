@@ -27,6 +27,7 @@ namespace Models
 
     public class PaginatedOrganizationRequestModel : OrganizationRequestModel
     {
+        public List<OrganizationMemberRolesCatalog> CurrentMemberRoles { get; set; }
         [IgnoreDataMember]
         public int LoggedInMemberId { get; set; }
 
@@ -54,10 +55,10 @@ namespace Models
         {
             get
             {
-                if ((Moderator != null && Moderator.Id == LoggedInMemberId) && (Status == StatusCatalog.Approved || Status == StatusCatalog.Rejected))
-                    return false;
-                else
+                if ((Moderator != null && Moderator.Id == LoggedInMemberId) && (Status != StatusCatalog.Approved && Status != StatusCatalog.Rejected))
                     return true;
+                else
+                    return false;
             }
         }
         public bool CanAddMessageToThread
