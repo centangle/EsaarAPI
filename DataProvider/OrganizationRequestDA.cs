@@ -143,6 +143,7 @@ namespace DataProvider
                 var memberOrganizations = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
 
                 List<int> memberModeratorOrgz = new List<int>();
+                List<int> memberOwnedOrgz = new List<int>();
                 if (memberModeratorOrgz != null)
                 {
                     foreach (var memberOrg in memberOrganizations)
@@ -151,6 +152,10 @@ namespace DataProvider
                         {
                             memberModeratorOrgz.Add(memberOrg.Organization.Id);
                         }
+                        if (IsOrganizationMemberOwner(memberOrg))
+                        {
+                            memberOwnedOrgz.Add(memberOrg.Organization.Id);
+                        }
                     }
                 }
                 var requestQueryable = (from ort in context.OrganizationRequests
@@ -158,6 +163,8 @@ namespace DataProvider
                                         join m in context.Members on ort.CreatedBy equals m.Id
                                         join am in context.Members on ort.ModeratorId equals am.Id into tam
                                         from am in tam.DefaultIfEmpty()
+                                        let isLoggedInMemberOrgOwner = memberOwnedOrgz.Any(x => x == o.Id)
+                                        let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == o.Id)
                                         where
                                         (filters.OrganizationId == null || ort.OrganizationId == filters.OrganizationId)
                                         && (filters.Type == null || ort.Type == (int)filters.Type.Value)
@@ -166,18 +173,19 @@ namespace DataProvider
                                         (
                                              ort.CreatedBy == _loggedInMemberId
                                              ||
-                                             o.OwnedBy == _loggedInMemberId
+                                             isLoggedInMemberOrgOwner
                                              ||
-                                             memberModeratorOrgz.Any(x => x == o.Id)
+                                             isLoggedInMemberOrgModerator
                                         )
                                         select new PaginatedOrganizationRequestModel
                                         {
                                             Id = ort.Id,
-                                            Organization = new BaseBriefModel()
+                                            Organization = new BaseImageBriefModel()
                                             {
                                                 Id = o.Id,
                                                 Name = o.Name,
                                                 NativeName = o.NativeName,
+                                                ImageUrl = o.LogoUrl,
                                             },
                                             Entity = new BaseBriefModel()
                                             {
@@ -195,10 +203,19 @@ namespace DataProvider
                                             Type = (OrganizationRequestTypeCatalog)ort.Type,
                                             Status = (StatusCatalog)ort.Status,
                                             LoggedInMemberId = _loggedInMemberId,
-                                            CreatedDate = ort.CreatedDate
+                                            IsLoggedInMemberOrganizationOwner = isLoggedInMemberOrgOwner,
+                                            IsLoggedInMemberOrganizationModerator = isLoggedInMemberOrgModerator,
+                                            CreatedDate = ort.CreatedDate,
+                                            CreatedBy = ort.CreatedBy,
                                         }).AsQueryable();
 
-                return await requestQueryable.Paginate(filters);
+                var requests = await requestQueryable.Paginate(filters);
+                foreach (var request in requests.Items)
+                {
+                    if (request.Type == OrganizationRequestTypeCatalog.Moderator || request.Type == OrganizationRequestTypeCatalog.Volunteer)
+                        request.Regions = await GetRequestEntityRegions(request.Id);
+                }
+                return requests;
             }
         }
     }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +21,16 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 var entityRegionQueryable = (from er in context.EntityRegions
+                                             join c in context.Countries on er.CountryId equals c.Id into lc
+                                             from c in lc.DefaultIfEmpty()
+                                             join s in context.States on er.StateId equals s.Id into ls
+                                             from s in ls.DefaultIfEmpty()
+                                             join d in context.Districts on er.DistrictId equals d.Id into ld
+                                             from d in ld.DefaultIfEmpty()
+                                             join t in context.Tehsils on er.TehsilId equals t.Id into lt
+                                             from t in lt.DefaultIfEmpty()
+                                             join uc in context.UnionCouncils on er.UnionCouncilId equals uc.Id into luc
+                                             from uc in luc.DefaultIfEmpty()
                                              where er.EntityId == filters.EntityId
                                              && er.EntityType == (int)filters.EntityType
                                              && er.IsDeleted == false
@@ -29,6 +40,8 @@ namespace DataProvider
                                                  Entity = new BaseBriefModel()
                                                  {
                                                      Id = er.Id,
+                                                     Name = "",
+                                                     NativeName = "",
                                                  },
                                                  EntityType = (EntityRegionTypeCatalog)er.EntityType,
                                                  Region = new RegionBriefModel()
@@ -36,6 +49,36 @@ namespace DataProvider
                                                      Id = er.Id,
                                                  },
                                                  RegionLevel = (RegionLevelTypeCatalog)er.RegionLevel,
+                                                 Country = new BaseBriefModel()
+                                                 {
+                                                     Id = c == null ? 0 : c.Id,
+                                                     Name = c == null ? "" : c.Name,
+                                                     NativeName = c == null ? "" : c.NativeName,
+                                                 },
+                                                 State = new BaseBriefModel()
+                                                 {
+                                                     Id = s == null ? 0 : s.Id,
+                                                     Name = s == null ? "" : s.Name,
+                                                     NativeName = s == null ? "" : s.NativeName,
+                                                 },
+                                                 District = new BaseBriefModel()
+                                                 {
+                                                     Id = d == null ? 0 : d.Id,
+                                                     Name = d == null ? "" : d.Name,
+                                                     NativeName = d == null ? "" : d.NativeName,
+                                                 },
+                                                 Tehsil = new BaseBriefModel()
+                                                 {
+                                                     Id = t == null ? 0 : t.Id,
+                                                     Name = t == null ? "" : t.Name,
+                                                     NativeName = t == null ? "" : t.NativeName,
+                                                 },
+                                                 UnionCouncil = new BaseBriefModel()
+                                                 {
+                                                     Id = uc == null ? 0 : uc.Id,
+                                                     Name = uc == null ? "" : uc.Name,
+                                                     NativeName = uc == null ? "" : uc.NativeName,
+                                                 },
                                                  IsApproved = er.IsApproved,
                                                  IsActive = er.IsActive,
                                                  CreatedDate = er.CreatedDate,
@@ -114,6 +157,7 @@ namespace DataProvider
                 dbModel.ApprovedBy = _loggedInMemberId;
             }
             SetAndValidateBaseProperties(dbModel, model);
+            dbModel.IsActive = true;
             await SetAllParentRegionLevel(context, dbModel, model);
             return dbModel;
 
@@ -186,6 +230,13 @@ namespace DataProvider
         }
         private async Task<bool> ModifyEntityRegions(CharityEntities context, List<EntityRegionModel> enityRegions, int organizationId, int? requestId, bool skipModeratorCheck = false)
         {
+            if (enityRegions == null || enityRegions.Count == 0)
+            {
+                throw new KnownException("There must be atleast one region");
+            }
+            // Remove Duplicates 
+            enityRegions = enityRegions.GroupBy(x => new { x.RegionLevel, x.Region.Id })
+                                       .Select(x => x.FirstOrDefault()).ToList();
             var organizationMember = await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId);
             if (IsOrganizationMemberModerator(organizationMember.FirstOrDefault()) || skipModeratorCheck)
             {
@@ -248,6 +299,75 @@ namespace DataProvider
                     return await GetUnionCouncil(context, regionId);
             }
             return null;
+        }
+        private async Task<List<EntityRegionModel>> GetRequestEntityRegions(int requestId)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                return await (from er in context.EntityRegions
+                              join c in context.Countries on er.CountryId equals c.Id into lc
+                              from c in lc.DefaultIfEmpty()
+                              join s in context.States on er.StateId equals s.Id into ls
+                              from s in ls.DefaultIfEmpty()
+                              join d in context.Districts on er.DistrictId equals d.Id into ld
+                              from d in ld.DefaultIfEmpty()
+                              join t in context.Tehsils on er.TehsilId equals t.Id into lt
+                              from t in lt.DefaultIfEmpty()
+                              join uc in context.UnionCouncils on er.UnionCouncilId equals uc.Id into luc
+                              from uc in luc.DefaultIfEmpty()
+                              where er.RequestId == requestId
+                              && er.IsDeleted == false
+                              select new EntityRegionModel
+                              {
+                                  Id = er.Id,
+                                  Entity = new BaseBriefModel()
+                                  {
+                                      Id = er.Id,
+                                      Name = "",
+                                      NativeName = "",
+                                  },
+                                  EntityType = (EntityRegionTypeCatalog)er.EntityType,
+                                  Region = new RegionBriefModel()
+                                  {
+                                      Id = er.Id,
+                                  },
+                                  RegionLevel = (RegionLevelTypeCatalog)er.RegionLevel,
+                                  Country = new BaseBriefModel()
+                                  {
+                                      Id = c == null ? 0 : c.Id,
+                                      Name = c == null ? "" : c.Name,
+                                      NativeName = c == null ? "" : c.NativeName,
+                                  },
+                                  State = new BaseBriefModel()
+                                  {
+                                      Id = s == null ? 0 : s.Id,
+                                      Name = s == null ? "" : s.Name,
+                                      NativeName = s == null ? "" : s.NativeName,
+                                  },
+                                  District = new BaseBriefModel()
+                                  {
+                                      Id = d == null ? 0 : d.Id,
+                                      Name = d == null ? "" : d.Name,
+                                      NativeName = d == null ? "" : d.NativeName,
+                                  },
+                                  Tehsil = new BaseBriefModel()
+                                  {
+                                      Id = t == null ? 0 : t.Id,
+                                      Name = t == null ? "" : t.Name,
+                                      NativeName = t == null ? "" : t.NativeName,
+                                  },
+                                  UnionCouncil = new BaseBriefModel()
+                                  {
+                                      Id = uc == null ? 0 : uc.Id,
+                                      Name = uc == null ? "" : uc.Name,
+                                      NativeName = uc == null ? "" : uc.NativeName,
+                                  },
+                                  IsApproved = er.IsApproved,
+                                  IsActive = er.IsActive,
+                                  CreatedDate = er.CreatedDate,
+
+                              }).ToListAsync();
+            }
         }
     }
 }

@@ -24,9 +24,15 @@ namespace Models
         public int? RequestId { get; set; }
         public EntityRegionRequestTypeCatalog RequestType { get; set; }
         public bool IsApproved { get; set; } = true;
+        public BaseBriefModel Country { get; set; }
+        public BaseBriefModel State { get; set; }
+        public BaseBriefModel District { get; set; }
+        public BaseBriefModel Tehsil { get; set; }
+        public BaseBriefModel UnionCouncil { get; set; }
     }
     public class PaginatedEntityRegionModel : EntityRegionModel
     {
+       
     }
     public class EntityRegionSearchModel : BaseSearchModel
     {

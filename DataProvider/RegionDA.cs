@@ -53,6 +53,7 @@ namespace DataProvider
                     stateQueryable = (from s in stateQueryable
                                       from er in context.EntityRegions.Where(x => x.StateId == null || x.StateId == s.Id)
                                       where er.EntityId == filters.OrganizationId
+                                      && (er.CountryId == s.CountryId || er.CountryId == null)
                                       && er.EntityType == (int)EntityRegionTypeCatalog.Organization
                                       && er.IsActive == true
                                       && er.IsDeleted == false
@@ -85,8 +86,9 @@ namespace DataProvider
                 if (filters.OrganizationId != null && filters.OrganizationId > 0)
                 {
                     districtQueryable = (from d in districtQueryable
-                                         from er in context.EntityRegions.Where(x => x.DistrictId == null || x.DistrictId == d.Id)
+                                         from er in context.EntityRegions.Where(x => x.DistrictId == d.Id || x.DistrictId == null)
                                          where er.EntityId == filters.OrganizationId
+                                         && (er.StateId == d.StateId || er.StateId == null)
                                          && er.EntityType == (int)EntityRegionTypeCatalog.Organization
                                          && er.IsActive == true
                                          && er.IsDeleted == false
@@ -99,6 +101,7 @@ namespace DataProvider
                                            Name = d.Name,
                                            NativeName = d.NativeName
                                        }).AsNoTracking().Distinct().AsQueryable();
+                var sql = regionQueryable.ToString();
                 return await regionQueryable.Paginate(filters);
             }
 
@@ -120,6 +123,7 @@ namespace DataProvider
                     tehsilQueryable = (from t in tehsilQueryable
                                        from er in context.EntityRegions.Where(x => x.TehsilId == null || x.TehsilId == t.Id)
                                        where er.EntityId == filters.OrganizationId
+                                       && (t.DistrictId == er.DistrictId || er.DistrictId == null)
                                        && er.EntityType == (int)EntityRegionTypeCatalog.Organization
                                        && er.IsActive == true
                                        && er.IsDeleted == false
@@ -131,7 +135,7 @@ namespace DataProvider
                                            Id = t.Id,
                                            Name = t.Name,
                                            NativeName = t.NativeName
-                                       }).AsNoTracking().AsQueryable();
+                                       }).AsNoTracking().Distinct().AsQueryable();
                 return await regionQueryable.Paginate(filters);
             }
 
@@ -140,25 +144,20 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var ucQueryable = (from u in context.UnionCouncils
+                var ucQueryable = (from uc in context.UnionCouncils
                                    where (
-                                   (
-                                   string.IsNullOrEmpty(filters.Name)
-                                   || u.Name.ToLower().Contains(filters.Name.ToLower())
-                                   || u.NativeName.ToLower().Contains(filters.Name.ToLower()))
-                                   && (filters.ParentId == null || u.TehsilId == filters.ParentId)
-                                   && u.IsDeleted == false)
-                                   select new RegionBriefModel
-                                   {
-                                       Id = u.Id,
-                                       Name = u.Name,
-                                       NativeName = u.NativeName
-                                   }).AsNoTracking().AsQueryable();
+                                   (string.IsNullOrEmpty(filters.Name)
+                                   || uc.Name.ToLower().Contains(filters.Name.ToLower())
+                                   || uc.NativeName.ToLower().Contains(filters.Name.ToLower()))
+                                   && (filters.ParentId == null || uc.TehsilId == filters.ParentId)
+                                   && uc.IsDeleted == false)
+                                   select uc).AsQueryable();
                 if (filters.OrganizationId != null && filters.OrganizationId > 0)
                 {
                     ucQueryable = (from uc in ucQueryable
                                    from er in context.EntityRegions.Where(x => x.UnionCouncilId == null || x.UnionCouncilId == uc.Id)
                                    where er.EntityId == filters.OrganizationId
+                                   && (uc.TehsilId == er.TehsilId || er.TehsilId == null)
                                    && er.EntityType == (int)EntityRegionTypeCatalog.Organization
                                    && er.IsActive == true
                                    && er.IsDeleted == false
@@ -170,9 +169,10 @@ namespace DataProvider
                                            Id = uc.Id,
                                            Name = uc.Name,
                                            NativeName = uc.NativeName
-                                       }).AsNoTracking().AsQueryable();
+                                       }).AsNoTracking().Distinct().AsQueryable();
                 return await regionQueryable.Paginate(filters);
             }
+
 
         }
         public async Task<RegionBriefModel> GetCountry(CharityEntities context, int id)

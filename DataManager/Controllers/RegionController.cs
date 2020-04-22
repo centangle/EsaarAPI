@@ -76,9 +76,18 @@ namespace DataManager.Controllers
         }
 
         [HttpGet]
-        public Array Levels()
+        public List<BaseBriefModel> Levels()
         {
-            return Enum.GetValues(typeof(RegionLevelTypeCatalog)).Cast<RegionLevelTypeCatalog>().ToArray();
+            List<BaseBriefModel> levels = new List<BaseBriefModel>();
+            foreach (RegionLevelTypeCatalog regionLevel in Enum.GetValues(typeof(RegionLevelTypeCatalog)))
+            {
+                levels.Add(new BaseBriefModel
+                {
+                    Id=(int)regionLevel,
+                    Name=regionLevel.ToString()
+                });
+            }
+            return levels;
         }
 
     }

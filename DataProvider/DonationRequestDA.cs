@@ -351,6 +351,7 @@ namespace DataProvider
                 var memberOrganizations = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
 
                 List<int> memberModeratorOrgz = new List<int>();
+                List<int> memberOwnedOrgz = new List<int>();
                 if (memberModeratorOrgz != null)
                 {
                     foreach (var memberOrg in memberOrganizations)
@@ -358,6 +359,10 @@ namespace DataProvider
                         if (IsOrganizationMemberModerator(memberOrg))
                         {
                             memberModeratorOrgz.Add(memberOrg.Organization.Id);
+                        }
+                        if (IsOrganizationMemberOwner(memberOrg))
+                        {
+                            memberOwnedOrgz.Add(memberOrg.Organization.Id);
                         }
                     }
                 }
@@ -369,6 +374,7 @@ namespace DataProvider
                                         from am in tam.DefaultIfEmpty()
                                         join v in context.Members on dro.VolunteerId equals v.Id into tv
                                         from v in tam.DefaultIfEmpty()
+                                        let isLoggedInMemberOrgOwner = memberOwnedOrgz.Any(x => x == o.Id)
                                         let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == o.Id)
                                         where
                                         (filters.OrganizationId == null || dro.OrganizationId == filters.OrganizationId)
@@ -377,6 +383,8 @@ namespace DataProvider
                                         &&
                                         (
                                              dr.MemberId == _loggedInMemberId
+                                             ||
+                                             isLoggedInMemberOrgOwner
                                              ||
                                              isLoggedInMemberOrgModerator
 
@@ -422,8 +430,10 @@ namespace DataProvider
                                             },
                                             Type = (DonationRequestTypeCatalog)dr.Type,
                                             LoggedInMemberId = _loggedInMemberId,
+                                            IsLoggedInMemberOrganizationOwner = isLoggedInMemberOrgOwner,
                                             IsLoggedInMemberOrganizationModerator = isLoggedInMemberOrgModerator,
-                                            CreatedDate = dr.CreatedDate
+                                            CreatedDate = dr.CreatedDate,
+                                            CreatedBy = dr.CreatedBy,
                                         }).AsQueryable();
 
                 return await requestQueryable.Paginate(filters);

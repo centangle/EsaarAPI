@@ -34,6 +34,7 @@ namespace Models
         }
         [IgnoreDataMember]
         public int LoggedInMemberId { get; set; }
+        public bool IsLoggedInMemberOrganizationOwner { get; set; }
         public bool IsLoggedInMemberOrganizationModerator { get; set; }
         public DonationRequestOrganizationModel DonationRequestOrganization { get; set; }
 
@@ -73,7 +74,7 @@ namespace Models
                         LoggedInMemberId != 0
                         &&
                         (
-                            (DonationRequestOrganization != null && DonationRequestOrganization.Moderator != null && IsLoggedInMemberOrganizationModerator)
+                            (DonationRequestOrganization != null && DonationRequestOrganization.Moderator != null && IsLoggedInMemberOrganizationOwner)
                             ||
                             (CreatedBy == LoggedInMemberId)
                         )
@@ -90,7 +91,7 @@ namespace Models
                 if (
                         DonationRequestOrganization != null
                         && DonationRequestOrganization.Moderator != null
-                        && IsLoggedInMemberOrganizationModerator
+                        && IsLoggedInMemberOrganizationOwner
                         && (DonationRequestOrganization.Status != StatusCatalog.Delivered && DonationRequestOrganization.Status != StatusCatalog.Rejected)
                   )
                     return true;

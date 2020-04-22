@@ -48,7 +48,7 @@ namespace DataProvider
                                         entityRegion.RequestId = organizationRequestId;
                                         entityRegion.RequestType = EntityRegionRequestTypeCatalog.OrganizationMember;
                                     }
-                                    await ModifyEntityRegions(context, model.Regions, model.Organization.Id, organizationRequestId);
+                                    await ModifyEntityRegions(context, model.Regions, model.Organization.Id, organizationRequestId, true);
                                 }
                                 transaction.Commit();
                                 return organizationRequestId;
@@ -56,6 +56,7 @@ namespace DataProvider
                             catch (Exception ex)
                             {
                                 transaction.Rollback();
+                                throw ex;
                             }
                         }
 
@@ -98,6 +99,13 @@ namespace DataProvider
                                 }
                                 foreach (var entityRegion in model.Regions)
                                 {
+                                    if (model.Entity == null || model.Entity.Id == 0)
+                                    {
+                                        model.Entity = new BaseBriefModel()
+                                        {
+                                            Id = _loggedInMemberId
+                                        };
+                                    }
                                     entityRegion.Entity.Id = model.Entity.Id;
                                     entityRegion.EntityType = EntityRegionTypeCatalog.OrganizationMember;
                                     entityRegion.RequestId = organizationRequest.Id;

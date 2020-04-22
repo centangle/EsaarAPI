@@ -2,6 +2,7 @@
 using Models.Base;
 using Models.BriefModel;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Serialization;
 
 namespace Models
@@ -10,12 +11,12 @@ namespace Models
     {
         public OrganizationRequestModel()
         {
-            Organization = new BaseBriefModel();
+            Organization = new BaseImageBriefModel();
             Entity = new BaseBriefModel();
             Moderator = new BaseBriefModel();
             Regions = new List<EntityRegionModel>();
         }
-        public BaseBriefModel Organization { get; set; }
+        public BaseImageBriefModel Organization { get; set; }
         public BaseBriefModel Entity { get; set; }
         public OrganizationRequestEntityTypeCatalog EntityType { get; set; } = OrganizationRequestEntityTypeCatalog.Member;
         public OrganizationRequestTypeCatalog Type { get; set; } = OrganizationRequestTypeCatalog.Volunteer;
@@ -30,7 +31,8 @@ namespace Models
         public List<OrganizationMemberRolesCatalog> CurrentMemberRoles { get; set; }
         [IgnoreDataMember]
         public int LoggedInMemberId { get; set; }
-
+        public bool IsLoggedInMemberOrganizationOwner { get; set; }
+        public bool IsLoggedInMemberOrganizationModerator { get; set; }
         public bool IsOpenRequest
         {
             get
@@ -45,7 +47,24 @@ namespace Models
         {
             get
             {
-                if (LoggedInMemberId != 0 && ((Moderator != null && Moderator.Id == LoggedInMemberId) || (CreatedBy == LoggedInMemberId)))
+                if (
+                        LoggedInMemberId != 0 &&
+                        (
+                            (Moderator != null && Moderator.Id == LoggedInMemberId)
+                            || IsLoggedInMemberOrganizationOwner
+                            || (CreatedBy == LoggedInMemberId)
+                        )
+                    )
+                    return true;
+                else
+                    return false;
+            }
+        }
+        public bool CanSelfAssign
+        {
+            get
+            {
+                if (IsOpenRequest && (IsLoggedInMemberOrganizationModerator || IsLoggedInMemberOrganizationOwner))
                     return true;
                 else
                     return false;
@@ -55,7 +74,14 @@ namespace Models
         {
             get
             {
-                if ((Moderator != null && Moderator.Id == LoggedInMemberId) && (Status != StatusCatalog.Approved && Status != StatusCatalog.Rejected))
+                if (
+                        (
+                            (Moderator != null && Moderator.Id == LoggedInMemberId)
+                            ||
+                            IsLoggedInMemberOrganizationOwner
+                        )
+                        && (Status != StatusCatalog.Approved && Status != StatusCatalog.Rejected)
+                    )
                     return true;
                 else
                     return false;
@@ -69,6 +95,33 @@ namespace Models
                     return false;
                 else
                     return true;
+            }
+        }
+        public bool ShowRegionsInRequestThread
+        {
+            get
+            {
+                if (Type == OrganizationRequestTypeCatalog.Volunteer || Type == OrganizationRequestTypeCatalog.Moderator)
+                    return true;
+                else
+                    return false;
+            }
+        }
+        public bool CanUpdateRegions
+        {
+            get
+            {
+                if (LoggedInMemberId != 0
+                    &&
+                    (
+                        CreatedBy == LoggedInMemberId
+                        || IsLoggedInMemberOrganizationOwner
+                        || IsLoggedInMemberOrganizationModerator
+                     )
+                  )
+                    return true;
+                else
+                    return false;
             }
         }
     }

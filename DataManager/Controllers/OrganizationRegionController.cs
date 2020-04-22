@@ -1,6 +1,7 @@
 ﻿using BusinessLogic;
 using Catalogs;
 using Models;
+using Models.BriefModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace DataManager.Controllers
         }
 
         [HttpGet]
-        public async Task<Array> Levels(int organizationId)
+        public async Task<List<BaseBriefModel>> Levels(int organizationId)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetOrganizationRegionAllowedLevels(organizationId);

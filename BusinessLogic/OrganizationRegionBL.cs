@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.BriefModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace BusinessLogic
 {
     public partial class Logic
     {
-        public async Task<Array> GetOrganizationRegionAllowedLevels(int organizationId)
+        public async Task<List<BaseBriefModel>> GetOrganizationRegionAllowedLevels(int organizationId)
         {
             return await _dataAccess.GetOrganizationRegionAllowedLevels(organizationId);
         }
