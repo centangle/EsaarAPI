@@ -199,10 +199,10 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 List<OrganizationMemberRolesCatalog> currentMemberRoles = new List<OrganizationMemberRolesCatalog>();
-                var memberOrganization = (await GetMemberRoleForOrganization(id, _loggedInMemberId)).FirstOrDefault();
-                if (memberOrganization != null)
+                var memberOrgRoles = (await GetMemberRoleForOrganization(id, _loggedInMemberId)).FirstOrDefault();
+                if (memberOrgRoles != null)
                 {
-                    currentMemberRoles = memberOrganization.Roles;
+                    currentMemberRoles = memberOrgRoles.Roles;
                 }
                 return await (from o in context.Organizations
                               join ob in context.Members on o.OwnedBy equals ob.Id

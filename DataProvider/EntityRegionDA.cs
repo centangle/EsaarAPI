@@ -237,8 +237,8 @@ namespace DataProvider
             // Remove Duplicates 
             enityRegions = enityRegions.GroupBy(x => new { x.RegionLevel, x.Region.Id })
                                        .Select(x => x.FirstOrDefault()).ToList();
-            var organizationMember = await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId);
-            if (IsOrganizationMemberModerator(organizationMember.FirstOrDefault()) || skipModeratorCheck)
+            var memberOrgRoles = await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId);
+            if (IsOrganizationMemberModerator(memberOrgRoles.FirstOrDefault()) || skipModeratorCheck)
             {
                 var masterList = await GetCurrentEntityRegions(context, enityRegions.FirstOrDefault(), requestId);
                 var newItems = enityRegions.Where(x => x.Id == 0).ToList();
@@ -329,7 +329,7 @@ namespace DataProvider
                                   EntityType = (EntityRegionTypeCatalog)er.EntityType,
                                   Region = new RegionBriefModel()
                                   {
-                                      Id = er.Id,
+                                      Id = er.RegionId,
                                   },
                                   RegionLevel = (RegionLevelTypeCatalog)er.RegionLevel,
                                   Country = new BaseBriefModel()

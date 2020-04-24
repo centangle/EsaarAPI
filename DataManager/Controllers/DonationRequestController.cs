@@ -2,7 +2,9 @@
 using Catalogs;
 using Helpers;
 using Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -22,21 +24,32 @@ namespace DataManager.Controllers
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetDonationRequests(filters);
         }
+        //[HttpGet]
+        //public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetPaginatedRequestsForVolunteer(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, DonationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
+        //{
+        //    var _logic = new Logic(LoggedInMemberId);
+        //    DonationRequestSearchModel filters = new DonationRequestSearchModel();
+        //    filters.OrganizationId = organizationId;
+        //    filters.Type = type;
+        //    SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
+        //    return await _logic.GetDonationRequestsForVolunteer(filters);
+        //}
         [HttpGet]
-        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetPaginatedRequestsForVolunteer(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, DonationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedDonationRequestModel> Get(int organizationRequestId)
         {
             var _logic = new Logic(LoggedInMemberId);
-            DonationRequestSearchModel filters = new DonationRequestSearchModel();
-            filters.OrganizationId = organizationId;
-            filters.Type = type;
-            SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
-            return await _logic.GetDonationRequestsForVolunteer(filters);
+            var model = await _logic.GetDonationRequestDetail(organizationRequestId);
+            if (model.CanAccessRequestThread == false)
+            {
+                throw new KnownException("You are not authorized");
+            }
+            return model;
         }
         [HttpGet]
-        public async Task<DonationRequestModel> Get(int organizationRequestId)
+        public async Task<List<DonationRequestOrganizationItemModel>> GetItems(int organizationRequestId)
         {
             var _logic = new Logic(LoggedInMemberId);
-            return await _logic.GetBriefDonationRequest(organizationRequestId);
+            return await _logic.GetDonationRequestItems(organizationRequestId);
         }
         [HttpPut]
         public async Task<bool> AssignModeratorToRequest(int organizationId, int donationRequestId, int? moderatorId = null)
@@ -80,6 +93,11 @@ namespace DataManager.Controllers
             }
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.UpdateDonationRequestStatus(donationRequestOrganizationId, note, items, updatedStatus);
+        }
+        [HttpGet]
+        public Array GetRequestStatus()
+        {
+            return Enum.GetValues(typeof(StatusCatalog)).Cast<StatusCatalog>().ToArray();
         }
     }
 }

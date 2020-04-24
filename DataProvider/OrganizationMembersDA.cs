@@ -73,7 +73,6 @@ namespace DataProvider
                 var organizationRequest = await context.OrganizationRequests.Where(
                                                                 x =>
                                                                 x.OrganizationId == model.Organization.Id
-                                                                && x.EntityId == _loggedInMemberId
                                                                 && x.EntityType == (int)model.EntityType
                                                                 && x.Type == (int)model.Type
                                                                 && x.IsDeleted == false).FirstOrDefaultAsync();
@@ -125,7 +124,7 @@ namespace DataProvider
                         }
                     }
                 }
-                return false;
+                throw new KnownException("Could not find Request with specified Id");
             }
         }
         public async Task<List<OrganizationMemberModel>> GetMemberRoleForOrganization(int organizationId, int? memberId)
@@ -176,8 +175,8 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var organizationMember = (await GetMemberRoleForOrganization(context, filters.OrganizationId, _loggedInMemberId)).FirstOrDefault();
-                if (IsOrganizationMemberModerator(organizationMember))
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, filters.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
                     return await (from om in context.OrganizationMembers
                                   join o in context.Organizations on om.OrganizationId equals o.Id
@@ -259,7 +258,7 @@ namespace DataProvider
             }
             return membershipModel;
         }
-        private async Task AddOrganizationMemberForRequest(CharityEntities context, RequestThreadModel requestModel)
+        private async Task<int> AddOrganizationMemberForRequest(CharityEntities context, RequestThreadModel requestModel)
         {
             var requestDB = await context.OrganizationRequests.Where(x => x.Id == requestModel.Entity.Id).FirstOrDefaultAsync();
             if (requestDB != null)
@@ -270,7 +269,9 @@ namespace DataProvider
                 model.Type = (OrganizationRequestTypeCatalog)requestDB.Type;
                 var memberModel = GetOrganizationMembershipModel(model);
                 await AddMemberToOrganization(context, memberModel);
+                return await context.SaveChangesAsync();
             }
+            return 0;
         }
         private async Task<List<OrganizationMemberModel>> GetMemberRoleForOrganization(CharityEntities context, int? organizationId, int? memberId, bool verifyActiveMember = true)
         {
@@ -312,6 +313,115 @@ namespace DataProvider
             }
             return orgMemberRoles;
         }
+        private async Task<List<OrganizationMemberRegionModel>> GetMemberRegionsForOrganization(CharityEntities context, int? organizationId, int? memberId, OrganizationMemberRolesCatalog? roleType = null, bool verifyActiveMember = true)
+        {
+            List<OrganizationMemberRegionModel> orgMemberRegions = new List<OrganizationMemberRegionModel>();
+            var lstOrgMembRegion = await (from o in context.Organizations
+                                          join om in context.OrganizationMembers on o.Id equals om.OrganizationId
+                                          join m in context.Members on om.MemberId equals m.Id
+                                          join er in context.EntityRegions on om.Id equals er.EntityId
+                                          //join c in context.Countries on er.CountryId equals c.Id into lc
+                                          //from c in lc.DefaultIfEmpty()
+                                          //join s in context.States on er.StateId equals s.Id into ls
+                                          //from s in ls.DefaultIfEmpty()
+                                          //join d in context.Districts on er.DistrictId equals d.Id into ld
+                                          //from d in ld.DefaultIfEmpty()
+                                          //join t in context.Tehsils on er.TehsilId equals t.Id into lt
+                                          //from t in lt.DefaultIfEmpty()
+                                          //join uc in context.UnionCouncils on er.UnionCouncilId equals uc.Id into luc
+                                          //from uc in luc.DefaultIfEmpty()
+                                          where
+                                          (organizationId == null || o.Id == organizationId)
+                                          && (memberId == null || m.Id == memberId)
+                                          && om.IsDeleted == false
+                                          && (verifyActiveMember == false || om.IsActive == true)
+                                          && (roleType == null || om.Type == (int)roleType)
+                                          && er.EntityType == (int)EntityRegionTypeCatalog.OrganizationMember
+                                          && er.IsApproved == true
+                                          && er.IsDeleted == false
+                                          select new OrganizationMemberRegionModel
+                                          {
+                                              Id = om.Id,
+                                              Organization = new BaseBriefModel
+                                              {
+                                                  Id = o.Id,
+                                                  Name = o.Name,
+                                                  NativeName = o.NativeName,
+                                              },
+                                              Member = new BaseBriefModel
+                                              {
+                                                  Id = m.Id,
+                                                  Name = m.Name,
+                                                  NativeName = m.NativeName,
+                                              },
+                                              Region = new EntityRegionBriefModel()
+                                              {
+                                                  Region = new RegionBriefModel()
+                                                  {
+                                                      Id = er.RegionId,
+                                                  },
+                                                  RegionLevel = (RegionLevelTypeCatalog)er.RegionLevel,
+                                                  Country = new BaseBriefModel()
+                                                  {
+                                                      Id = er.CountryId ?? 0,
+                                                      Name="",
+                                                      NativeName="",
+                                                      //Id = c == null ? 0 : c.Id,
+                                                      //Name = c == null ? "" : c.Name,
+                                                      //NativeName = c == null ? "" : c.NativeName,
+                                                  },
+                                                  State = new BaseBriefModel()
+                                                  {
+                                                      Id = er.StateId ?? 0,
+                                                      Name = "",
+                                                      NativeName = "",
+                                                      //Id = s == null ? 0 : s.Id,
+                                                      //Name = s == null ? "" : s.Name,
+                                                      //NativeName = s == null ? "" : s.NativeName,
+                                                  },
+                                                  District = new BaseBriefModel()
+                                                  {
+                                                      Id = er.DistrictId ?? 0,
+                                                      Name = "",
+                                                      NativeName = "",
+                                                      //Id = d == null ? 0 : d.Id,
+                                                      //Name = d == null ? "" : d.Name,
+                                                      //NativeName = d == null ? "" : d.NativeName,
+                                                  },
+                                                  Tehsil = new BaseBriefModel()
+                                                  {
+                                                      Id = er.TehsilId ?? 0,
+                                                      Name = "",
+                                                      NativeName = "",
+                                                      //Id = t == null ? 0 : t.Id,
+                                                      //Name = t == null ? "" : t.Name,
+                                                      //NativeName = t == null ? "" : t.NativeName,
+                                                  },
+                                                  UnionCouncil = new BaseBriefModel()
+                                                  {
+                                                      Id = er.UnionCouncilId ?? 0,
+                                                      Name = "",
+                                                      NativeName = "",
+                                                      //Id = uc == null ? 0 : uc.Id,
+                                                      //Name = uc == null ? "" : uc.Name,
+                                                      //NativeName = uc == null ? "" : uc.NativeName,
+                                                  },
+                                              },
+                                              Role = (OrganizationMemberRolesCatalog)om.Type,
+                                          }).GroupBy(x => new { x.Organization.Id, x.Role }).ToListAsync();
+            foreach (var orgMemberRegion in lstOrgMembRegion)
+            {
+                var memberRegions = orgMemberRegion.Select(x => x.Region).ToList();
+                orgMemberRegions.Add(new OrganizationMemberRegionModel()
+                {
+                    Organization = orgMemberRegion.FirstOrDefault().Organization,
+                    Member = orgMemberRegion.FirstOrDefault().Member,
+                    Role = orgMemberRegion.FirstOrDefault().Role,
+                    Regions = memberRegions
+                });
+            }
+            return orgMemberRegions;
+        }
         private async Task<bool> IsOrganizationMembershipRequestAllowed(CharityEntities context, OrganizationRequestModel requestModel, OrganizationMemberModel membershipModel)
         {
             var sameTypeOfRequestInProcess = (await context.OrganizationRequests.Where(
@@ -335,8 +445,8 @@ namespace DataProvider
         }
         private async Task<bool> IsAlreadyAMember(CharityEntities context, int organizationId, int memberId, OrganizationMemberRolesCatalog role)
         {
-            var memberOrganization = (await GetMemberRoleForOrganization(context, organizationId, memberId, false)).FirstOrDefault();
-            if (memberOrganization != null && memberOrganization.Roles.Contains(role))
+            var memberOrgRoles = (await GetMemberRoleForOrganization(context, organizationId, memberId, false)).FirstOrDefault();
+            if (memberOrgRoles != null && memberOrgRoles.Roles.Contains(role))
             {
                 throw new KnownException($"This user is already {role} for this organization.");
             }
@@ -359,8 +469,8 @@ namespace DataProvider
                     }
                     else
                     {
-                        var organizationMember = (await GetMemberRoleForOrganization(context, orgRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
-                        if (IsOrganizationMemberOwner(organizationMember))
+                        var memberOrgRoles = (await GetMemberRoleForOrganization(context, orgRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                        if (IsOrganizationMemberOwner(memberOrgRoles))
                         {
                             return true;
                         }

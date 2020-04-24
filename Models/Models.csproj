@@ -48,6 +48,7 @@
     <Compile Include="Base\BaseModel.cs" />
     <Compile Include="Base\BaseSearchModel.cs" />
     <Compile Include="BriefModel\BaseBriefModel.cs" />
+    <Compile Include="BriefModel\EntityRegionBriefModel.cs" />
     <Compile Include="BriefModel\ItemBriefModel.cs" />
     <Compile Include="BriefModel\MemberBriefModel.cs" />
     <Compile Include="BriefModel\RegionBriefModel.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="OrganizationAccountModel.cs" />
     <Compile Include="OrganizationAttachmentModel.cs" />
     <Compile Include="OrganizationItemModel.cs" />
+    <Compile Include="OrganizationMemberRegionModel.cs" />
     <Compile Include="OrganizationOfficeModel.cs" />
     <Compile Include="OrganizationRequestModel.cs" />
     <Compile Include="OrganizationMemberModel.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="MemberModel.cs" />
     <Compile Include="DonationRequestItemModel.cs" />
     <Compile Include="DonationRequestModel.cs" />
+    <Compile Include="RadiusRegionsModel.cs" />
     <Compile Include="RegionSearchModel.cs" />
     <Compile Include="RequestThreadModel.cs" />
     <Compile Include="UOMModel.cs" />

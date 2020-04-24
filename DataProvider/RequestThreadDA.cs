@@ -213,7 +213,14 @@ namespace DataProvider
                                                        SystemFileName = a.SystemFileName,
                                                        FileExtension = a.FileExtension,
                                                    }).ToListAsync();
-                return requestThread;
+                if (await IsRequestThreadAccessible(context, requestThread))
+                {
+                    return requestThread;
+                }
+                else
+                {
+                    throw new KnownException("You are not authorized");
+                }
 
             }
         }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Linq.Dynamic;
 
 namespace DataProvider.Helpers
 {
@@ -20,9 +21,9 @@ namespace DataProvider.Helpers
                 if (!string.IsNullOrEmpty(search.OrderByColumn))
                 {
                     if (search.OrderDir == Catalogs.PaginationOrderCatalog.Asc)
-                        query = query.OrderBy(search.OrderByColumn, "OrderBy");
+                        query = query.OrderBy($"{search.OrderByColumn} ASC");
                     else
-                        query = query.OrderBy(search.OrderByColumn, "OrderByDescending");
+                        query = query.OrderBy($"{search.OrderByColumn} DESC");
                 }
 
                 try

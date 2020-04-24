@@ -13,5 +13,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.GetOrganizationRequests(filters);
         }
+        public async Task<PaginatedOrganizationRequestModel> GetOrganizationRequest(int requestId)
+        {
+            return await _dataAccess.GetOrganizationRequest(requestId);
+        }
     }
 }

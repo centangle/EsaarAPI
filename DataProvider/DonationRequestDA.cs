@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -83,14 +84,13 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var organizationMember = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
-                if (IsOrganizationMemberModerator(organizationMember))
+                var orgMemberRoles = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(orgMemberRoles))
                 {
                     var donationRequest = await context.DonationRequests.Where(x => x.Id == donationRequestId).FirstOrDefaultAsync();
                     {
                         if (donationRequest != null)
                         {
-
                             if (donationRequest.IsDeleted)
                             {
                                 throw new KnownException("This request has been deleted");
@@ -134,8 +134,8 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var organizationMember = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
-                if (IsOrganizationMemberModerator(organizationMember) || IsOrganizationMemberVolunteer(organizationMember))
+                var orgaMemberRole = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(orgaMemberRole) || IsOrganizationMemberVolunteer(orgaMemberRole))
                 {
                     var donationRequest = await context.DonationRequests.Where(x => x.Id == donationRequestId).FirstOrDefaultAsync();
                     {
@@ -164,7 +164,7 @@ namespace DataProvider
                                     }
                                     else
                                     {
-                                        if (IsOrganizationMemberModerator(organizationMember) == false)
+                                        if (IsOrganizationMemberModerator(orgaMemberRole) == false)
                                         {
                                             throw new KnownException("You are not authorized to perform this action");
                                         }
@@ -258,27 +258,37 @@ namespace DataProvider
             requestThreadModel.IsSystemGenerated = true;
             return requestThreadModel;
         }
-        public async Task<DonationRequestModel> GetBriefDonationRequest(int organizationRequestId)
+        public async Task<PaginatedDonationRequestModel> GetDonationRequestDetail(int organizationRequestId)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var memberOrganizations = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
-
+                var memberOrgRoles = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
                 List<int> memberModeratorOrgz = new List<int>();
-                if (memberModeratorOrgz != null)
+                List<int> memberOwnedOrgz = new List<int>();
+                if (memberOrgRoles != null)
                 {
-                    foreach (var memberOrg in memberOrganizations)
+                    foreach (var memberOrgRole in memberOrgRoles)
                     {
-                        if (IsOrganizationMemberModerator(memberOrg))
+                        if (IsOrganizationMemberModerator(memberOrgRole))
                         {
-                            memberModeratorOrgz.Add(memberOrg.Organization.Id);
+                            memberModeratorOrgz.Add(memberOrgRole.Organization.Id);
+                        }
+                        if (IsOrganizationMemberOwner(memberOrgRole))
+                        {
+                            memberOwnedOrgz.Add(memberOrgRole.Organization.Id);
                         }
                     }
                 }
                 var donationRequest = await (from dr in context.DonationRequests
+                                             join m in context.Members on dr.CreatedBy equals m.Id
                                              join dro in context.DonationRequestOrganizations on dr.Id equals dro.DonationRequestId
                                              join o in context.Organizations on dro.OrganizationId equals o.Id
-                                             join m in context.Members on dr.CreatedBy equals m.Id
+                                             join am in context.Members on dro.ModeratorId equals am.Id into tam
+                                             from am in tam.DefaultIfEmpty()
+                                             join v in context.Members on dro.VolunteerId equals v.Id into tv
+                                             from v in tam.DefaultIfEmpty()
+                                             let isLoggedInMemberOrgOwner = memberOwnedOrgz.Any(x => x == o.Id)
+                                             let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == o.Id)
                                              where
                                              dro.Id == organizationRequestId
                                              && dr.IsDeleted == false
@@ -286,9 +296,11 @@ namespace DataProvider
                                              (
                                                   dr.MemberId == _loggedInMemberId
                                                   ||
-                                                  o.OwnedBy == _loggedInMemberId
+                                                  dro.ModeratorId == _loggedInMemberId
                                                   ||
-                                                  memberModeratorOrgz.Any(x => x == o.Id)
+                                                  dro.VolunteerId == _loggedInMemberId
+                                                  ||
+                                                  isLoggedInMemberOrgOwner
                                              )
                                              select new PaginatedDonationRequestModel
                                              {
@@ -299,6 +311,13 @@ namespace DataProvider
                                                      Name = m.Name,
                                                      NativeName = m.NativeName,
                                                  },
+
+                                                 //Campaign = new BaseBriefModel()
+                                                 //{
+                                                 //    Id = m.Id,
+                                                 //    Name = m.Name,
+                                                 //    NativeName = m.NativeName,
+                                                 //},
                                                  DonationRequestOrganization = new DonationRequestOrganizationModel()
                                                  {
                                                      Id = dro.Id,
@@ -308,53 +327,138 @@ namespace DataProvider
                                                          Name = o.Name,
                                                          NativeName = o.NativeName,
                                                      },
+                                                     Moderator = new BaseBriefModel()
+                                                     {
+                                                         Id = am == null ? 0 : am.Id,
+                                                         Name = am == null ? "" : am.Name,
+                                                         NativeName = am == null ? "" : am.NativeName,
+                                                     },
+                                                     Volunteer = new BaseBriefModel()
+                                                     {
+                                                         Id = v == null ? 0 : v.Id,
+                                                         Name = v == null ? "" : v.Name,
+                                                         NativeName = v == null ? "" : v.NativeName,
+                                                     },
                                                      Status = (StatusCatalog)dro.Status,
                                                  },
-                                                 Note = dr.Note,
-                                                 Date = dr.Date,
-                                                 PrefferedCollectionTime = dr.PrefferedCollectionTime,
-                                                 Address = dr.Address,
-                                                 AddressLatLong = dr.AddressLatLong,
                                                  Type = (DonationRequestTypeCatalog)dr.Type,
+                                                 LoggedInMemberId = _loggedInMemberId,
+                                                 IsLoggedInMemberOrganizationOwner = isLoggedInMemberOrgOwner,
+                                                 IsLoggedInMemberOrganizationModerator = isLoggedInMemberOrgModerator,
+                                                 CreatedDate = dr.CreatedDate,
+                                                 CreatedBy = dr.CreatedBy,
                                              }).FirstOrDefaultAsync();
-                donationRequest.Items = await (from dri in context.DonationRequestItems
-                                               join uom in context.UOMs on dri.QuantityUOM equals uom.Id
-                                               join i in context.Items on dri.ItemId equals i.Id
-                                               where dri.DonationRequestId == donationRequest.Id
-                                               select new DonationRequestItemModel()
-                                               {
-                                                   Item = new BaseBriefModel()
-                                                   {
-                                                       Id = i.Id,
-                                                       Name = i.Name,
-                                                       NativeName = i.NativeName,
-                                                   },
-                                                   Quantity = dri.Quantity,
-                                                   QuantityUOM = new UOMBriefModel()
-                                                   {
-                                                       Id = uom.Id,
-                                                       Name = uom.Name,
-                                                       NativeName = uom.NativeName,
-                                                       NoOfBaseUnit = uom.NoOfBaseUnit,
-                                                   },
-                                               }
-                                       ).ToListAsync();
-
-
                 return donationRequest;
+            }
+        }
+        public async Task<List<DonationRequestOrganizationItemModel>> GetDonationRequestItems(int organizationRequestId)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var memberOrgRoles = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
+
+                List<int> memberModeratorOrgz = new List<int>();
+                List<int> memberOwnedOrgz = new List<int>();
+                if (memberOrgRoles != null)
+                {
+                    foreach (var memberOrgRole in memberOrgRoles)
+                    {
+                        if (IsOrganizationMemberModerator(memberOrgRole))
+                        {
+                            memberModeratorOrgz.Add(memberOrgRole.Organization.Id);
+                        }
+                        if (IsOrganizationMemberOwner(memberOrgRole))
+                        {
+                            memberOwnedOrgz.Add(memberOrgRole.Organization.Id);
+                        }
+                    }
+                }
+                return await (from dr in context.DonationRequests
+                              join dri in context.DonationRequestItems on dr.Id equals dri.DonationRequestId
+                              join i in context.Items on dri.ItemId equals i.Id
+                              join uom in context.UOMs on dri.QuantityUOM equals uom.Id
+                              join dro in context.DonationRequestOrganizations on dr.Id equals dro.DonationRequestId
+                              join droi in context.DonationRequestOrganizationItems on
+                                new { orgId = dro.Id, itemId = dri.ItemId }
+                                equals
+                                new { orgId = droi.RequestOrganizationId, itemId = droi.RequestItemId }
+                                into ldroi
+                              from droi in ldroi.DefaultIfEmpty()
+                              join aiuom in context.UOMs on droi.QuantityUOM equals aiuom.Id into laiuom
+                              from aiuom in laiuom.DefaultIfEmpty()
+                              join ciuom in context.UOMs on droi.QuantityUOM equals ciuom.Id into lciuom
+                              from ciuom in lciuom.DefaultIfEmpty()
+                              join diuom in context.UOMs on droi.QuantityUOM equals diuom.Id into ldiuom
+                              from diuom in ldiuom.DefaultIfEmpty()
+                              let isLoggedInMemberOrgOwner = memberOwnedOrgz.Any(x => x == dro.OrganizationId)
+                              let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == dro.OrganizationId)
+                              where
+                              dro.Id == organizationRequestId
+                              && dr.IsDeleted == false
+                              &&
+                              (
+                                   dr.MemberId == _loggedInMemberId
+                                   ||
+                                   dro.ModeratorId == _loggedInMemberId
+                                   ||
+                                   isLoggedInMemberOrgOwner
+                              )
+                              select new DonationRequestOrganizationItemModel
+                              {
+                                  Id = dr.Id,
+                                  Item = new BaseBriefModel()
+                                  {
+                                      Id = i.Id,
+                                      Name = i.Name,
+                                      NativeName = i.NativeName,
+                                  },
+                                  Quantity = dri.Quantity,
+                                  QuantityUOM = new UOMBriefModel()
+                                  {
+                                      Id = uom.Id,
+                                      Name = uom.Name,
+                                      NativeName = uom.NativeName,
+                                      NoOfBaseUnit = uom.NoOfBaseUnit,
+                                  },
+                                  IsApproved = droi == null ? false : true,
+                                  ApprovedQuantity = droi == null ? 0 : droi.Quantity,
+                                  ApprovedQuantityUOM = new UOMBriefModel()
+                                  {
+                                      Id = aiuom == null ? 0 : aiuom.Id,
+                                      Name = aiuom == null ? "" : aiuom.Name,
+                                      NativeName = aiuom == null ? "" : aiuom.NativeName,
+                                      NoOfBaseUnit = aiuom == null ? 0 : aiuom.NoOfBaseUnit,
+                                  },
+                                  CollectedQuantity = droi == null ? 0 : droi.CollectedQuantity,
+                                  CollectedQuantityUOM = new UOMBriefModel()
+                                  {
+                                      Id = ciuom == null ? 0 : ciuom.Id,
+                                      Name = ciuom == null ? "" : ciuom.Name,
+                                      NativeName = ciuom == null ? "" : ciuom.NativeName,
+                                      NoOfBaseUnit = ciuom == null ? 0 : ciuom.NoOfBaseUnit,
+                                  },
+                                  DeliveredQuantity = droi == null ? 0 : droi.DeliveredQuantity,
+                                  DeliveredQuantityUOM = new UOMBriefModel()
+                                  {
+                                      Id = diuom == null ? 0 : diuom.Id,
+                                      Name = diuom == null ? "" : diuom.Name,
+                                      NativeName = diuom == null ? "" : diuom.NativeName,
+                                      NoOfBaseUnit = diuom == null ? 0 : diuom.NoOfBaseUnit,
+                                  },
+
+                              }).ToListAsync();
             }
         }
         public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequests(DonationRequestSearchModel filters)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var memberOrganizations = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
-
+                var memberOrgRoles = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
                 List<int> memberModeratorOrgz = new List<int>();
                 List<int> memberOwnedOrgz = new List<int>();
-                if (memberModeratorOrgz != null)
+                if (memberOrgRoles != null)
                 {
-                    foreach (var memberOrg in memberOrganizations)
+                    foreach (var memberOrg in memberOrgRoles)
                     {
                         if (IsOrganizationMemberModerator(memberOrg))
                         {
@@ -374,8 +478,15 @@ namespace DataProvider
                                         from am in tam.DefaultIfEmpty()
                                         join v in context.Members on dro.VolunteerId equals v.Id into tv
                                         from v in tam.DefaultIfEmpty()
+                                        join ov in context.OrganizationMembers on
+                                            new { orgId = o.Id, type = (int)OrganizationMemberRolesCatalog.Volunteer, memberId = _loggedInMemberId }
+                                            equals
+                                            new { orgId = ov.Organization.Id, type = ov.Type, memberId = ov.MemberId }
+                                            into lov
+                                        from ov in lov.DefaultIfEmpty()
                                         let isLoggedInMemberOrgOwner = memberOwnedOrgz.Any(x => x == o.Id)
                                         let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == o.Id)
+                                        let isLoggedInMemberOrgVolunteer = ov != null
                                         where
                                         (filters.OrganizationId == null || dro.OrganizationId == filters.OrganizationId)
                                         && (filters.Type == null || dr.Type == (int)filters.Type.Value)
@@ -387,7 +498,34 @@ namespace DataProvider
                                              isLoggedInMemberOrgOwner
                                              ||
                                              isLoggedInMemberOrgModerator
-
+                                             ||
+                                             (// Volunteer Region Check
+                                                 isLoggedInMemberOrgVolunteer
+                                                 &&
+                                                 (
+                                                    (context.EntityRegions.Where(x => x.RegionLevel == (int)RegionLevelTypeCatalog.UnionCouncil
+                                                        && x.EntityType == (int)EntityRegionTypeCatalog.OrganizationMember
+                                                        && x.UnionCouncilId == dr.UnionCouncilId).Count() > 0)
+                                                    ||
+                                                    (context.EntityRegions.Where(x => x.RegionLevel == (int)RegionLevelTypeCatalog.Tehsil
+                                                       && x.EntityType == (int)EntityRegionTypeCatalog.OrganizationMember
+                                                       && x.TehsilId == dr.TehsilId).Count() > 0)
+                                                    ||
+                                                    (context.EntityRegions.Where(x => x.RegionLevel == (int)RegionLevelTypeCatalog.District
+                                                       && x.EntityType == (int)EntityRegionTypeCatalog.OrganizationMember
+                                                       && x.DistrictId == dr.DistrictId).Count() > 0)
+                                                    ||
+                                                    (context.EntityRegions.Where(x => x.RegionLevel == (int)RegionLevelTypeCatalog.State
+                                                       && x.EntityType == (int)EntityRegionTypeCatalog.OrganizationMember
+                                                       && x.StateId == dr.StateId).Count() > 0)
+                                                    ||
+                                                    (context.EntityRegions.Where(x => x.RegionLevel == (int)RegionLevelTypeCatalog.Country
+                                                       && x.EntityType == (int)EntityRegionTypeCatalog.OrganizationMember
+                                                       && x.CountryId == dr.CountryId).Count() > 0)
+                                                 )
+                                                 &&
+                                                 (dro.Status >= (int)StatusCatalog.Approved && dro.Status < (int)StatusCatalog.Rejected)
+                                             )
                                          )
                                         select new PaginatedDonationRequestModel
                                         {
@@ -439,84 +577,84 @@ namespace DataProvider
                 return await requestQueryable.Paginate(filters);
             }
         }
-        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequestsForVolunteer(DonationRequestSearchModel filters)
-        {
-            using (CharityEntities context = new CharityEntities())
-            {
-                var memberOrganizations = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
+        //public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequestsForVolunteer(DonationRequestSearchModel filters)
+        //{
+        //    using (CharityEntities context = new CharityEntities())
+        //    {
+        //        var memberOrgRoles = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
 
-                List<int> memberVolunteerOrgz = new List<int>();
-                if (memberVolunteerOrgz != null)
-                {
-                    foreach (var memberOrg in memberOrganizations)
-                    {
-                        if (IsOrganizationMemberVolunteer(memberOrg))
-                        {
-                            memberVolunteerOrgz.Add(memberOrg.Organization.Id);
-                        }
-                    }
-                }
-                var requestQueryable = (from dr in context.DonationRequests
-                                        join m in context.Members on dr.CreatedBy equals m.Id
-                                        join dro in context.DonationRequestOrganizations on dr.Id equals dro.DonationRequestId
-                                        join o in context.Organizations on dro.OrganizationId equals o.Id
-                                        join am in context.Members on dro.ModeratorId equals am.Id into tam
-                                        from am in tam.DefaultIfEmpty()
-                                        join v in context.Members on dro.VolunteerId equals v.Id into tv
-                                        from v in tam.DefaultIfEmpty()
-                                        where
-                                        (filters.OrganizationId == null || dro.OrganizationId == filters.OrganizationId)
-                                        && (filters.Type == null || dr.Type == (int)filters.Type.Value)
-                                        && dr.IsDeleted == false
-                                        && memberVolunteerOrgz.Any(x => x == o.Id)
-                                        && (dro.Status >= (int)StatusCatalog.Approved)
-                                        && (dro.VolunteerId == null || dro.VolunteerId == 0 || dro.VolunteerId == _loggedInMemberId)
-                                        select new PaginatedDonationRequestModel
-                                        {
-                                            Id = dr.Id,
-                                            Member = new BaseBriefModel()
-                                            {
-                                                Id = m.Id,
-                                                Name = m.Name,
-                                                NativeName = m.NativeName,
-                                            },
+        //        List<int> memberVolunteerOrgz = new List<int>();
+        //        if (memberVolunteerOrgz != null)
+        //        {
+        //            foreach (var memberOrgRole in memberOrgRoles)
+        //            {
+        //                if (IsOrganizationMemberVolunteer(memberOrgRole))
+        //                {
+        //                    memberVolunteerOrgz.Add(memberOrgRole.Organization.Id);
+        //                }
+        //            }
+        //        }
+        //        var requestQueryable = (from dr in context.DonationRequests
+        //                                join m in context.Members on dr.CreatedBy equals m.Id
+        //                                join dro in context.DonationRequestOrganizations on dr.Id equals dro.DonationRequestId
+        //                                join o in context.Organizations on dro.OrganizationId equals o.Id
+        //                                join am in context.Members on dro.ModeratorId equals am.Id into tam
+        //                                from am in tam.DefaultIfEmpty()
+        //                                join v in context.Members on dro.VolunteerId equals v.Id into tv
+        //                                from v in tam.DefaultIfEmpty()
+        //                                where
+        //                                (filters.OrganizationId == null || dro.OrganizationId == filters.OrganizationId)
+        //                                && (filters.Type == null || dr.Type == (int)filters.Type.Value)
+        //                                && dr.IsDeleted == false
+        //                                && memberVolunteerOrgz.Any(x => x == o.Id)
+        //                                && (dro.Status >= (int)StatusCatalog.Approved)
+        //                                && (dro.VolunteerId == null || dro.VolunteerId == 0 || dro.VolunteerId == _loggedInMemberId)
+        //                                select new PaginatedDonationRequestModel
+        //                                {
+        //                                    Id = dr.Id,
+        //                                    Member = new BaseBriefModel()
+        //                                    {
+        //                                        Id = m.Id,
+        //                                        Name = m.Name,
+        //                                        NativeName = m.NativeName,
+        //                                    },
 
-                                            //Campaign = new BaseBriefModel()
-                                            //{
-                                            //    Id = m.Id,
-                                            //    Name = m.Name,
-                                            //    NativeName = m.NativeName,
-                                            //},
-                                            DonationRequestOrganization = new DonationRequestOrganizationModel()
-                                            {
-                                                Id = dro.Id,
-                                                Organization = new BaseBriefModel()
-                                                {
-                                                    Id = o.Id,
-                                                    Name = o.Name,
-                                                    NativeName = o.NativeName,
-                                                },
-                                                Moderator = new BaseBriefModel()
-                                                {
-                                                    Id = am == null ? 0 : am.Id,
-                                                    Name = am == null ? "" : am.Name,
-                                                    NativeName = am == null ? "" : am.NativeName,
-                                                },
-                                                Volunteer = new BaseBriefModel()
-                                                {
-                                                    Id = v == null ? 0 : v.Id,
-                                                    Name = v == null ? "" : v.Name,
-                                                    NativeName = v == null ? "" : v.NativeName,
-                                                },
-                                                Status = (StatusCatalog)dro.Status,
-                                            },
-                                            Type = (DonationRequestTypeCatalog)dr.Type,
-                                            LoggedInMemberId = _loggedInMemberId,
-                                            CreatedDate = dr.CreatedDate
-                                        }).AsQueryable();
+        //                                    //Campaign = new BaseBriefModel()
+        //                                    //{
+        //                                    //    Id = m.Id,
+        //                                    //    Name = m.Name,
+        //                                    //    NativeName = m.NativeName,
+        //                                    //},
+        //                                    DonationRequestOrganization = new DonationRequestOrganizationModel()
+        //                                    {
+        //                                        Id = dro.Id,
+        //                                        Organization = new BaseBriefModel()
+        //                                        {
+        //                                            Id = o.Id,
+        //                                            Name = o.Name,
+        //                                            NativeName = o.NativeName,
+        //                                        },
+        //                                        Moderator = new BaseBriefModel()
+        //                                        {
+        //                                            Id = am == null ? 0 : am.Id,
+        //                                            Name = am == null ? "" : am.Name,
+        //                                            NativeName = am == null ? "" : am.NativeName,
+        //                                        },
+        //                                        Volunteer = new BaseBriefModel()
+        //                                        {
+        //                                            Id = v == null ? 0 : v.Id,
+        //                                            Name = v == null ? "" : v.Name,
+        //                                            NativeName = v == null ? "" : v.NativeName,
+        //                                        },
+        //                                        Status = (StatusCatalog)dro.Status,
+        //                                    },
+        //                                    Type = (DonationRequestTypeCatalog)dr.Type,
+        //                                    LoggedInMemberId = _loggedInMemberId,
+        //                                    CreatedDate = dr.CreatedDate
+        //                                }).AsQueryable();
 
-                return await requestQueryable.Paginate(filters);
-            }
-        }
+        //        return await requestQueryable.Paginate(filters);
+        //    }
+        //}
     }
 }

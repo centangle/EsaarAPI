@@ -77,8 +77,8 @@ namespace DataProvider
                     }
                     else
                     {
-                        var organizationMember = (await GetMemberRoleForOrganization(context, orgRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
-                        if (IsOrganizationMemberOwner(organizationMember))
+                        var memberOrgRoles = (await GetMemberRoleForOrganization(context, orgRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                        if (IsOrganizationMemberOwner(memberOrgRoles))
                         {
                             return true;
                         }
@@ -93,8 +93,8 @@ namespace DataProvider
             var donationOrganizationRequest = await context.DonationRequestOrganizations.Where(x => x.Id == model.Entity.Id).FirstOrDefaultAsync();
             if (donationOrganizationRequest != null)
             {
-                var organizationMember = (await GetMemberRoleForOrganization(context, donationOrganizationRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
-                if (IsOrganizationMemberModerator(organizationMember))
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, donationOrganizationRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
                     if (donationOrganizationRequest.IsDeleted == true)
                     {

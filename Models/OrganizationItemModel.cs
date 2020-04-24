@@ -29,10 +29,6 @@ namespace Models
         {
             ItemUOMs = new List<UOMBriefModel>();
         }
-        [IgnoreDataMember]
-        public string ItemName { get; set; }
-        [IgnoreDataMember]
-        public string ItemNativeName { get; set; }
         public UOMBriefParentModel ItemDefaultUOM { get; set; }
         public List<UOMBriefModel> ItemUOMs { get; set; }
     }
@@ -40,7 +36,7 @@ namespace Models
     {
         public OrganizationItemSearchModel()
         {
-            OrderByColumn = "ItemName";
+            OrderByColumn = "Item.Name";
         }
         public int OrganizationId { get; set; }
         public int? CampaignId { get; set; }

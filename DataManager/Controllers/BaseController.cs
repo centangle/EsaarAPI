@@ -18,6 +18,7 @@ namespace DataManager.Controllers
             {
                 try
                 {
+                    return 1;
                     var loggedInMemberId = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == "MemberId").FirstOrDefault();
                     if (loggedInMemberId != null)
                     {

@@ -22,8 +22,8 @@ namespace DataProvider
             }
             using (CharityEntities context = new CharityEntities())
             {
-                var organizationMember = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
-                if (IsOrganizationMemberModerator(organizationMember))
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
                     await AssignAttachments(context, attachments, organizationId, Catalogs.AttachmentEntityTypeCatalog.Organization, true);
                     return await context.SaveChangesAsync() > 0;

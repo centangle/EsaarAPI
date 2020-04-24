@@ -208,8 +208,8 @@ namespace DataProvider
             {
                 throw new KnownException("Package Organization is required");
             }
-            var organizationMember = (await GetMemberRoleForOrganization(context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
-            if (IsOrganizationMemberModerator(organizationMember) == false)
+            var memberOrgRoles = (await GetMemberRoleForOrganization(context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
+            if (IsOrganizationMemberModerator(memberOrgRoles) == false)
             {
                 throw new KnownException("You are not authorized to add package to this organization");
             }

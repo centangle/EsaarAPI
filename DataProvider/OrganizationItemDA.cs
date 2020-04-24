@@ -263,8 +263,6 @@ namespace DataProvider
                                                 Name = o.Name,
                                                 NativeName = o.NativeName,
                                             },
-                                            ItemName = i.Name,
-                                            ItemNativeName = i.NativeName,
                                             Item = new ItemBriefModel()
                                             {
                                                 Id = i.Id,

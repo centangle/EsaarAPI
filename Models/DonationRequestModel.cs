@@ -74,7 +74,7 @@ namespace Models
                         LoggedInMemberId != 0
                         &&
                         (
-                            (DonationRequestOrganization != null && DonationRequestOrganization.Moderator != null && IsLoggedInMemberOrganizationOwner)
+                            (DonationRequestOrganization != null && DonationRequestOrganization.Moderator != null && (IsLoggedInMemberOrganizationOwner || IsLoggedInMemberOrganizationModerator))
                             ||
                             (CreatedBy == LoggedInMemberId)
                         )
@@ -91,7 +91,7 @@ namespace Models
                 if (
                         DonationRequestOrganization != null
                         && DonationRequestOrganization.Moderator != null
-                        && IsLoggedInMemberOrganizationOwner
+                        && (IsLoggedInMemberOrganizationOwner || DonationRequestOrganization.Moderator.Id == LoggedInMemberId)
                         && (DonationRequestOrganization.Status != StatusCatalog.Delivered && DonationRequestOrganization.Status != StatusCatalog.Rejected)
                   )
                     return true;
@@ -99,6 +99,7 @@ namespace Models
                     return false;
             }
         }
+
     }
 
     public class DonationRequestSearchModel : BaseSearchModel

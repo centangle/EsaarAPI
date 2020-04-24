@@ -19,8 +19,8 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var organizationMember = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
-                if (IsOrganizationMemberModerator(organizationMember))
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
                     var organizationRequest = await context.OrganizationRequests.Where(x => x.Id == requestId).FirstOrDefaultAsync();
                     {
@@ -95,8 +95,8 @@ namespace DataProvider
             var organizationRequest = await context.OrganizationRequests.Where(x => x.Id == model.Entity.Id).FirstOrDefaultAsync();
             if (organizationRequest != null)
             {
-                var organizationMember = (await GetMemberRoleForOrganization(context, organizationRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
-                if (IsOrganizationMemberModerator(organizationMember))
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, organizationRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
                     if (organizationRequest.IsDeleted == true)
                     {
@@ -105,11 +105,15 @@ namespace DataProvider
                     organizationRequest.Status = (int)model.Status;
                     if (model.Status == StatusCatalog.Approved)
                     {
-                        await AddOrganizationMemberForRequest(context, model);
-                        var entityRegions = await context.EntityRegions.Where(x => x.RequestId == organizationRequest.Id && x.RequestType == (int)EntityRegionRequestTypeCatalog.OrganizationMember && x.IsDeleted == false).ToListAsync();
-                        foreach (var entityRegion in entityRegions)
+                        int orgMemberId = await AddOrganizationMemberForRequest(context, model);
+                        if (orgMemberId > 0)
                         {
-                            entityRegion.IsApproved = true;
+                            var entityRegions = await context.EntityRegions.Where(x => x.RequestId == organizationRequest.Id && x.RequestType == (int)EntityRegionRequestTypeCatalog.OrganizationMember && x.IsDeleted == false).ToListAsync();
+                            foreach (var entityRegion in entityRegions)
+                            {
+                                entityRegion.EntityId = orgMemberId;
+                                entityRegion.IsApproved = true;
+                            }
                         }
                     }
                     return true;
@@ -136,25 +140,101 @@ namespace DataProvider
             requestThreadModel.IsSystemGenerated = true;
             return requestThreadModel;
         }
+        public async Task<PaginatedOrganizationRequestModel> GetOrganizationRequest(int requestId)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var memberOrgRoles = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
+                List<int> memberModeratorOrgz = new List<int>();
+                List<int> memberOwnedOrgz = new List<int>();
+                if (memberOrgRoles != null)
+                {
+                    foreach (var memberOrgRole in memberOrgRoles)
+                    {
+                        if (IsOrganizationMemberModerator(memberOrgRole))
+                        {
+                            memberModeratorOrgz.Add(memberOrgRole.Organization.Id);
+                        }
+                        if (IsOrganizationMemberOwner(memberOrgRole))
+                        {
+                            memberOwnedOrgz.Add(memberOrgRole.Organization.Id);
+                        }
+                    }
+                }
+                var request = await (from ort in context.OrganizationRequests
+                                     join o in context.Organizations on ort.OrganizationId equals o.Id
+                                     join m in context.Members on ort.CreatedBy equals m.Id
+                                     join am in context.Members on ort.ModeratorId equals am.Id into tam
+                                     from am in tam.DefaultIfEmpty()
+                                     let isLoggedInMemberOrgOwner = memberOwnedOrgz.Any(x => x == o.Id)
+                                     let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == o.Id)
+                                     where
+                                     ort.Id == requestId
+                                     && ort.IsDeleted == false
+                                     &&
+                                     (
+                                          ort.CreatedBy == _loggedInMemberId
+                                          ||
+                                          isLoggedInMemberOrgModerator
+                                          ||
+                                          isLoggedInMemberOrgModerator
+                                     )
+                                     select new PaginatedOrganizationRequestModel
+                                     {
+                                         Id = ort.Id,
+                                         Organization = new BaseImageBriefModel()
+                                         {
+                                             Id = o.Id,
+                                             Name = o.Name,
+                                             NativeName = o.NativeName,
+                                             ImageUrl = o.LogoUrl,
+                                         },
+                                         Entity = new BaseBriefModel()
+                                         {
+                                             Id = m.Id,
+                                             Name = m.Name,
+                                             NativeName = m.NativeName,
+                                         },
+                                         Moderator = new BaseBriefModel()
+                                         {
+                                             Id = am == null ? 0 : am.Id,
+                                             Name = am == null ? "" : am.Name,
+                                             NativeName = am == null ? "" : am.NativeName,
+                                         },
+                                         EntityType = (OrganizationRequestEntityTypeCatalog)ort.EntityType,
+                                         Type = (OrganizationRequestTypeCatalog)ort.Type,
+                                         Status = (StatusCatalog)ort.Status,
+                                         LoggedInMemberId = _loggedInMemberId,
+                                         IsLoggedInMemberOrganizationOwner = isLoggedInMemberOrgOwner,
+                                         IsLoggedInMemberOrganizationModerator = isLoggedInMemberOrgModerator,
+                                         CreatedDate = ort.CreatedDate,
+                                         CreatedBy = ort.CreatedBy,
+                                     }).FirstOrDefaultAsync();
+
+
+                if (request.Type == OrganizationRequestTypeCatalog.Moderator || request.Type == OrganizationRequestTypeCatalog.Volunteer)
+                    request.Regions = await GetRequestEntityRegions(request.Id);
+                return request;
+            }
+        }
         public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var memberOrganizations = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
-
+                var memberOrgRoles = await GetMemberRoleForOrganization(context, null, _loggedInMemberId);
                 List<int> memberModeratorOrgz = new List<int>();
                 List<int> memberOwnedOrgz = new List<int>();
-                if (memberModeratorOrgz != null)
+                if (memberOrgRoles != null)
                 {
-                    foreach (var memberOrg in memberOrganizations)
+                    foreach (var memberOrgRole in memberOrgRoles)
                     {
-                        if (IsOrganizationMemberModerator(memberOrg))
+                        if (IsOrganizationMemberModerator(memberOrgRole))
                         {
-                            memberModeratorOrgz.Add(memberOrg.Organization.Id);
+                            memberModeratorOrgz.Add(memberOrgRole.Organization.Id);
                         }
-                        if (IsOrganizationMemberOwner(memberOrg))
+                        if (IsOrganizationMemberOwner(memberOrgRole))
                         {
-                            memberOwnedOrgz.Add(memberOrg.Organization.Id);
+                            memberOwnedOrgz.Add(memberOrgRole.Organization.Id);
                         }
                     }
                 }

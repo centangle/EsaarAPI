@@ -47,9 +47,9 @@ namespace DataProvider
                 throw new KnownException("Item is required");
             }
             dbModel.RequestItemId = model.Item.Id;
-            if (status == StatusCatalog.Approved && (model.Quantity == null || model.Quantity < 0))
+            if (status == StatusCatalog.Approved && (model.ApprovedQuantity == null || model.ApprovedQuantity < 0))
             {
-                throw new KnownException("Quantity is required");
+                throw new KnownException("Approved Quantity is required");
             }
             if (status == StatusCatalog.Collected && (model.CollectedQuantity == null || model.CollectedQuantity < 0))
             {
@@ -59,16 +59,16 @@ namespace DataProvider
             {
                 throw new KnownException("Delivered Quantity is required");
             }
-            if (model.Quantity != null && model.Quantity > 0)
+            if (model.ApprovedQuantity != null && model.ApprovedQuantity > 0)
             {
-                dbModel.Quantity = model.Quantity ?? 0;
-                if (model.QuantityUOM == null || model.QuantityUOM.Id < 1)
+                dbModel.Quantity = model.ApprovedQuantity ?? 0;
+                if (model.ApprovedQuantityUOM == null || model.ApprovedQuantityUOM.Id < 1)
                 {
-                    throw new KnownException("Quantity UOM is required");
+                    throw new KnownException("Approved Quantity UOM is required");
                 }
                 else
                 {
-                    dbModel.QuantityUOM = model.QuantityUOM.Id;
+                    dbModel.QuantityUOM = model.ApprovedQuantityUOM.Id;
                 }
             }
             if (model.CollectedQuantity != null)

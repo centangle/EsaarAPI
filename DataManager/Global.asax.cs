@@ -9,6 +9,9 @@ namespace DataManager
     {
         protected void Application_Start()
         {
+            #pragma warning disable CS0436 // Type conflicts with imported type
+            SqlServerTypes.Utilities.LoadNativeAssemblies(Server.MapPath("~/bin"));
+            #pragma warning restore CS0436 // Type conflicts with imported type
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);

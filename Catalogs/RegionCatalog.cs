@@ -14,4 +14,14 @@ namespace Catalogs
         Tehsil,
         UnionCouncil
     }
+    public enum RegionRadiusTypeCatalog : int
+    {
+        Meters,
+        Kilometers
+    }
+    public enum RegionSearchTypeCatalog : int
+    {
+        Contains,
+        Intersects
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BusinessLogic
@@ -21,17 +22,21 @@ namespace BusinessLogic
         {
             return await _dataAccess.AssignVolunteerToDonationRequest(organizationId, donationRequestId, volunteerId);
         }
-        public async Task<DonationRequestModel> GetBriefDonationRequest(int organizationRequestId)
+        public async Task<PaginatedDonationRequestModel> GetDonationRequestDetail(int organizationRequestId)
         {
-            return await _dataAccess.GetBriefDonationRequest(organizationRequestId);
+            return await _dataAccess.GetDonationRequestDetail(organizationRequestId);
         }
         public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequests(DonationRequestSearchModel filters)
         {
             return await _dataAccess.GetDonationRequests(filters);
         }
-        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequestsForVolunteer(DonationRequestSearchModel filters)
+        //public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequestsForVolunteer(DonationRequestSearchModel filters)
+        //{
+        //    return await _dataAccess.GetDonationRequestsForVolunteer(filters);
+        //}
+        public async Task<List<DonationRequestOrganizationItemModel>> GetDonationRequestItems(int organizationRequestId)
         {
-            return await _dataAccess.GetDonationRequestsForVolunteer(filters);
+            return await _dataAccess.GetDonationRequestItems(organizationRequestId);
         }
     }
 }

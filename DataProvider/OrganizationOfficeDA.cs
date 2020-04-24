@@ -18,8 +18,8 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 var dbModel = SetOrganizationOffice(new OrganizationOffice(), model);
-                var organizationMember = (await GetMemberRoleForOrganization(context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
-                if (IsOrganizationMemberModerator(organizationMember))
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
                     context.OrganizationOffices.Add(dbModel);
                     await context.SaveChangesAsync();
