@@ -1,2 +1,2 @@
-# Charity
-A WebApi for charity app 
+# Esaar
+A WebApi for Esaar (Charity App)
