@@ -373,80 +373,107 @@ namespace DataProvider
                         }
                     }
                 }
-                return await (from dr in context.DonationRequests
-                              join dri in context.DonationRequestItems on dr.Id equals dri.DonationRequestId
-                              join i in context.Items on dri.ItemId equals i.Id
-                              join uom in context.UOMs on dri.QuantityUOM equals uom.Id
-                              join dro in context.DonationRequestOrganizations on dr.Id equals dro.DonationRequestId
-                              join droi in context.DonationRequestOrganizationItems on
-                                new { orgId = dro.Id, itemId = dri.ItemId }
-                                equals
-                                new { orgId = droi.RequestOrganizationId, itemId = droi.RequestItemId }
-                                into ldroi
-                              from droi in ldroi.DefaultIfEmpty()
-                              join aiuom in context.UOMs on droi.QuantityUOM equals aiuom.Id into laiuom
-                              from aiuom in laiuom.DefaultIfEmpty()
-                              join ciuom in context.UOMs on droi.QuantityUOM equals ciuom.Id into lciuom
-                              from ciuom in lciuom.DefaultIfEmpty()
-                              join diuom in context.UOMs on droi.QuantityUOM equals diuom.Id into ldiuom
-                              from diuom in ldiuom.DefaultIfEmpty()
-                              let isLoggedInMemberOrgOwner = memberOwnedOrgz.Any(x => x == dro.OrganizationId)
-                              let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == dro.OrganizationId)
-                              where
-                              dro.Id == organizationRequestId
-                              && dr.IsDeleted == false
-                              &&
-                              (
-                                   dr.MemberId == _loggedInMemberId
-                                   ||
-                                   dro.ModeratorId == _loggedInMemberId
-                                   ||
-                                   isLoggedInMemberOrgOwner
-                              )
-                              select new DonationRequestOrganizationItemModel
-                              {
-                                  Id = dr.Id,
-                                  Item = new BaseBriefModel()
-                                  {
-                                      Id = i.Id,
-                                      Name = i.Name,
-                                      NativeName = i.NativeName,
-                                  },
-                                  Quantity = dri.Quantity,
-                                  QuantityUOM = new UOMBriefModel()
-                                  {
-                                      Id = uom.Id,
-                                      Name = uom.Name,
-                                      NativeName = uom.NativeName,
-                                      NoOfBaseUnit = uom.NoOfBaseUnit,
-                                  },
-                                  IsApproved = droi == null ? false : true,
-                                  ApprovedQuantity = droi == null ? 0 : droi.Quantity,
-                                  ApprovedQuantityUOM = new UOMBriefModel()
-                                  {
-                                      Id = aiuom == null ? 0 : aiuom.Id,
-                                      Name = aiuom == null ? "" : aiuom.Name,
-                                      NativeName = aiuom == null ? "" : aiuom.NativeName,
-                                      NoOfBaseUnit = aiuom == null ? 0 : aiuom.NoOfBaseUnit,
-                                  },
-                                  CollectedQuantity = droi == null ? 0 : droi.CollectedQuantity,
-                                  CollectedQuantityUOM = new UOMBriefModel()
-                                  {
-                                      Id = ciuom == null ? 0 : ciuom.Id,
-                                      Name = ciuom == null ? "" : ciuom.Name,
-                                      NativeName = ciuom == null ? "" : ciuom.NativeName,
-                                      NoOfBaseUnit = ciuom == null ? 0 : ciuom.NoOfBaseUnit,
-                                  },
-                                  DeliveredQuantity = droi == null ? 0 : droi.DeliveredQuantity,
-                                  DeliveredQuantityUOM = new UOMBriefModel()
-                                  {
-                                      Id = diuom == null ? 0 : diuom.Id,
-                                      Name = diuom == null ? "" : diuom.Name,
-                                      NativeName = diuom == null ? "" : diuom.NativeName,
-                                      NoOfBaseUnit = diuom == null ? 0 : diuom.NoOfBaseUnit,
-                                  },
+                var items = await (from dr in context.DonationRequests
+                                   join dri in context.DonationRequestItems on dr.Id equals dri.DonationRequestId
+                                   join i in context.Items on dri.ItemId equals i.Id
+                                   join uom in context.UOMs on dri.QuantityUOM equals uom.Id
+                                   join iuom in context.UOMs on i.DefaultUOM equals iuom.Id
+                                   join dro in context.DonationRequestOrganizations on dr.Id equals dro.DonationRequestId
+                                   join droi in context.DonationRequestOrganizationItems on
+                                     new { orgId = dro.Id, itemId = dri.ItemId }
+                                     equals
+                                     new { orgId = droi.RequestOrganizationId, itemId = droi.RequestItemId }
+                                     into ldroi
+                                   from droi in ldroi.DefaultIfEmpty()
+                                   join aiuom in context.UOMs on droi.QuantityUOM equals aiuom.Id into laiuom
+                                   from aiuom in laiuom.DefaultIfEmpty()
+                                   join ciuom in context.UOMs on droi.QuantityUOM equals ciuom.Id into lciuom
+                                   from ciuom in lciuom.DefaultIfEmpty()
+                                   join diuom in context.UOMs on droi.QuantityUOM equals diuom.Id into ldiuom
+                                   from diuom in ldiuom.DefaultIfEmpty()
+                                   let isLoggedInMemberOrgOwner = memberOwnedOrgz.Any(x => x == dro.OrganizationId)
+                                   let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == dro.OrganizationId)
+                                   where
+                                   dro.Id == organizationRequestId
+                                   && dr.IsDeleted == false
+                                   &&
+                                   (
+                                        dr.MemberId == _loggedInMemberId
+                                        ||
+                                        dro.ModeratorId == _loggedInMemberId
+                                        ||
+                                        isLoggedInMemberOrgOwner
+                                   )
+                                   select new DonationRequestOrganizationItemModel
+                                   {
+                                       Id = dr.Id,
+                                       Item = new BaseBriefModel()
+                                       {
+                                           Id = i.Id,
+                                           Name = i.Name,
+                                           NativeName = i.NativeName,
+                                       },
+                                       ItemDefaultUOM = new UOMBriefParentModel()
+                                       {
+                                           Id = iuom.Id,
+                                           Name = iuom.Name,
+                                           NativeName = iuom.NativeName,
+                                           ParentId = iuom.ParentId,
+                                       },
+                                       Quantity = dri.Quantity,
+                                       QuantityUOM = new UOMBriefModel()
+                                       {
+                                           Id = uom.Id,
+                                           Name = uom.Name,
+                                           NativeName = uom.NativeName,
+                                           NoOfBaseUnit = uom.NoOfBaseUnit,
+                                       },
+                                       IsApproved = droi == null ? false : true,
+                                       ApprovedQuantity = droi == null ? 0 : droi.Quantity,
+                                       ApprovedQuantityUOM = new UOMBriefModel()
+                                       {
+                                           Id = aiuom == null ? 0 : aiuom.Id,
+                                           Name = aiuom == null ? "" : aiuom.Name,
+                                           NativeName = aiuom == null ? "" : aiuom.NativeName,
+                                           NoOfBaseUnit = aiuom == null ? 0 : aiuom.NoOfBaseUnit,
+                                       },
+                                       CollectedQuantity = droi == null ? 0 : droi.CollectedQuantity,
+                                       CollectedQuantityUOM = new UOMBriefModel()
+                                       {
+                                           Id = ciuom == null ? 0 : ciuom.Id,
+                                           Name = ciuom == null ? "" : ciuom.Name,
+                                           NativeName = ciuom == null ? "" : ciuom.NativeName,
+                                           NoOfBaseUnit = ciuom == null ? 0 : ciuom.NoOfBaseUnit,
+                                       },
+                                       DeliveredQuantity = droi == null ? 0 : droi.DeliveredQuantity,
+                                       DeliveredQuantityUOM = new UOMBriefModel()
+                                       {
+                                           Id = diuom == null ? 0 : diuom.Id,
+                                           Name = diuom == null ? "" : diuom.Name,
+                                           NativeName = diuom == null ? "" : diuom.NativeName,
+                                           NoOfBaseUnit = diuom == null ? 0 : diuom.NoOfBaseUnit,
+                                       },
 
-                              }).ToListAsync();
+                                   }).ToListAsync();
+                List<UOMModel> availableUOM = new List<UOMModel>();
+                foreach (var item in items)
+                {
+                    int itemDefaultUOMRootId = (item.ItemDefaultUOM.ParentId == null ?
+                        item.ItemDefaultUOM.Id :
+                        (item.ItemDefaultUOM.ParentId ?? 0));
+                    var existingUOM = availableUOM.Where(x => x.Id == itemDefaultUOMRootId).FirstOrDefault();
+                    if (existingUOM == null)
+                    {
+                        var uom = await GetUOM(itemDefaultUOMRootId);
+                        if (uom != null)
+                        {
+                            availableUOM.Add(uom);
+                            item.ItemUOMs.AddRange(GetUOMTreeFlatList(uom));
+                        }
+                    }
+
+                }
+                return items;
             }
         }
         public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequests(DonationRequestSearchModel filters)
@@ -570,6 +597,7 @@ namespace DataProvider
                                             LoggedInMemberId = _loggedInMemberId,
                                             IsLoggedInMemberOrganizationOwner = isLoggedInMemberOrgOwner,
                                             IsLoggedInMemberOrganizationModerator = isLoggedInMemberOrgModerator,
+                                            IsLoggedInMemberOrganizationVolunteer = isLoggedInMemberOrgVolunteer,
                                             CreatedDate = dr.CreatedDate,
                                             CreatedBy = dr.CreatedBy,
                                         }).AsQueryable();

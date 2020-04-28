@@ -36,6 +36,7 @@ namespace Models
         public int LoggedInMemberId { get; set; }
         public bool IsLoggedInMemberOrganizationOwner { get; set; }
         public bool IsLoggedInMemberOrganizationModerator { get; set; }
+        public bool IsLoggedInMemberOrganizationVolunteer { get; set; }
         public DonationRequestOrganizationModel DonationRequestOrganization { get; set; }
 
         public bool IsOpenRequestForModerator
@@ -94,6 +95,26 @@ namespace Models
                         && (IsLoggedInMemberOrganizationOwner || DonationRequestOrganization.Moderator.Id == LoggedInMemberId)
                         && (DonationRequestOrganization.Status != StatusCatalog.Delivered && DonationRequestOrganization.Status != StatusCatalog.Rejected)
                   )
+                    return true;
+                else
+                    return false;
+            }
+        }
+        public bool CanModeratorSelfAssign
+        {
+            get
+            {
+                if (IsOpenRequestForModerator && (IsLoggedInMemberOrganizationModerator || IsLoggedInMemberOrganizationOwner))
+                    return true;
+                else
+                    return false;
+            }
+        }
+        public bool CanVolunteerSelfAssign
+        {
+            get
+            {
+                if (IsOpenRequestForVolunteer && IsLoggedInMemberOrganizationVolunteer)
                     return true;
                 else
                     return false;
