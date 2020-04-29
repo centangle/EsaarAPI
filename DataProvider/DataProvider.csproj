@@ -138,6 +138,7 @@
     <Compile Include="EDMXPartialClasses\Item.cs" />
     <Compile Include="EDMXPartialClasses\Organization.cs" />
     <Compile Include="EDMXPartialClasses\IBaseClasses.cs" />
+    <Compile Include="EDMXPartialClasses\UOM.cs" />
     <Compile Include="EntityRegion.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>

@@ -19,6 +19,7 @@ namespace DataProvider
         {
             this.DonationRequestItems = new HashSet<DonationRequestItem>();
             this.PackageItems = new HashSet<PackageItem>();
+            this.UOM1 = new HashSet<UOM>();
         }
     
         public int Id { get; set; }
@@ -27,6 +28,8 @@ namespace DataProvider
         public string Abbreviation { get; set; }
         public double NoOfBaseUnit { get; set; }
         public Nullable<int> ParentId { get; set; }
+        public Nullable<int> RootId { get; set; }
+        public bool IsPeripheral { get; set; }
         public int Type { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
@@ -39,5 +42,8 @@ namespace DataProvider
         public virtual ICollection<DonationRequestItem> DonationRequestItems { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PackageItem> PackageItems { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UOM> UOM1 { get; set; }
+        public virtual UOM UOM2 { get; set; }
     }
 }

@@ -23,6 +23,10 @@ namespace DataProvider
             {
                 return (SetOrganization(dbModel as Organization, model as OrganizationModel) as D);
             }
+            else if (typeof(D) == typeof(UOM))
+            {
+                return (SetUOM(dbModel as UOM, model as UOMModel) as D);
+            }
             return null;
         }
         private void DeleteTreeNode<D>(D dbModel) where D : ITree<D>

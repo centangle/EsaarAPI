@@ -595,6 +595,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Abbreviation" Type="nvarchar" MaxLength="30" />
           <Property Name="NoOfBaseUnit" Type="float" Nullable="false" />
           <Property Name="ParentId" Type="int" />
+          <Property Name="RootId" Type="int" />
+          <Property Name="IsPeripheral" Type="bit" Nullable="false" />
           <Property Name="Type" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
@@ -1169,6 +1171,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UOM_UOM1">
+          <End Role="UOM" Type="Self.UOM" Multiplicity="0..1" />
+          <End Role="UOM1" Type="Self.UOM" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UOM">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UOM1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="CharityModelStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Address" EntityType="Self.Address" Schema="dbo" store:Type="Tables" />
@@ -1399,6 +1413,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="Tehsil" EntitySet="Tehsil" />
             <End Role="UnionCouncil" EntitySet="UnionCouncil" />
           </AssociationSet>
+          <AssociationSet Name="FK_UOM_UOM1" Association="Self.FK_UOM_UOM1">
+            <End Role="UOM" EntitySet="UOM" />
+            <End Role="UOM1" EntitySet="UOM" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -1618,6 +1636,10 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_UnionCouncil_Tehsil" Association="CharityModel.FK_UnionCouncil_Tehsil">
             <End Role="Tehsil" EntitySet="Tehsils" />
             <End Role="UnionCouncil" EntitySet="UnionCouncils" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UOM_UOM1" Association="CharityModel.FK_UOM_UOM1">
+            <End Role="UOM" EntitySet="UOMs" />
+            <End Role="UOM1" EntitySet="UOMs" />
           </AssociationSet>
           <AssociationSet Name="AspNetUserRoles" Association="CharityModel.AspNetUserRoles">
             <End Role="AspNetRole" EntitySet="AspNetRoles" />
@@ -2294,6 +2316,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="Abbreviation" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="NoOfBaseUnit" Type="Double" Nullable="false" />
           <Property Name="ParentId" Type="Int32" />
+          <Property Name="RootId" Type="Int32" />
+          <Property Name="IsPeripheral" Type="Boolean" Nullable="false" />
           <Property Name="Type" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
@@ -2303,6 +2327,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="DonationRequestItems" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="UOM" ToRole="DonationRequestItem" />
           <NavigationProperty Name="PackageItems" Relationship="CharityModel.FK_PackageItems_UOM" FromRole="UOM" ToRole="PackageItem" />
+          <NavigationProperty Name="UOM1" Relationship="CharityModel.FK_UOM_UOM1" FromRole="UOM" ToRole="UOM1" />
+          <NavigationProperty Name="UOM2" Relationship="CharityModel.FK_UOM_UOM1" FromRole="UOM1" ToRole="UOM" />
         </EntityType>
         <EntityType Name="RefreshToken">
           <Key>
@@ -2850,6 +2876,18 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="UnionCouncil">
               <PropertyRef Name="TehsilId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UOM_UOM1">
+          <End Type="CharityModel.UOM" Role="UOM" Multiplicity="0..1" />
+          <End Type="CharityModel.UOM" Role="UOM1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UOM">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UOM1">
+              <PropertyRef Name="ParentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3462,6 +3500,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="IsPeripheral" ColumnName="IsPeripheral" />
+                <ScalarProperty Name="RootId" ColumnName="RootId" />
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />
                 <ScalarProperty Name="NoOfBaseUnit" ColumnName="NoOfBaseUnit" />
                 <ScalarProperty Name="Abbreviation" ColumnName="Abbreviation" />
