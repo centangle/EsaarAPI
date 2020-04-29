@@ -28,16 +28,17 @@ namespace DataProvider.Helpers
 
                 try
                 {
+                    if (search.CalculateTotal)
+                    {
+                        searchResult.TotalCount = (query == null ? 0 : await query.CountAsync());
+                    }
                     if (search.DisablePagination == false)
                     {
                         query = query.Skip((search.CurrentPage - 1) * search.RecordsPerPage).Take(search.RecordsPerPage);
                     }
                     List<T> resultList = await query.ToListAsync() as List<T>;
                     searchResult.Items = resultList ?? new List<T>();
-                    if (search.CalculateTotal)
-                    {
-                        searchResult.TotalCount = (query == null ? 0 : await query.CountAsync());
-                    }
+
 
                 }
                 catch (Exception ex)
