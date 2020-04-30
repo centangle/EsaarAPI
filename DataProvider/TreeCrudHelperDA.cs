@@ -29,16 +29,18 @@ namespace DataProvider
             }
             return null;
         }
-        private void DeleteTreeNode<D>(D dbModel) where D : ITree<D>
+        private Dictionary<int, string> DeleteTreeNode<D>(D dbModel, Dictionary<int, string> deletedItems) where D : ITree<D>
         {
             dbModel.IsDeleted = true;
             if (dbModel.children != null && dbModel.children.Count > 0)
             {
                 foreach (var item in dbModel.children)
                 {
-                    DeleteTreeNode(item);
+                    DeleteTreeNode(item, deletedItems);
+                    deletedItems.Add(item.Id, (item as IName).Name);
                 }
             }
+            return deletedItems;
         }
         private async Task ModifyTreeNodes<D, M>(CharityEntities context, DbSet<D> newDbNodes, List<D> currentDbNodes, List<TreeTraversal<M>> allNodes)
             where M : class, ITree<M>

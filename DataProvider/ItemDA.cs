@@ -157,7 +157,8 @@ namespace DataProvider
                 if (dbModel != null)
                 {
                     var root = (await GetSingleItemTree<Item, Item>(context, dbModel.Id, false)).First();
-                    DeleteTreeNode(root);
+                    Dictionary<int, string> deletedItems = new Dictionary<int, string>();
+                    DeleteTreeNode(root, deletedItems);
                     return await context.SaveChangesAsync() > 0;
                 }
                 return false;

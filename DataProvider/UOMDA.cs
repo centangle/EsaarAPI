@@ -10,6 +10,7 @@ using Models.BriefModel;
 using AutoMapper;
 using Models.Interfaces;
 using System.Data.SqlClient;
+using Helpers;
 
 namespace DataProvider
 {
@@ -152,8 +153,22 @@ namespace DataProvider
                     if (dbModel != null)
                     {
                         var root = (await GetSingleUOMTree<UOM, UOM>(context, dbModel.Id, false)).First();
-                        DeleteTreeNode(root);
-                        return await context.SaveChangesAsync() > 0;
+                        Dictionary<int, string> deletedUoms = new Dictionary<int, string>();
+                        List<string> itemsUsingUoms = new List<string>();
+                        DeleteTreeNode(root, deletedUoms);
+                        foreach (var uom in deletedUoms)
+                        {
+                            List<string> usedItems = await context.Items.Where(x => x.DefaultUOM == uom.Key && x.IsDeleted == false).Select(x => x.Name).ToListAsync();
+                            itemsUsingUoms.Add($"{uom.Value} is used in  {string.Join(", ", usedItems)}");
+                        }
+                        if (itemsUsingUoms.Count > 0)
+                        {
+                            throw new KnownException(string.Join(";", itemsUsingUoms));
+                        }
+                        else
+                        {
+                            return await context.SaveChangesAsync() > 0;
+                        }
                     }
                 return false;
             }
@@ -171,20 +186,25 @@ namespace DataProvider
                                       {
                                           Id = u.Id,
                                           Name = u.Name,
+                                          NativeName = u.NativeName,
                                           Abbreviation = u.Abbreviation,
                                           NoOfBaseUnit = u.NoOfBaseUnit,
+                                          Description = u.Description,
                                           ParentId = null,
                                       }).FirstOrDefaultAsync();
                 if (uom != null)
                 {
                     uom.children = await (from u in context.UOMs
                                           where u.ParentId == uom.Id
+                                          && u.IsDeleted == false
                                           select new UOMModel
                                           {
                                               Id = u.Id,
                                               Name = u.Name,
+                                              NativeName = u.NativeName,
                                               Abbreviation = u.Abbreviation,
                                               NoOfBaseUnit = u.NoOfBaseUnit,
+                                              Description = u.Description,
                                               ParentId = u.ParentId,
                                           }).ToListAsync();
                 }
@@ -204,8 +224,10 @@ namespace DataProvider
                                                       {
                                                           Id = u.Id,
                                                           Name = u.Name,
+                                                          NativeName = u.NativeName,
                                                           Abbreviation = u.Abbreviation,
                                                           NoOfBaseUnit = u.NoOfBaseUnit,
+                                                          Description = u.Description,
                                                           ParentId = null,
                                                       }).AsQueryable();
                 List<UOMModel> UOMList = await UOMsQueryable.OrderBy(x => x.Name).Skip((filters.CurrentPage - 1) * filters.RecordsPerPage).Take(filters.RecordsPerPage).ToListAsync();
@@ -213,12 +235,15 @@ namespace DataProvider
                 {
                     uom.children = await (from u in context.UOMs
                                           where u.ParentId == uom.Id
+                                          && u.IsDeleted == false
                                           select new UOMModel
                                           {
                                               Id = u.Id,
                                               Name = u.Name,
+                                              NativeName = u.NativeName,
                                               Abbreviation = u.Abbreviation,
                                               NoOfBaseUnit = u.NoOfBaseUnit,
+                                              Description = u.Description,
                                               ParentId = u.ParentId,
                                           }).ToListAsync();
                 }
@@ -246,7 +271,9 @@ namespace DataProvider
                                  {
                                      Id = u.Id,
                                      Name = u.Name,
+                                     NativeName = u.NativeName,
                                      NoOfBaseUnit = u.NoOfBaseUnit,
+                                     Description = u.Description,
                                  }).ToListAsync();
                 //======================Get Only Child UOMS====================
 
@@ -259,8 +286,10 @@ namespace DataProvider
                                         {
                                             Id = u.Id,
                                             Name = u.Name,
+                                            NativeName = u.NativeName,
                                             ParentId = u.ParentId,
                                             NoOfBaseUnit = u.NoOfBaseUnit,
+                                            Description = u.Description,
                                         }).ToListAsync());
                 searchResult.Items = UOMList ?? new List<UOMModel>();
                 if (filters.CalculateTotal)
@@ -282,6 +311,7 @@ namespace DataProvider
                 dbModel.RootId = null;
             else
                 dbModel.RootId = model.Root.Id;
+            dbModel.Description = model.Description;
             dbModel.IsPeripheral = model.IsPeripheral;
             SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
@@ -328,6 +358,7 @@ namespace DataProvider
                                   Name = uom.Name,
                                   NativeName = uom.NativeName,
                                   NoOfBaseUnit = uom.NoOfBaseUnit,
+                                  Description = uom.Description,
                                   IsPeripheral = uom.IsPeripheral,
                                   IsActive = uom.IsActive,
                               }).ToListAsync();
@@ -356,6 +387,7 @@ namespace DataProvider
                                   NoOfBaseUnit = uom.NoOfBaseUnit,
                                   IsPeripheral = uom.IsPeripheral,
                                   IsActive = uom.IsActive,
+                                  Description = uom.Description,
                               }).ToListAsync();
             }
         }

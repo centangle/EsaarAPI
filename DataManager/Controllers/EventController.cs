@@ -9,11 +9,13 @@ namespace DataManager.Controllers
     [Authorize]
     public class EventController : BaseController
     {
+        [HttpGet]
         public async Task<EventModel> Get(int id)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetEvent(id);
         }
+        [HttpGet]
         public async Task<PaginatedResultModel<EventModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, bool? isActive = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);

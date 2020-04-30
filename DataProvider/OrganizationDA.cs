@@ -173,7 +173,8 @@ namespace DataProvider
                 if (dbModel != null)
                 {
                     var root = (await GetSingleOrganizationTree<Organization, Organization>(context, dbModel.Id, false)).First();
-                    DeleteTreeNode(root);
+                    Dictionary<int, string> deletedOrgz = new Dictionary<int, string>();
+                    DeleteTreeNode(root, deletedOrgz);
                     return await context.SaveChangesAsync() > 0;
                 }
                 return false;

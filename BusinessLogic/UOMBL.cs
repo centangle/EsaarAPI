@@ -9,7 +9,6 @@ namespace BusinessLogic
 {
     public partial class Logic
     {
-
         public async Task<int> CreateUOM(UOMModel model)
         {
             return await _dataAccess.CreateUOM(model);
@@ -58,16 +57,13 @@ namespace BusinessLogic
         {
             return await _dataAccess.DeleteUOM(Id);
         }
-
         public async Task<PaginatedResultModel<UOMModel>> GetUOM(UOMSearchModel filters)
         {
             return await _dataAccess.GetUOM(filters);
         }
-
         public async Task<PaginatedResultModel<UOMModel>> GetUOMForDD(UOMSearchModel filters)
         {
             return await _dataAccess.GetUOMForDD(filters);
         }
-
     }
 }

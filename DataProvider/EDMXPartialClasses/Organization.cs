@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DataProvider
 {
-    public partial class Organization : ITree<Organization>, IBase
+    public partial class Organization : ITree<Organization>, IBase, IName
     {
         public ICollection<Organization> children
         {

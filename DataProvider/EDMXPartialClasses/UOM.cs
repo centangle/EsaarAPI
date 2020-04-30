@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataProvider
 {
-    public partial class UOM : ITree<UOM>, IBase
+    public partial class UOM : ITree<UOM>, IBase, IName
     {
         public ICollection<UOM> children
         {

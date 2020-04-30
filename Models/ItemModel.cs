@@ -12,7 +12,23 @@ namespace Models
     {
         [Required]
         public string Name { get; set; }
-        public string NativeName { get; set; }
+        private string _nativeName;
+        public string NativeName
+        {
+            get
+            {
+                if (_nativeName == null)
+                {
+                    return "";
+                }
+                else
+                    return _nativeName;
+            }
+            set
+            {
+                _nativeName = value;
+            }
+        }
         [IgnoreDataMember]
         public int? ParentId
         {

@@ -30,6 +30,7 @@ namespace DataProvider
         public Nullable<int> ParentId { get; set; }
         public Nullable<int> RootId { get; set; }
         public bool IsPeripheral { get; set; }
+        public string Description { get; set; }
         public int Type { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }

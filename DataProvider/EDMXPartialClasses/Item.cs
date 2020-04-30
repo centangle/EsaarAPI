@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DataProvider
 {
-    public partial class Item : ITree<Item>, IBase
+    public partial class Item : ITree<Item>, IBase, IName
     {
         public ICollection<Item> children
         {

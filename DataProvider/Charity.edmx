@@ -597,6 +597,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="ParentId" Type="int" />
           <Property Name="RootId" Type="int" />
           <Property Name="IsPeripheral" Type="bit" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="Type" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
@@ -2318,6 +2319,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="ParentId" Type="Int32" />
           <Property Name="RootId" Type="Int32" />
           <Property Name="IsPeripheral" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Type" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
@@ -3500,6 +3502,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="IsPeripheral" ColumnName="IsPeripheral" />
                 <ScalarProperty Name="RootId" ColumnName="RootId" />
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />

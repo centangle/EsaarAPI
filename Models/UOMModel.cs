@@ -46,11 +46,26 @@ namespace Models
         public BaseBriefModel Root { get; set; }
         [Required]
         public string Name { get; set; }
-        public string NativeName { get; set; }
+        private string _nativeName;
+        public string NativeName
+        {
+            get
+            {
+                if (_nativeName == null)
+                    return "";
+                else
+                    return _nativeName;
+            }
+            set
+            {
+                _nativeName = value;
+            }
+        }
         public string Abbreviation { get; set; }
         public double NoOfBaseUnit { get; set; }
         public ICollection<UOMModel> children { get; set; }
         public bool IsPeripheral { get; set; }
+        public string Description { get; set; }
         [IgnoreDataMember]
         public UnitTypeCatalog Type { get; set; }
     }
