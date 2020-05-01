@@ -61,17 +61,25 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                Organization dbModel = await context.Organizations.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
-                if (dbModel != null)
+                var orgMemberRoles = (await GetMemberRoleForOrganization(context, model.Id, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberOwner(orgMemberRoles))
                 {
-                    SetOrganization(dbModel, model);
-                    if (model.ParentId != 0)
-                        dbModel.ParentId = model.ParentId;
-                    else
-                        dbModel.ParentId = null;
-                    return await context.SaveChangesAsync() > 0;
+                    Organization dbModel = await context.Organizations.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
+                    if (dbModel != null)
+                    {
+                        SetOrganization(dbModel, model);
+                        if (model.ParentId != 0)
+                            dbModel.ParentId = model.ParentId;
+                        else
+                            dbModel.ParentId = null;
+                        return await context.SaveChangesAsync() > 0;
+                    }
+                    return false;
                 }
-                return false;
+                else
+                {
+                    throw new KnownException("You are not authorized to perform this action");
+                }
             }
 
         }
@@ -165,19 +173,27 @@ namespace DataProvider
                 }
             }
         }
-        public async Task<bool> DeleteOrganization(int Id)
+        public async Task<bool> DeleteOrganization(int id)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                Organization dbModel = await context.Organizations.Where(x => x.Id == Id && x.IsDeleted == false).FirstOrDefaultAsync();
-                if (dbModel != null)
+                var orgMemberRoles = (await GetMemberRoleForOrganization(context, id, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberOwner(orgMemberRoles))
                 {
-                    var root = (await GetSingleOrganizationTree<Organization, Organization>(context, dbModel.Id, false)).First();
-                    Dictionary<int, string> deletedOrgz = new Dictionary<int, string>();
-                    DeleteTreeNode(root, deletedOrgz);
-                    return await context.SaveChangesAsync() > 0;
+                    Organization dbModel = await context.Organizations.Where(x => x.Id == id && x.IsDeleted == false).FirstOrDefaultAsync();
+                    if (dbModel != null)
+                    {
+                        var root = (await GetSingleOrganizationTree<Organization, Organization>(context, dbModel.Id, false)).First();
+                        Dictionary<int, string> deletedOrgz = new Dictionary<int, string>();
+                        DeleteTreeNode(root, deletedOrgz);
+                        return await context.SaveChangesAsync() > 0;
+                    }
+                    return false;
                 }
-                return false;
+                else
+                {
+                    throw new KnownException("You are not authorized to perform this action");
+                }
             }
         }
         private Organization SetOrganization(Organization dbModel, OrganizationModel model)
