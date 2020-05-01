@@ -159,11 +159,14 @@ namespace DataProvider
                         foreach (var uom in deletedUoms)
                         {
                             List<string> usedItems = await context.Items.Where(x => x.DefaultUOM == uom.Key && x.IsDeleted == false).Select(x => x.Name).ToListAsync();
-                            itemsUsingUoms.Add($"{uom.Value} is used in  {string.Join(", ", usedItems)}");
+                            if (usedItems.Count > 0)
+                            {
+                                itemsUsingUoms.Add($"{uom.Value} is used in {string.Join(", ", usedItems)}");
+                            }
                         }
                         if (itemsUsingUoms.Count > 0)
                         {
-                            throw new KnownException(string.Join(";", itemsUsingUoms));
+                            throw new KnownException($"Can not delete this uom because {string.Join(", and ", itemsUsingUoms)}.");
                         }
                         else
                         {
@@ -206,6 +209,14 @@ namespace DataProvider
                                               NoOfBaseUnit = u.NoOfBaseUnit,
                                               Description = u.Description,
                                               ParentId = u.ParentId,
+                                              Parent = new BaseBriefModel()
+                                              {
+                                                  Id = u.ParentId ?? 0,
+                                              },
+                                              Root = new BaseBriefModel()
+                                              {
+                                                  Id = u.RootId ?? 0,
+                                              },
                                           }).ToListAsync();
                 }
                 return uom;
@@ -245,6 +256,14 @@ namespace DataProvider
                                               NoOfBaseUnit = u.NoOfBaseUnit,
                                               Description = u.Description,
                                               ParentId = u.ParentId,
+                                              Parent = new BaseBriefModel()
+                                              {
+                                                  Id = u.ParentId ?? 0,
+                                              },
+                                              Root = new BaseBriefModel()
+                                              {
+                                                  Id = u.RootId ?? 0,
+                                              },
                                           }).ToListAsync();
                 }
                 searchResult.Items = UOMList ?? new List<UOMModel>();
@@ -261,33 +280,42 @@ namespace DataProvider
             {
                 PaginatedResultModel<UOMModel> searchResult = new PaginatedResultModel<UOMModel>();
                 List<UOMModel> UOMList = new List<UOMModel>();
-                //======================Get Only Parent UOMS====================
-                UOMList = await (from u in context.UOMs
-                                 where
-                                 (string.IsNullOrEmpty(filters.Name) || u.Name.Contains(filters.Name) || u.Abbreviation.Contains(filters.Name))
-                                 && ((filters.ParentId == null || u.Id == filters.ParentId) && u.ParentId == null)
-                                 && u.IsDeleted == false
-                                 select new UOMModel
-                                 {
-                                     Id = u.Id,
-                                     Name = u.Name,
-                                     NativeName = u.NativeName,
-                                     NoOfBaseUnit = u.NoOfBaseUnit,
-                                     Description = u.Description,
-                                 }).ToListAsync();
-                //======================Get Only Child UOMS====================
+                ////======================Get Only Parent UOMS====================
+                //UOMList = await (from u in context.UOMs
+                //                 where
+                //                 (string.IsNullOrEmpty(filters.Name) || u.Name.Contains(filters.Name) || u.Abbreviation.Contains(filters.Name))
+                //                 && ((filters.ParentId == null || u.Id == filters.ParentId) && u.ParentId == null)
+                //                 && u.IsDeleted == false
+                //                 select new UOMModel
+                //                 {
+                //                     Id = u.Id,
+                //                     Name = u.Name,
+                //                     NativeName = u.NativeName,
+                //                     NoOfBaseUnit = u.NoOfBaseUnit,
+                //                     Description = u.Description,
+                //                 }).ToListAsync();
+                ////======================Get Only Child UOMS====================
 
                 UOMList.AddRange(await (from u in context.UOMs
                                         where
                                         (string.IsNullOrEmpty(filters.Name) || u.Name.Contains(filters.Name) || u.Abbreviation.Contains(filters.Name))
                                         && ((filters.ParentId == null || u.ParentId == filters.ParentId) && u.ParentId != null)
                                         && u.IsDeleted == false
+                                        && u.IsPeripheral == true
                                         select new UOMModel
                                         {
                                             Id = u.Id,
                                             Name = u.Name,
                                             NativeName = u.NativeName,
                                             ParentId = u.ParentId,
+                                            Parent = new BaseBriefModel()
+                                            {
+                                                Id = u.ParentId ?? 0,
+                                            },
+                                            Root = new BaseBriefModel()
+                                            {
+                                                Id = u.RootId ?? 0,
+                                            },
                                             NoOfBaseUnit = u.NoOfBaseUnit,
                                             Description = u.Description,
                                         }).ToListAsync());

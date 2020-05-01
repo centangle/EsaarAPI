@@ -319,7 +319,10 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 context.Configuration.AutoDetectChangesEnabled = false;
-                return await GetAllItems<ItemModel, ItemModel>(context, true, getHierarchicalData);
+                var uoms = await context.UOMs.Where(x => x.IsDeleted == false).ToListAsync();
+                var result = await GetAllItems<ItemModel, ItemModel>(context, true, getHierarchicalData);
+                SetItemsUOM(uoms, result);
+                return result;
             }
         }
         private async Task<IEnumerable<T>> GetAllItems<T, M>(CharityEntities context, bool returnViewModel, bool getHierarchicalData)
@@ -401,6 +404,23 @@ namespace DataProvider
                .ForMember(s => s.children, m => m.Ignore())
                );
 
+        }
+        private void SetItemsUOM(List<UOM> uoms, IEnumerable<ItemModel> items)
+        {
+            foreach (var item in items)
+            {
+                var uom = uoms.Where(x => x.Id == item.DefaultUOM.Id).FirstOrDefault();
+                if (uom != null)
+                {
+                    item.DefaultUOM.Name = uom.Name;
+                    item.DefaultUOM.NativeName = uom.NativeName;
+                    item.DefaultUOM.NoOfBaseUnit = uom.NoOfBaseUnit;
+                }
+                if (item.children != null && item.children.Count > 0)
+                {
+                    SetItemsUOM(uoms, item.children);
+                }
+            }
         }
     }
 }
