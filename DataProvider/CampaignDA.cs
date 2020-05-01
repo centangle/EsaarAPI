@@ -17,58 +17,67 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                using (var transaction = context.Database.BeginTransaction())
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
-
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        var dbModel = SetCampaign(new Campaign(), model);
-                        context.Campaigns.Add(dbModel);
-                        bool result = await context.SaveChangesAsync() > 0;
-                        if (result)
+                        try
                         {
-                            model.Id = dbModel.Id;
-                            AddCampaignItems(context, model.Items, model.Id, model.Organization.Id);
-                            await context.SaveChangesAsync();
+                            var dbModel = SetCampaign(new Campaign(), model);
+                            context.Campaigns.Add(dbModel);
+                            bool result = await context.SaveChangesAsync() > 0;
+                            if (result)
+                            {
+                                model.Id = dbModel.Id;
+                                AddCampaignItems(context, model.Items, model.Id, model.Organization.Id);
+                                await context.SaveChangesAsync();
+                            }
+                            transaction.Commit();
+                            return model.Id;
                         }
-                        transaction.Commit();
-                        return model.Id;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        throw ex;
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
                     }
                 }
+                else
+                    throw new KnownException("You are not authorized to perform this action");
             }
         }
         public async Task<bool> UpdateCampaign(CampaignModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                using (var transaction = context.Database.BeginTransaction())
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        Campaign dbModel = await context.Campaigns.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
-                        if (dbModel != null)
+                        try
                         {
-                            SetCampaign(dbModel, model);
-                            await ModifyCampaignItems(context, model);
-                            bool result = await context.SaveChangesAsync() > 0;
-                            transaction.Commit();
-                            return result;
+                            Campaign dbModel = await context.Campaigns.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
+                            if (dbModel != null)
+                            {
+                                SetCampaign(dbModel, model);
+                                await ModifyCampaignItems(context, model);
+                                bool result = await context.SaveChangesAsync() > 0;
+                                transaction.Commit();
+                                return result;
+                            }
+                            return false;
                         }
-                        return false;
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        throw ex;
-                    }
-
                 }
-                return false;
+                else
+                    throw new KnownException("You are not authorized to perform this action");
             }
 
         }
@@ -79,8 +88,14 @@ namespace DataProvider
                 Campaign dbModel = await context.Campaigns.Where(x => x.Id == id && x.IsDeleted == false).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
-                    dbModel.IsDeleted = true;
-                    return await context.SaveChangesAsync() > 0;
+                    var memberOrgRoles = (await GetMemberRoleForOrganization(context, dbModel.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                    if (IsOrganizationMemberModerator(memberOrgRoles))
+                    {
+                        dbModel.IsDeleted = true;
+                        return await context.SaveChangesAsync() > 0;
+                    }
+                    else
+                        throw new KnownException("You are not authorized to perform this action");
                 }
                 return false;
             }
