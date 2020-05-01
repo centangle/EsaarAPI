@@ -11,5 +11,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.AssignOrganizationAttachments(organizationId, attachments);
         }
+        public async Task<bool> DeleteOrganizationAttachment(int id)
+        {
+            return await _dataAccess.DeleteOrganizationAttachment(id);
+        }
     }
 }

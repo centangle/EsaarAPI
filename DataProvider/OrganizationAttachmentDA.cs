@@ -1,7 +1,9 @@
-﻿using Helpers;
+﻿using Catalogs;
+using Helpers;
 using Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +18,7 @@ namespace DataProvider
             {
                 throw new KnownException("Organization is required");
             }
-            if(attachments==null|| attachments.Count==0)
+            if (attachments == null || attachments.Count == 0)
             {
                 throw new KnownException("Attachments are required");
             }
@@ -31,6 +33,28 @@ namespace DataProvider
                 else
                     throw new KnownException("You are not authorized to perform this action");
 
+            }
+        }
+        public async Task<bool> DeleteOrganizationAttachment(int id)
+        {
+            using (CharityEntities context = new CharityEntities())
+            {
+                var attachment = await context.Attachments.Where(x => x.Id == id && x.IsDeleted == false).FirstOrDefaultAsync();
+                if (attachment != null)
+                {
+                    if (attachment.EntityType == (int)AttachmentEntityTypeCatalog.Organization)
+                    {
+                        var memberOrgRoles = (await GetMemberRoleForOrganization(context, id, _loggedInMemberId)).FirstOrDefault();
+                        if (IsOrganizationMemberOwner(memberOrgRoles))
+                        {
+                            attachment.IsDeleted = true;
+                            return await context.SaveChangesAsync() > 0;
+                        }
+                        else
+                            throw new KnownException("You are not authorized to perform this action");
+                    }
+                }
+                return false;
             }
         }
     }

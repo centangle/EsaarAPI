@@ -30,5 +30,11 @@ namespace DataManager.Controllers
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.AssignOrganizationAttachments(organizationId, attachments);
         }
+        [HttpDelete]
+        public async Task<bool> Delete(int id)
+        {
+            var _logic = new Logic(LoggedInMemberId);
+            return await _logic.DeleteOrganizationAttachment(id);
+        }
     }
 }
