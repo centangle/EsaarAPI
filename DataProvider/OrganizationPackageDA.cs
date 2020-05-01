@@ -86,11 +86,17 @@ namespace DataProvider
                 Item dbModel = await context.Items.Where(x => x.Id == id && x.IsDeleted == false).FirstOrDefaultAsync();
                 if (dbModel != null)
                 {
-                    dbModel.IsDeleted = true;
-                    return await context.SaveChangesAsync() > 0;
+                    var memberOrgRoles = (await GetMemberRoleForOrganization(context, dbModel.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                    if (IsOrganizationMemberModerator(memberOrgRoles))
+                    {
+                        dbModel.IsDeleted = true;
+                        return await context.SaveChangesAsync() > 0;
+                    }
                 }
-                return false;
+                else
+                    throw new KnownException("You are not authorized to perform this action");
             }
+            return false;
         }
         public async Task<PackageModel> GetPackage(int id)
         {
