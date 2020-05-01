@@ -35,12 +35,18 @@ namespace DataProvider
             using (CharityEntities context = new CharityEntities())
             {
                 OrganizationAccount dbModel = await context.OrganizationAccounts.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
-                if (dbModel != null)
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
-                    SetOrganizationAccount(dbModel, model);
-                    return await context.SaveChangesAsync() > 0;
+                    if (dbModel != null)
+                    {
+                        SetOrganizationAccount(dbModel, model);
+                        return await context.SaveChangesAsync() > 0;
+                    }
+                    return false;
                 }
-                return false;
+                else
+                    throw new KnownException("You are not authorized to perform this action");
             }
 
         }
@@ -48,13 +54,19 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var dbModel = await context.OrganizationAccounts.Where(x => x.Id == id && x.IsDeleted == false).FirstOrDefaultAsync();
-                if (dbModel != null)
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, id, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
-                    dbModel.IsDeleted = true;
-                    return await context.SaveChangesAsync() > 0;
+                    var dbModel = await context.OrganizationAccounts.Where(x => x.Id == id && x.IsDeleted == false).FirstOrDefaultAsync();
+                    if (dbModel != null)
+                    {
+                        dbModel.IsDeleted = true;
+                        return await context.SaveChangesAsync() > 0;
+                    }
+                    return false;
                 }
-                return false;
+                else
+                    throw new KnownException("You are not authorized to perform this action");
             }
         }
         public async Task<OrganizationAccountModel> GetOrganizationAccount(int id)
