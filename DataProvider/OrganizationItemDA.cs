@@ -25,30 +25,42 @@ namespace DataProvider
         }
         private async Task<OrganizationItem> CreateOrganizationItem(CharityEntities context, OrganizationItemModel model)
         {
-            var currentItems = await GetCurrentOrganizationItems(context, model.Organization.Id);
-            if (!DoesOrganizationItemBindingExist(model.Organization.Id, model.Item.Id, currentItems))
+            var memberOrgRoles = (await GetMemberRoleForOrganization(context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
+            if (IsOrganizationMemberModerator(memberOrgRoles))
             {
-                var dbModel = SetOrganizationItem(new OrganizationItem(), model);
-                context.OrganizationItems.Add(dbModel);
-                return dbModel;
+                var currentItems = await GetCurrentOrganizationItems(context, model.Organization.Id);
+                if (!DoesOrganizationItemBindingExist(model.Organization.Id, model.Item.Id, currentItems))
+                {
+                    var dbModel = SetOrganizationItem(new OrganizationItem(), model);
+                    context.OrganizationItems.Add(dbModel);
+                    return dbModel;
+                }
+                return null;
             }
-            return null;
+            else
+                throw new KnownException("You are not authorized to perform this action");
         }
         public async Task<bool> UpdateOrganizationItem(OrganizationItemModel model)
         {
             using (CharityEntities context = new CharityEntities())
             {
-                OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
-                if (dbModel != null)
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
-                    if (dbModel.ItemId != model.Item.Id)
+                    OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
+                    if (dbModel != null)
                     {
-                        throw new KnownException("Cannot change item in update");
+                        if (dbModel.ItemId != model.Item.Id)
+                        {
+                            throw new KnownException("Cannot change item in update");
+                        }
+                        SetOrganizationItem(dbModel, model);
+                        return await context.SaveChangesAsync() > 0;
                     }
-                    SetOrganizationItem(dbModel, model);
-                    return await context.SaveChangesAsync() > 0;
+                    return false;
                 }
-                return false;
+                else
+                    throw new KnownException("You are not authorized to perform this action");
             }
 
         }
@@ -56,62 +68,75 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                var currentItems = await GetCurrentOrganizationItems(context, organizationItems.FirstOrDefault().Organization.Id);
-                using (var transaction = context.Database.BeginTransaction())
+                var organizationId = organizationItems.FirstOrDefault().Organization.Id;
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
-                    try
+                    var currentItems = await GetCurrentOrganizationItems(context, organizationId);
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        foreach (var item in organizationItems)
+                        try
                         {
-                            if (!DoesOrganizationItemBindingExist(item.Organization.Id, item.Item.Id, currentItems))
+                            foreach (var item in organizationItems)
                             {
-                                var dbModel = SetOrganizationItem(new OrganizationItem(), item);
-                                context.OrganizationItems.Add(dbModel);
+                                if (!DoesOrganizationItemBindingExist(item.Organization.Id, item.Item.Id, currentItems))
+                                {
+                                    var dbModel = SetOrganizationItem(new OrganizationItem(), item);
+                                    context.OrganizationItems.Add(dbModel);
+                                }
                             }
+                            await context.SaveChangesAsync();
+                            transaction.Commit();
+                            return true;
                         }
-                        await context.SaveChangesAsync();
-                        transaction.Commit();
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        throw ex;
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
                     }
                 }
+                else
+                    throw new KnownException("You are not authorized to perform this action");
             }
         }
         public async Task<bool> UpdateMultipleOrganizationItem(List<OrganizationItemModel> organizationItems)
         {
             using (CharityEntities context = new CharityEntities())
             {
-
-                using (var transaction = context.Database.BeginTransaction())
+                var organizationId = organizationItems.FirstOrDefault().Organization.Id;
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
-                    try
+                    using (var transaction = context.Database.BeginTransaction())
                     {
-                        foreach (var orgItemModel in organizationItems)
+                        try
                         {
-                            OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == orgItemModel.Id && x.IsDeleted == false).FirstOrDefaultAsync();
-                            if (dbModel != null)
+                            foreach (var orgItemModel in organizationItems)
                             {
-                                if (dbModel.ItemId != orgItemModel.Item.Id)
+                                OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == orgItemModel.Id && x.IsDeleted == false).FirstOrDefaultAsync();
+                                if (dbModel != null)
                                 {
-                                    throw new KnownException("Cannot change item in update");
+                                    if (dbModel.ItemId != orgItemModel.Item.Id)
+                                    {
+                                        throw new KnownException("Cannot change item in update");
+                                    }
+                                    SetOrganizationItem(dbModel, orgItemModel);
                                 }
-                                SetOrganizationItem(dbModel, orgItemModel);
                             }
+                            await context.SaveChangesAsync();
+                            transaction.Commit();
+                            return true;
                         }
-                        await context.SaveChangesAsync();
-                        transaction.Commit();
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        throw ex;
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
                     }
                 }
+                else
+                    throw new KnownException("You are not authorized to perform this action");
             }
 
         }
@@ -152,7 +177,6 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
@@ -160,7 +184,13 @@ namespace DataProvider
                         foreach (var id in ids)
                         {
                             OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.Id == id && x.IsDeleted == false).FirstOrDefaultAsync();
-                            dbModel.IsDeleted = true;
+                            var memberOrgRoles = (await GetMemberRoleForOrganization(context, dbModel.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                            if (IsOrganizationMemberModerator(memberOrgRoles))
+                            {
+                                dbModel.IsDeleted = true;
+                            }
+                            else
+                                throw new KnownException("You are not authorized to perform this action");
                         }
                         await context.SaveChangesAsync();
                         transaction.Commit();
@@ -172,6 +202,7 @@ namespace DataProvider
                         throw ex;
                     }
                 }
+
             }
 
         }
@@ -179,12 +210,18 @@ namespace DataProvider
         {
             using (CharityEntities context = new CharityEntities())
             {
-                OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.OrganizationId == organizationId && x.ItemId == itemId && x.IsDeleted == false).FirstOrDefaultAsync();
-                if (dbModel != null)
+                var memberOrgRoles = (await GetMemberRoleForOrganization(context, organizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
-                    dbModel.IsDeleted = true;
-                    return await context.SaveChangesAsync() > 0;
+                    OrganizationItem dbModel = await context.OrganizationItems.Where(x => x.OrganizationId == organizationId && x.ItemId == itemId && x.IsDeleted == false).FirstOrDefaultAsync();
+                    if (dbModel != null)
+                    {
+                        dbModel.IsDeleted = true;
+                        return await context.SaveChangesAsync() > 0;
+                    }
                 }
+                else
+                    throw new KnownException("You are not authorized to perform this action");
             }
             return false;
 
