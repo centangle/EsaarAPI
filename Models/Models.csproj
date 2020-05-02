@@ -1,95 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BEB58624-7608-486F-8942-99D06A0A869C}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Models</RootNamespace>
-    <AssemblyName>Models</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddressModel.cs" />
-    <Compile Include="AttachmentModel.cs" />
-    <Compile Include="Base\BaseModel.cs" />
-    <Compile Include="Base\BaseSearchModel.cs" />
-    <Compile Include="BriefModel\BaseBriefModel.cs" />
-    <Compile Include="BriefModel\EntityRegionBriefModel.cs" />
-    <Compile Include="BriefModel\ItemBriefModel.cs" />
-    <Compile Include="BriefModel\MemberBriefModel.cs" />
-    <Compile Include="BriefModel\RegionBriefModel.cs" />
-    <Compile Include="BriefModel\UOMBriefModel.cs" />
-    <Compile Include="EventModel.cs" />
-    <Compile Include="CampaignModel.cs" />
-    <Compile Include="DonationRequestOrganizationItemModel.cs" />
-    <Compile Include="DonationRequestOrganizationModel.cs" />
-    <Compile Include="EntityRegionModel.cs" />
-    <Compile Include="Interfaces\IBase.cs" />
-    <Compile Include="Interfaces\IImage.cs" />
-    <Compile Include="Interfaces\IName.cs" />
-    <Compile Include="Interfaces\ITree.cs" />
-    <Compile Include="OrganizationAccountModel.cs" />
-    <Compile Include="OrganizationAttachmentModel.cs" />
-    <Compile Include="OrganizationItemModel.cs" />
-    <Compile Include="OrganizationMemberRegionModel.cs" />
-    <Compile Include="OrganizationOfficeModel.cs" />
-    <Compile Include="OrganizationRequestModel.cs" />
-    <Compile Include="OrganizationMemberModel.cs" />
-    <Compile Include="OrganizationModel.cs" />
-    <Compile Include="ItemModel.cs" />
-    <Compile Include="PackageItemModel.cs" />
-    <Compile Include="PackageModel.cs" />
-    <Compile Include="PaginatedResultModel.cs" />
-    <Compile Include="MemberModel.cs" />
-    <Compile Include="DonationRequestItemModel.cs" />
-    <Compile Include="DonationRequestModel.cs" />
-    <Compile Include="RadiusRegionsModel.cs" />
-    <Compile Include="RegionSearchModel.cs" />
-    <Compile Include="RequestThreadModel.cs" />
-    <Compile Include="UOMModel.cs" />
-    <Compile Include="UserModel.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RefreshTokenModel.cs" />
+    <ProjectReference Include="..\Catalogs\Catalogs.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Catalogs\Catalogs.csproj">
-      <Project>{2b92d596-bc79-4a45-87e7-00b2744880f6}</Project>
-      <Name>Catalogs</Name>
-    </ProjectReference>
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ComponentModel.DataAnnotations.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
