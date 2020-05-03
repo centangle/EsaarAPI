@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using API.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers
@@ -16,10 +17,14 @@ namespace API.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        public TokenController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        private readonly IConfiguration _configuration;
+
+        public TokenController(ApplicationDbContext context, UserManager<IdentityUser> userManager,
+            IConfiguration configuration)
         {
             _context = context;
             _userManager = userManager;
+            _configuration = configuration;
         }
         [Route("/token")]
         [HttpPost]
@@ -59,7 +64,7 @@ namespace API.Controllers
             }
             var token = new JwtSecurityToken(
                  new JwtHeader(
-                     new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Mysupersecretkey")),
+                     new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("Secrets:SecurityKey"))),
                      SecurityAlgorithms.HmacSha256)),
                      new JwtPayload(claims));
             var output = new
