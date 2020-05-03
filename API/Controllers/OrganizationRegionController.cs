@@ -18,6 +18,7 @@ namespace API.Controllers
     public class OrganizationRegionController : BaseController
     {
         [HttpGet]
+        [Route("GetPaginated")]
         public async Task<PaginatedResultModel<PaginatedEntityRegionModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int organizationId, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -29,6 +30,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Route("Modify")]
         public async Task<bool> Modify(int organizationId, List<EntityRegionModel> entityRegions)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -42,6 +44,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("Levels")]
         public async Task<List<BaseBriefModel>> Levels(int organizationId)
         {
             var _logic = new Logic(LoggedInMemberId);

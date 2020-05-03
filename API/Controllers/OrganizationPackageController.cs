@@ -16,24 +16,28 @@ namespace API.Controllers
     public class OrganizationPackageController : BaseController
     {
         [HttpGet]
+        [Route("GetPackage")]
         public async Task<PackageModel> GetPackage(int id)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetPackage(id);
         }
         [HttpPost]
+        [Route("Create")]
         public async Task<int> Create(PackageModel model)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.AddPackage(model);
         }
         [HttpPost]
+        [Route("Update")]
         public async Task<bool> Update(PackageModel model)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.UpdatePackage(model);
         }
         [HttpDelete]
+        [Route("Delete")]
         public async Task<bool> Delete(int id)
         {
             var _logic = new Logic(LoggedInMemberId);

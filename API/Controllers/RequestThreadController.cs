@@ -18,12 +18,14 @@ namespace API.Controllers
     {
 
         [HttpGet]
+        [Route("Get")]
         public async Task<RequestThreadModel> Get(int id)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetRequestThread(id);
         }
         [HttpGet]
+        [Route("GetPaginated")]
         public async Task<PaginatedResultModel<RequestThreadModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int entityId, RequestThreadEntityTypeCatalog entityType, RequestThreadTypeCatalog type, string orderByColumn = null, bool calculateTotal = true)
         {
             RequestThreadSearchModel filters = new RequestThreadSearchModel();
@@ -36,6 +38,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Route("AddRequestThread")]
         public async Task<int> AddRequestThread(RequestThreadModel model)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -44,12 +47,14 @@ namespace API.Controllers
         }
 
         [HttpPut]
+        [Route("UpdateRequestThread")]
         public async Task<bool> UpdateRequestThread(RequestThreadModel model)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.UpdateRequestThread(model);
         }
         [HttpDelete]
+        [Route("DeleteRequestThread")]
         public async Task<bool> DeleteRequestThread(int id)
         {
             var _logic = new Logic(LoggedInMemberId);

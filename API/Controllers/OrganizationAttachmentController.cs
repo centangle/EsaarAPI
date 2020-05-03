@@ -17,6 +17,7 @@ namespace API.Controllers
     public class OrganizationAttachmentController : BaseController
     {
         [HttpGet]
+        [Route("GetPaginated")]
         public async Task<PaginatedResultModel<AttachmentModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int organizationId, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -27,12 +28,14 @@ namespace API.Controllers
             return await _logic.GetAttachments(filters);
         }
         [HttpPut]
+        [Route("Create")]
         public async Task<bool> Create(int organizationId, List<AttachmentModel> attachments)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.AssignOrganizationAttachments(organizationId, attachments);
         }
         [HttpDelete]
+        [Route("Delete")]
         public async Task<bool> Delete(int id)
         {
             var _logic = new Logic(LoggedInMemberId);

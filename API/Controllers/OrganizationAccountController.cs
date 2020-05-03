@@ -16,11 +16,15 @@ namespace API.Controllers
     [Authorize]
     public class OrganizationAccountController : BaseController
     {
+        [HttpGet]
+        [Route("Get")]
         public async Task<OrganizationAccountModel> Get(int id)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetOrganizationAccount(id);
         }
+        [HttpGet]
+        [Route("GetPaginated")]
         public async Task<PaginatedResultModel<OrganizationAccountModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int organizationId, string name = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -31,18 +35,21 @@ namespace API.Controllers
             return await _logic.GetOrganizationAccounts(filters);
         }
         [HttpPost]
+        [Route("Create")]
         public async Task<int> Create(OrganizationAccountModel model)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.CreateOrganizationAccount(model);
         }
         [HttpPost]
+        [Route("Update")]
         public async Task<bool> Update(OrganizationAccountModel model)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.UpdateOrganizationAccount(model);
         }
         [HttpDelete]
+        [Route("Delete")]
         public async Task<bool> Delete(int id)
         {
             var _logic = new Logic(LoggedInMemberId);

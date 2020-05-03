@@ -17,6 +17,7 @@ namespace API.Controllers
     public class OrganizationMemberController : BaseController
     {
         [HttpGet]
+        [Route("GetPaginated")]
         public async Task<PaginatedResultModel<OrganizationMemberModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, string organizationName = null, int? memberId = null, string memberName = null, OrganizationMemberRolesCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -30,6 +31,7 @@ namespace API.Controllers
             return await _logic.GetOrganizationMembers(filters);
         }
         [HttpGet]
+        [Route("GetOrganizationMembersForDD")]
         public async Task<PaginatedResultModel<OrganizationMemberModel>> GetOrganizationMembersForDD(int numberOfRecords, int organizationId, OrganizationMemberRolesCatalog type, string memberName = null)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -40,8 +42,8 @@ namespace API.Controllers
             filters.RecordsPerPage = numberOfRecords;
             return await _logic.GetOrganizationMembers(filters);
         }
-
         [HttpGet]
+        [Route("GetMemberRole")]
         public async Task<List<OrganizationMemberRolesCatalog>> GetMemberRole(int organizationId)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -51,12 +53,14 @@ namespace API.Controllers
             return new List<OrganizationMemberRolesCatalog>();
         }
         [HttpPost]
+        [Route("RequestMembership")]
         public async Task<int> RequestMembership(OrganizationRequestModel model)
         {
             var _logic = new Logic(LoggedInMemberId);
             return await _logic.RequestOrganizationMembership(model);
         }
         [HttpPost]
+        [Route("UpdateOrganizationMembershipRegions")]
         public async Task<bool> UpdateOrganizationMembershipRegions(OrganizationRequestModel model)
         {
             var _logic = new Logic(LoggedInMemberId);

@@ -15,6 +15,8 @@ namespace API.Controllers
     [Authorize]
     public class MemberController : BaseController
     {
+        [HttpGet]
+        [Route("GetMemberForDD")]
         public async Task<List<MemberBriefModel>> GetMemberForDD(string filter)
         {
             var _logic = new Logic(LoggedInMemberId);

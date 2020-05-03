@@ -18,6 +18,7 @@ namespace API.Controllers
     public class RegionController : BaseController
     {
         [HttpGet]
+        [Route("Countries")]
         public async Task<PaginatedResultModel<RegionBriefModel>> Countries(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, int? organizationId = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -30,6 +31,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("States")]
         public async Task<PaginatedResultModel<RegionBriefModel>> States(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, int? countryId = null, int? organizationId = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -42,6 +44,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("Districts")]
         public async Task<PaginatedResultModel<RegionBriefModel>> Districts(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, int? stateId = null, int? organizationId = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -54,6 +57,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("Tehsils")]
         public async Task<PaginatedResultModel<RegionBriefModel>> Tehsils(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, int? districtId = null, int? organizationId = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -66,6 +70,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("UnionCouncils")]
         public async Task<PaginatedResultModel<RegionBriefModel>> UnionCouncils(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, int? tehsilId = null, int? organizationId = null, string orderByColumn = null, bool calculateTotal = true)
         {
             var _logic = new Logic(LoggedInMemberId);
@@ -78,6 +83,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("Levels")]
         public List<BaseBriefModel> Levels()
         {
             List<BaseBriefModel> levels = new List<BaseBriefModel>();
