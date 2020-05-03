@@ -1,12 +1,18 @@
-﻿using BusinessLogic;
-using Catalogs;
-using Models;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Http;
+using BusinessLogic;
+using Catalogs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Models;
 
-namespace DataManager.Controllers
+namespace API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     [Authorize]
     public class UOMController : BaseController
     {
