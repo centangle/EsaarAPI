@@ -41,8 +41,15 @@ namespace API.Controllers
         }
         private async Task<bool> IsValidUsernameAndPassword(string username, string password)
         {
-            var user = await _userManager.FindByEmailAsync(username);
-            return await _userManager.CheckPasswordAsync(user, password);
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(username);
+                return await _userManager.CheckPasswordAsync(user, password);
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
         }
         private async Task<dynamic> GenerateToken(string username)
         {

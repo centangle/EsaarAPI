@@ -16,7 +16,12 @@ namespace API.Controllers
     [Authorize]
     public class ItemController : BaseController
     {
+        private readonly Logic _logic;
 
+        public ItemController(Logic logic)
+        {
+            _logic = logic;
+        }
         [HttpGet]
         [Route("Get")]
         public async Task<ItemModel> Get(int id)
@@ -36,7 +41,6 @@ namespace API.Controllers
         [Route("GetPeripheralItems")]
         public async Task<IEnumerable<ItemModel>> GetPeripheralItems(int? organizationId = null)
         {
-            var _logic = new Logic(LoggedInMemberId);
             return await _logic.GetPeripheralItems(organizationId);
         }
         [HttpGet]

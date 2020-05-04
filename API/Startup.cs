@@ -10,6 +10,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using BusinessLogic;
+using API.Services;
+using API.Models;
+using DataProvider;
 
 namespace API
 {
@@ -19,20 +25,32 @@ namespace API
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                    Configuration.GetConnectionString("AuthConnection")));
+           
+            services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Default Password settings.
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            });
+
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddTransient<Logic, Logic>();
+            //services.AddTransient<DataAccess, DataAccess>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = "JwtBearer";
@@ -49,6 +67,8 @@ namespace API
                      ClockSkew = TimeSpan.FromMinutes(5)
                  };
              });
+
+            //services.AddScoped<IUserService, UserService>();
             services.AddSwaggerGen(setup =>
             {
                 setup.SwaggerDoc(
@@ -60,7 +80,6 @@ namespace API
                     });
             });
         }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -84,9 +103,9 @@ namespace API
             app.UseAuthorization();
 
             app.UseSwagger();
-            app.UseSwaggerUI(x=>
+            app.UseSwaggerUI(x =>
             {
-                x.SwaggerEndpoint("/swagger/v1/swagger.json","Charity API v1");
+                x.SwaggerEndpoint("/swagger/v1/swagger.json", "Esaar API v1");
             });
 
             app.UseEndpoints(endpoints =>
