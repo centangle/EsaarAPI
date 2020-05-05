@@ -17,18 +17,6 @@ namespace EntityProvider
 {
     public partial class DataAccess
     {
-        public async Task CheckOrganization()
-        {
-            try
-            {
-                var orgq = _context.Organizations.Where(x => x.Id == 1).AsQueryable();
-                var query = await orgq.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
         public async Task<int> CreateOrganization(OrganizationModel model)
         {
             using (var transaction = _context.Database.BeginTransaction())
