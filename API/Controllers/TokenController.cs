@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using API.Data;
+using BusinessLogic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -18,13 +19,16 @@ namespace API.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
-
-        public TokenController(ApplicationDbContext context, UserManager<IdentityUser> userManager,
+        private readonly Logic _logic;
+        public TokenController(ApplicationDbContext context,
+            Logic logic,
+            UserManager<IdentityUser> userManager,
             IConfiguration configuration)
         {
             _context = context;
             _userManager = userManager;
             _configuration = configuration;
+            _logic = logic;
         }
         [Route("/token")]
         [HttpPost]
@@ -46,7 +50,7 @@ namespace API.Controllers
                 var user = await _userManager.FindByEmailAsync(username);
                 return await _userManager.CheckPasswordAsync(user, password);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -58,12 +62,15 @@ namespace API.Controllers
                         join r in _context.Roles on ur.RoleId equals r.Id
                         where ur.UserId == user.Id
                         select new { ur.UserId, ur.RoleId, r.Name };
+            var member = await _logic.GetMemberByAuthId(user.Id);
+            int memberId = member == null ? 0 : member.Id;
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name,username),
                 new Claim(ClaimTypes.NameIdentifier,user.Id),
+                new Claim("memberId",memberId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Nbf,new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
-                new Claim(JwtRegisteredClaimNames.Exp,new DateTimeOffset(DateTime.Now.AddDays(1)).ToUnixTimeSeconds().ToString())
+                new Claim(JwtRegisteredClaimNames.Exp,new DateTimeOffset(DateTime.Now.AddDays(5)).ToUnixTimeSeconds().ToString())
             };
             foreach (var role in roles)
             {

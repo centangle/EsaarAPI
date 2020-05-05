@@ -16,18 +16,24 @@ namespace API.Controllers
     [Authorize]
     public class EventController : BaseController
     {
+        private readonly Logic _logic;
+
+        public EventController(Logic logic)
+        {
+            _logic = logic;
+        }
         [HttpGet]
         [Route("Get")]
         public async Task<EventModel> Get(int id)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.GetEvent(id);
         }
         [HttpGet]
         [Route("GetPaginated")]
         public async Task<PaginatedResultModel<EventModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, bool? isActive = null, string orderByColumn = null, bool calculateTotal = true)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             EventSearchModel filters = new EventSearchModel();
             filters.Name = name;
             filters.IsActive = isActive;
@@ -38,21 +44,21 @@ namespace API.Controllers
         [Route("Create")]
         public async Task<int> Create(EventModel model)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.CreateEvent(model);
         }
         [HttpPost]
         [Route("Update")]
         public async Task<bool> Update(EventModel model)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.UpdateEvent(model);
         }
         [HttpDelete]
         [Route("Delete")]
         public async Task<bool> Delete(int id)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.DeleteEvent(id);
         }
     }

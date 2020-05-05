@@ -17,11 +17,17 @@ namespace API.Controllers
     [Authorize]
     public class OrganizationRegionController : BaseController
     {
+        private readonly Logic _logic;
+
+        public OrganizationRegionController(Logic logic)
+        {
+            _logic = logic;
+        }
         [HttpGet]
         [Route("GetPaginated")]
         public async Task<PaginatedResultModel<PaginatedEntityRegionModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int organizationId, string orderByColumn = null, bool calculateTotal = true)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             EntityRegionSearchModel filters = new EntityRegionSearchModel();
             filters.EntityId = organizationId;
             filters.EntityType = EntityRegionTypeCatalog.Organization;
@@ -33,7 +39,7 @@ namespace API.Controllers
         [Route("Modify")]
         public async Task<bool> Modify(int organizationId, List<EntityRegionModel> entityRegions)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             foreach (var entityRegion in entityRegions)
             {
                 entityRegion.Entity.Id = organizationId;
@@ -47,7 +53,7 @@ namespace API.Controllers
         [Route("Levels")]
         public async Task<List<BaseBriefModel>> Levels(int organizationId)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.GetOrganizationRegionAllowedLevels(organizationId);
         }
     }

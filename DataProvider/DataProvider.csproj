@@ -97,18 +97,6 @@
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="AddressDA.cs" />
-    <Compile Include="AspNetRole.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="AspNetUser.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="AspNetUserClaim.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="AspNetUserLogin.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
     <Compile Include="Attachment.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
@@ -243,9 +231,6 @@
     </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="State.cs">
-      <DependentUpon>Charity.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sysdiagram.cs">
       <DependentUpon>Charity.tt</DependentUpon>
     </Compile>
     <Compile Include="Tehsil.cs">

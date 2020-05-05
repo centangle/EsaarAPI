@@ -29,10 +29,6 @@ namespace DataProvider
     
         public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
         public virtual DbSet<Address> Addresses { get; set; }
-        public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
-        public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
-        public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
-        public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<Attachment> Attachments { get; set; }
         public virtual DbSet<Campaign> Campaigns { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
@@ -57,7 +53,6 @@ namespace DataProvider
         public virtual DbSet<PackageItem> PackageItems { get; set; }
         public virtual DbSet<RequestThread> RequestThreads { get; set; }
         public virtual DbSet<State> States { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Tehsil> Tehsils { get; set; }
         public virtual DbSet<UnionCouncil> UnionCouncils { get; set; }
         public virtual DbSet<UOM> UOMs { get; set; }

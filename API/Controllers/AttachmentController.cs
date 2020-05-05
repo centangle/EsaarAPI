@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BusinessLogic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,12 @@ namespace API.Controllers
     [Authorize]
     public class AttachmentController : BaseController
     {
+        private readonly Logic _logic;
+
+        public AttachmentController(Logic logic)
+        {
+            _logic = logic;
+        }
         //[HttpPost]
         //public async Task<string> Upload()
         //{
@@ -46,7 +53,7 @@ namespace API.Controllers
         //                OriginalFileName = originalFileName,
         //                FileExtension = fileExtension,
         //            };
-        //            var _logic = new Logic(LoggedInMemberId);
+        //            
         //            await _logic.CreateAttachment(attachment);
         //            return attachment.Url;
         //        }
@@ -65,7 +72,7 @@ namespace API.Controllers
         //        var root = ctx.Server.MapPath("~");
         //        var fileDirectory = url.Replace("/", @"\");
         //        string filePath = Path.GetFullPath(Path.Combine(root + fileDirectory));
-        //        var _logic = new Logic(LoggedInMemberId);
+        //        
         //        if (await _logic.DeleteAttachment(url))
         //        {
         //            File.Delete(filePath);

@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataProvider\DataProvider.csproj" />
+    <ProjectReference Include="..\EntityProvider\EntityProvider.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>
   <ItemGroup>

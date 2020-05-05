@@ -17,18 +17,24 @@ namespace API.Controllers
     [Authorize]
     public class OrganizationRequestController : BaseController
     {
+        private readonly Logic _logic;
+
+        public OrganizationRequestController(Logic logic)
+        {
+            _logic = logic;
+        }
         [HttpPut]
         [Route("AssignRequest")]
         public async Task<bool> AssignRequest(int organizationId, int requestId, int? moderatorId = null)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.AssignOrganizationRequest(organizationId, requestId, moderatorId);
         }
         [HttpGet]
         [Route("GetPaginated")]
         public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, OrganizationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             OrganizationRequestSearchModel filters = new OrganizationRequestSearchModel();
             filters.OrganizationId = organizationId;
             filters.Type = type;
@@ -39,7 +45,7 @@ namespace API.Controllers
         [Route("Get")]
         public async Task<PaginatedOrganizationRequestModel> Get(int requestId)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             var model = await _logic.GetOrganizationRequest(requestId);
             if (model.CanAccessRequestThread == false)
             {

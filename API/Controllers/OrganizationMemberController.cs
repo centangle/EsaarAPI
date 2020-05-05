@@ -16,11 +16,17 @@ namespace API.Controllers
     [Authorize]
     public class OrganizationMemberController : BaseController
     {
+        private readonly Logic _logic;
+
+        public OrganizationMemberController(Logic logic)
+        {
+            _logic = logic;
+        }
         [HttpGet]
         [Route("GetPaginated")]
         public async Task<PaginatedResultModel<OrganizationMemberModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, string organizationName = null, int? memberId = null, string memberName = null, OrganizationMemberRolesCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             OrganizationMemberSearchModel filters = new OrganizationMemberSearchModel();
             filters.OrganizationId = organizationId;
             filters.OrganizationName = organizationName;
@@ -34,7 +40,7 @@ namespace API.Controllers
         [Route("GetOrganizationMembersForDD")]
         public async Task<PaginatedResultModel<OrganizationMemberModel>> GetOrganizationMembersForDD(int numberOfRecords, int organizationId, OrganizationMemberRolesCatalog type, string memberName = null)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             OrganizationMemberSearchModel filters = new OrganizationMemberSearchModel();
             filters.OrganizationId = organizationId;
             filters.MemberName = memberName;
@@ -46,7 +52,7 @@ namespace API.Controllers
         [Route("GetMemberRole")]
         public async Task<List<OrganizationMemberRolesCatalog>> GetMemberRole(int organizationId)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             var result = (await _logic.GetMemberRoleForOrganization(organizationId, LoggedInMemberId)).FirstOrDefault();
             if (result != null)
                 return result.Roles;
@@ -56,14 +62,14 @@ namespace API.Controllers
         [Route("RequestMembership")]
         public async Task<int> RequestMembership(OrganizationRequestModel model)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.RequestOrganizationMembership(model);
         }
         [HttpPost]
         [Route("UpdateOrganizationMembershipRegions")]
         public async Task<bool> UpdateOrganizationMembershipRegions(OrganizationRequestModel model)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.UpdateOrganizationMembershipRegions(model);
         }
     }

@@ -16,12 +16,17 @@ namespace API.Controllers
     [Authorize]
     public class RequestThreadController : BaseController
     {
+        private readonly Logic _logic;
 
+        public RequestThreadController(Logic logic)
+        {
+            _logic = logic;
+        }
         [HttpGet]
         [Route("Get")]
         public async Task<RequestThreadModel> Get(int id)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.GetRequestThread(id);
         }
         [HttpGet]
@@ -33,7 +38,7 @@ namespace API.Controllers
             filters.EntityType = entityType;
             filters.Type = type;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.GetRequestThreads(filters);
         }
 
@@ -41,7 +46,7 @@ namespace API.Controllers
         [Route("AddRequestThread")]
         public async Task<int> AddRequestThread(RequestThreadModel model)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             model.IsSystemGenerated = false;
             return await _logic.AddRequestThread(model);
         }
@@ -50,14 +55,14 @@ namespace API.Controllers
         [Route("UpdateRequestThread")]
         public async Task<bool> UpdateRequestThread(RequestThreadModel model)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.UpdateRequestThread(model);
         }
         [HttpDelete]
         [Route("DeleteRequestThread")]
         public async Task<bool> DeleteRequestThread(int id)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.DeleteRequestThread(id);
         }
     }

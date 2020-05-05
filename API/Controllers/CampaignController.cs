@@ -16,17 +16,23 @@ namespace API.Controllers
     [Authorize]
     public class CampaignController : BaseController
     {
+        private readonly Logic _logic;
+
+        public CampaignController(Logic logic)
+        {
+            _logic = logic;
+        }
         [HttpGet]
         public async Task<CampaignModel> Get(int id)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.GetCampaign(id);
         }
         [HttpGet]
         [Route("GetPaginated")]
         public async Task<PaginatedResultModel<CampaignModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, int? eventId = null, string name = null, string orderByColumn = null, bool calculateTotal = true)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             CampaignSearchModel filters = new CampaignSearchModel();
             filters.Name = name;
             filters.OrganizationId = organizationId;
@@ -39,7 +45,7 @@ namespace API.Controllers
         [Route("Create")]
         public async Task<int> Create(CampaignModel model)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.CreateCampaign(model);
         }
 
@@ -47,7 +53,7 @@ namespace API.Controllers
         [Route("Update")]
         public async Task<bool> Update(CampaignModel model)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.UpdateCampaign(model);
         }
 
@@ -55,7 +61,7 @@ namespace API.Controllers
         [Route("Delete")]
         public async Task<bool> Delete(int id)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.DeleteCampaign(id);
         }
     }

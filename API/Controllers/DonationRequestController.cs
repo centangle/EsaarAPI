@@ -17,11 +17,17 @@ namespace API.Controllers
     [Authorize]
     public class DonationRequestController : BaseController
     {
+        private readonly Logic _logic;
+
+        public DonationRequestController(Logic logic)
+        {
+            _logic = logic;
+        }
         [HttpGet]
         [Route("GetPaginated")]
         public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, DonationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             DonationRequestSearchModel filters = new DonationRequestSearchModel();
             filters.OrganizationId = organizationId;
             filters.Type = type;
@@ -31,7 +37,7 @@ namespace API.Controllers
         //[HttpGet]
         //public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetPaginatedRequestsForVolunteer(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, DonationRequestTypeCatalog? type = null, string orderByColumn = null, bool calculateTotal = true)
         //{
-        //    var _logic = new Logic(LoggedInMemberId);
+        //    
         //    DonationRequestSearchModel filters = new DonationRequestSearchModel();
         //    filters.OrganizationId = organizationId;
         //    filters.Type = type;
@@ -41,7 +47,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<PaginatedDonationRequestModel> Get(int organizationRequestId)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             var model = await _logic.GetDonationRequestDetail(organizationRequestId);
             if (model.CanAccessRequestThread == false)
             {
@@ -53,35 +59,35 @@ namespace API.Controllers
         [Route("GetItems")]
         public async Task<List<DonationRequestOrganizationItemModel>> GetItems(int organizationRequestId)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.GetDonationRequestItems(organizationRequestId);
         }
         [HttpPut]
         [Route("AssignModeratorToRequest")]
         public async Task<bool> AssignModeratorToRequest(int organizationId, int donationRequestId, int? moderatorId = null)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.AssignModeratorToDonationRequest(organizationId, donationRequestId, moderatorId);
         }
         [HttpPut]
         [Route("AssignVolunteerToRequest")]
         public async Task<bool> AssignVolunteerToRequest(int organizationId, int donationRequestId, int? volunteerId = null)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.AssignVolunteerToDonationRequest(organizationId, donationRequestId, volunteerId);
         }
         [HttpPost]
         [Route("Create")]
         public async Task<int> Create(DonationRequestModel model)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.AddDonationRequest(model);
         }
         [HttpPut]
         [Route("Update")]
         public async Task<bool> Update(DonationRequestModel model)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.UpdateDonationRequest(model);
         }
         [HttpPost]
@@ -101,7 +107,7 @@ namespace API.Controllers
             {
                 updatedStatus = StatusCatalog.Delivered;
             }
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.UpdateDonationRequestStatus(donationRequestOrganizationId, note, items, updatedStatus);
         }
         [HttpGet]

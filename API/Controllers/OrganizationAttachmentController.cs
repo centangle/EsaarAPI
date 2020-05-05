@@ -16,11 +16,17 @@ namespace API.Controllers
     [Authorize]
     public class OrganizationAttachmentController : BaseController
     {
+        private readonly Logic _logic;
+
+        public OrganizationAttachmentController(Logic logic)
+        {
+            _logic = logic;
+        }
         [HttpGet]
         [Route("GetPaginated")]
         public async Task<PaginatedResultModel<AttachmentModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int organizationId, string orderByColumn = null, bool calculateTotal = true)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             AttachmentSearchModel filters = new AttachmentSearchModel();
             filters.EntityId = organizationId;
             filters.EntityType = Catalogs.AttachmentEntityTypeCatalog.Organization;
@@ -31,14 +37,14 @@ namespace API.Controllers
         [Route("Create")]
         public async Task<bool> Create(int organizationId, List<AttachmentModel> attachments)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.AssignOrganizationAttachments(organizationId, attachments);
         }
         [HttpDelete]
         [Route("Delete")]
         public async Task<bool> Delete(int id)
         {
-            var _logic = new Logic(LoggedInMemberId);
+            
             return await _logic.DeleteOrganizationAttachment(id);
         }
     }

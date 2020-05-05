@@ -15,11 +15,17 @@ namespace API.Controllers
     [Authorize]
     public class MemberController : BaseController
     {
+        private readonly Logic _logic;
+
+        public MemberController(Logic logic)
+        {
+            _logic = logic;
+        }
         [HttpGet]
         [Route("GetMemberForDD")]
         public async Task<List<MemberBriefModel>> GetMemberForDD(string filter)
         {
-            var _logic = new Logic(LoggedInMemberId);
+
             return await _logic.GetMemberForDD(filter);
         }
     }

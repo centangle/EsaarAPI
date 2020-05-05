@@ -43,57 +43,6 @@
           <Property Name="UpdatedBy" Type="int" Nullable="false" />
           <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
-        <EntityType Name="AspNetRoles">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
-        </EntityType>
-        <EntityType Name="AspNetUserClaims">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="ClaimType" Type="nvarchar(max)" />
-          <Property Name="ClaimValue" Type="nvarchar(max)" />
-        </EntityType>
-        <EntityType Name="AspNetUserLogins">
-          <Key>
-            <PropertyRef Name="LoginProvider" />
-            <PropertyRef Name="ProviderKey" />
-            <PropertyRef Name="UserId" />
-          </Key>
-          <Property Name="LoginProvider" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="ProviderKey" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
-        </EntityType>
-        <EntityType Name="AspNetUserRoles">
-          <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="RoleId" />
-          </Key>
-          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
-        </EntityType>
-        <EntityType Name="AspNetUsers">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="Email" Type="nvarchar" MaxLength="256" />
-          <Property Name="EmailConfirmed" Type="bit" Nullable="false" />
-          <Property Name="PasswordHash" Type="nvarchar(max)" />
-          <Property Name="SecurityStamp" Type="nvarchar(max)" />
-          <Property Name="PhoneNumber" Type="nvarchar(max)" />
-          <Property Name="PhoneNumberConfirmed" Type="bit" Nullable="false" />
-          <Property Name="TwoFactorEnabled" Type="bit" Nullable="false" />
-          <Property Name="LockoutEndDateUtc" Type="datetime" />
-          <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
-          <Property Name="AccessFailedCount" Type="int" Nullable="false" />
-          <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
-        </EntityType>
         <EntityType Name="Attachment">
           <Key>
             <PropertyRef Name="Id" />
@@ -543,16 +492,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedBy" Type="int" Nullable="false" />
           <Property Name="UpdatedDate" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="principal_id" Type="int" Nullable="false" />
-          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="version" Type="int" />
-          <Property Name="definition" Type="varbinary(max)" />
-        </EntityType>
         <EntityType Name="Tehsil">
           <Key>
             <PropertyRef Name="Id" />
@@ -711,62 +650,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="Item1">
               <PropertyRef Name="ParentId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserClaims">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogins" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserLogins">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
-          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetRoles">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserRoles">
-              <PropertyRef Name="RoleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserRoles">
-              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -961,18 +844,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="PackageItem">
               <PropertyRef Name="ItemUOM" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_People_AspNetUsers">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
-          <End Role="Member" Type="Self.Member" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Member">
-              <PropertyRef Name="AuthUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1172,7 +1043,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UOM_UOM1">
+        <Association Name="FK_UOM_UOM">
           <End Role="UOM" Type="Self.UOM" Multiplicity="0..1" />
           <End Role="UOM1" Type="Self.UOM" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1187,11 +1058,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
         <EntityContainer Name="CharityModelStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Address" EntityType="Self.Address" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Attachment" EntityType="Self.Attachment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Campaign" EntityType="Self.Campaign" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Country" EntityType="Self.Country" Schema="dbo" store:Type="Tables" />
@@ -1216,7 +1082,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="PackageItem" EntityType="Self.PackageItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestThread" EntityType="Self.RequestThread" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="State" EntityType="Self.State" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tehsil" EntityType="Self.Tehsil" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnionCouncil" EntityType="Self.UnionCouncil" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UOM" EntityType="Self.UOM" Schema="dbo" store:Type="Tables" />
@@ -1265,22 +1130,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_ChildItem_ParentItem" Association="Self.FK_ChildItem_ParentItem">
             <End Role="Item" EntitySet="Item" />
             <End Role="Item1" EntitySet="Item" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
-            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-            <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
           <AssociationSet Name="FK_District_State" Association="Self.FK_District_State">
             <End Role="State" EntitySet="State" />
@@ -1346,10 +1195,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="UOM" EntitySet="UOM" />
             <End Role="PackageItem" EntitySet="PackageItem" />
           </AssociationSet>
-          <AssociationSet Name="FK_People_AspNetUsers" Association="Self.FK_People_AspNetUsers">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="Member" EntitySet="Member" />
-          </AssociationSet>
           <AssociationSet Name="FK_Request_Beneficiary" Association="Self.FK_Request_Beneficiary">
             <End Role="Member" EntitySet="Member" />
             <End Role="DonationRequest" EntitySet="DonationRequest" />
@@ -1414,7 +1259,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="Tehsil" EntitySet="Tehsil" />
             <End Role="UnionCouncil" EntitySet="UnionCouncil" />
           </AssociationSet>
-          <AssociationSet Name="FK_UOM_UOM1" Association="Self.FK_UOM_UOM1">
+          <AssociationSet Name="FK_UOM_UOM" Association="Self.FK_UOM_UOM">
             <End Role="UOM" EntitySet="UOM" />
             <End Role="UOM1" EntitySet="UOM" />
           </AssociationSet>
@@ -1429,10 +1274,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           </FunctionImport>
           <EntitySet Name="C__MigrationHistory" EntityType="CharityModel.C__MigrationHistory" />
           <EntitySet Name="Addresses" EntityType="CharityModel.Address" />
-          <EntitySet Name="AspNetRoles" EntityType="CharityModel.AspNetRole" />
-          <EntitySet Name="AspNetUserClaims" EntityType="CharityModel.AspNetUserClaim" />
-          <EntitySet Name="AspNetUserLogins" EntityType="CharityModel.AspNetUserLogin" />
-          <EntitySet Name="AspNetUsers" EntityType="CharityModel.AspNetUser" />
           <EntitySet Name="Attachments" EntityType="CharityModel.Attachment" />
           <EntitySet Name="Campaigns" EntityType="CharityModel.Campaign" />
           <EntitySet Name="Countries" EntityType="CharityModel.Country" />
@@ -1457,7 +1298,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <EntitySet Name="PackageItems" EntityType="CharityModel.PackageItem" />
           <EntitySet Name="RequestThreads" EntityType="CharityModel.RequestThread" />
           <EntitySet Name="States" EntityType="CharityModel.State" />
-          <EntitySet Name="sysdiagrams" EntityType="CharityModel.sysdiagram" />
           <EntitySet Name="Tehsils" EntityType="CharityModel.Tehsil" />
           <EntitySet Name="UnionCouncils" EntityType="CharityModel.UnionCouncil" />
           <EntitySet Name="UOMs" EntityType="CharityModel.UOM" />
@@ -1485,18 +1325,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <AssociationSet Name="FK_Address_UnionCouncil" Association="CharityModel.FK_Address_UnionCouncil">
             <End Role="UnionCouncil" EntitySet="UnionCouncils" />
             <End Role="Address" EntitySet="Addresses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="CharityModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUser" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserClaim" EntitySet="AspNetUserClaims" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="CharityModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUser" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserLogin" EntitySet="AspNetUserLogins" />
-          </AssociationSet>
-          <AssociationSet Name="FK_People_AspNetUsers" Association="CharityModel.FK_People_AspNetUsers">
-            <End Role="AspNetUser" EntitySet="AspNetUsers" />
-            <End Role="Member" EntitySet="Members" />
           </AssociationSet>
           <AssociationSet Name="FK_Campaign_Event" Association="CharityModel.FK_Campaign_Event">
             <End Role="Event" EntitySet="Events" />
@@ -1638,13 +1466,9 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             <End Role="Tehsil" EntitySet="Tehsils" />
             <End Role="UnionCouncil" EntitySet="UnionCouncils" />
           </AssociationSet>
-          <AssociationSet Name="FK_UOM_UOM1" Association="CharityModel.FK_UOM_UOM1">
+          <AssociationSet Name="FK_UOM_UOM" Association="CharityModel.FK_UOM_UOM">
             <End Role="UOM" EntitySet="UOMs" />
             <End Role="UOM1" EntitySet="UOMs" />
-          </AssociationSet>
-          <AssociationSet Name="AspNetUserRoles" Association="CharityModel.AspNetUserRoles">
-            <End Role="AspNetRole" EntitySet="AspNetRoles" />
-            <End Role="AspNetUser" EntitySet="AspNetUsers" />
           </AssociationSet>
           </EntityContainer>
         <ComplexType Name="spGetItemWithChildren_Result">
@@ -1704,56 +1528,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <NavigationProperty Name="State" Relationship="CharityModel.FK_Address_State" FromRole="Address" ToRole="State" />
           <NavigationProperty Name="Tehsil" Relationship="CharityModel.FK_Address_Tehsil" FromRole="Address" ToRole="Tehsil" />
           <NavigationProperty Name="UnionCouncil" Relationship="CharityModel.FK_Address_UnionCouncil" FromRole="Address" ToRole="UnionCouncil" />
-        </EntityType>
-        <EntityType Name="AspNetRole">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="AspNetUsers" Relationship="CharityModel.AspNetUserRoles" FromRole="AspNetRole" ToRole="AspNetUser" />
-        </EntityType>
-        <EntityType Name="AspNetUserClaim">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="AspNetUser" Relationship="CharityModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaim" ToRole="AspNetUser" />
-        </EntityType>
-        <EntityType Name="AspNetUserLogin">
-          <Key>
-            <PropertyRef Name="LoginProvider" />
-            <PropertyRef Name="ProviderKey" />
-            <PropertyRef Name="UserId" />
-          </Key>
-          <Property Name="LoginProvider" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="ProviderKey" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="AspNetUser" Relationship="CharityModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogin" ToRole="AspNetUser" />
-        </EntityType>
-        <EntityType Name="AspNetUser">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
-          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
-          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
-          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
-          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="AspNetUserClaims" Relationship="CharityModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserClaim" />
-          <NavigationProperty Name="AspNetUserLogins" Relationship="CharityModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserLogin" />
-          <NavigationProperty Name="Members" Relationship="CharityModel.FK_People_AspNetUsers" FromRole="AspNetUser" ToRole="Member" />
-          <NavigationProperty Name="AspNetRoles" Relationship="CharityModel.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -2073,7 +1847,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="UpdatedBy" Type="Int32" Nullable="false" />
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
-          <NavigationProperty Name="AspNetUser" Relationship="CharityModel.FK_People_AspNetUsers" FromRole="Member" ToRole="AspNetUser" />
           <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_Beneficiary" FromRole="Member" ToRole="DonationRequest" />
           <NavigationProperty Name="DonationRequestVolunteers" Relationship="CharityModel.FK_RequestVolunteer_Member" FromRole="Member" ToRole="DonationRequestVolunteer" />
           <NavigationProperty Name="OrganizationMembers" Relationship="CharityModel.FK_OrganizationMember_Member" FromRole="Member" ToRole="OrganizationMember" />
@@ -2256,16 +2029,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <NavigationProperty Name="DonationRequests" Relationship="CharityModel.FK_Request_State" FromRole="State" ToRole="DonationRequest" />
           <NavigationProperty Name="EntityRegions" Relationship="CharityModel.FK_EntityRegion_State" FromRole="State" ToRole="EntityRegion" />
         </EntityType>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
         <EntityType Name="Tehsil">
           <Key>
             <PropertyRef Name="Id" />
@@ -2329,8 +2092,8 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
           <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="DonationRequestItems" Relationship="CharityModel.FK_RequestItem_UOM" FromRole="UOM" ToRole="DonationRequestItem" />
           <NavigationProperty Name="PackageItems" Relationship="CharityModel.FK_PackageItems_UOM" FromRole="UOM" ToRole="PackageItem" />
-          <NavigationProperty Name="UOM1" Relationship="CharityModel.FK_UOM_UOM1" FromRole="UOM" ToRole="UOM1" />
-          <NavigationProperty Name="UOM2" Relationship="CharityModel.FK_UOM_UOM1" FromRole="UOM1" ToRole="UOM" />
+          <NavigationProperty Name="UOM1" Relationship="CharityModel.FK_UOM_UOM" FromRole="UOM" ToRole="UOM1" />
+          <NavigationProperty Name="UOM2" Relationship="CharityModel.FK_UOM_UOM" FromRole="UOM1" ToRole="UOM" />
         </EntityType>
         <EntityType Name="RefreshToken">
           <Key>
@@ -2412,46 +2175,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Principal>
             <Dependent Role="Address">
               <PropertyRef Name="UnionCouncilId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-          <End Type="CharityModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="CharityModel.AspNetUserClaim" Role="AspNetUserClaim" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserClaim">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-          <End Type="CharityModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="CharityModel.AspNetUserLogin" Role="AspNetUserLogin" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserLogin">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_People_AspNetUsers">
-          <End Type="CharityModel.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
-          <End Type="CharityModel.Member" Role="Member" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Member">
-              <PropertyRef Name="AuthUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2881,7 +2604,7 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UOM_UOM1">
+        <Association Name="FK_UOM_UOM">
           <End Type="CharityModel.UOM" Role="UOM" Multiplicity="0..1" />
           <End Type="CharityModel.UOM" Role="UOM1" Multiplicity="*" />
           <ReferentialConstraint>
@@ -2892,10 +2615,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
               <PropertyRef Name="ParentId" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>
-        <Association Name="AspNetUserRoles">
-          <End Type="CharityModel.AspNetRole" Role="AspNetRole" Multiplicity="*" />
-          <End Type="CharityModel.AspNetUser" Role="AspNetUser" Multiplicity="*" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -2938,51 +2657,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
                 <ScalarProperty Name="EntityId" ColumnName="EntityId" />
                 <ScalarProperty Name="NativeName" ColumnName="NativeName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetRoles">
-            <EntityTypeMapping TypeName="CharityModel.AspNetRole">
-              <MappingFragment StoreEntitySet="AspNetRoles">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetUserClaims">
-            <EntityTypeMapping TypeName="CharityModel.AspNetUserClaim">
-              <MappingFragment StoreEntitySet="AspNetUserClaims">
-                <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
-                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetUserLogins">
-            <EntityTypeMapping TypeName="CharityModel.AspNetUserLogin">
-              <MappingFragment StoreEntitySet="AspNetUserLogins">
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
-                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AspNetUsers">
-            <EntityTypeMapping TypeName="CharityModel.AspNetUser">
-              <MappingFragment StoreEntitySet="AspNetUsers">
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
-                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
-                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
-                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
-                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
-                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
-                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
-                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -3447,17 +3121,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="CharityModel.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="definition" ColumnName="definition" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Tehsils">
             <EntityTypeMapping TypeName="CharityModel.Tehsil">
               <MappingFragment StoreEntitySet="Tehsil">
@@ -3526,14 +3189,6 @@ warning 6002: The table/view 'Charity.dbo.RefreshToken' does not have a primary 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="AspNetUserRoles" TypeName="CharityModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
-            <EndProperty Name="AspNetUser">
-              <ScalarProperty Name="Id" ColumnName="UserId" />
-            </EndProperty>
-            <EndProperty Name="AspNetRole">
-              <ScalarProperty Name="Id" ColumnName="RoleId" />
-            </EndProperty>
-          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

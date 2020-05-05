@@ -1,6 +1,7 @@
-﻿using DataProvider;
+﻿//using DataProvider;
+using EntityProvider;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
+using System.Linq;
 
 namespace BusinessLogic
 {
@@ -22,19 +23,14 @@ namespace BusinessLogic
         public Logic(DataAccess dataAccess, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            SetLoggedInMemberId();
             _dataAccess = dataAccess;
-            SetDataAccess();
+            var strLoggedInMemberId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "memberId")?.Value;
+            if (strLoggedInMemberId != null)
+                _loggedInMemberId = int.Parse(strLoggedInMemberId);
         }
         private void SetDataAccess()
         {
             _dataAccess = new DataAccess(_loggedInMemberId);
         }
-        private void SetLoggedInMemberId()
-        {
-            //var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        }
-
-
     }
 }
