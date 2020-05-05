@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using API.SwaggerFilters;
 
 namespace API
 {
@@ -86,6 +87,7 @@ namespace API
                         Title = "Esaar API",
                         Version = "v1",
                     });
+                setup.OperationFilter<SwaggerFileOperationFilter>();
                 setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
