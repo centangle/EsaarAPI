@@ -17,6 +17,8 @@ using EntityProvider.DbModels;
 using EntityProvider;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace API
 {
@@ -131,6 +133,12 @@ namespace API
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
+                RequestPath = "/Uploads"
+            });
 
             app.UseRouting();
 
