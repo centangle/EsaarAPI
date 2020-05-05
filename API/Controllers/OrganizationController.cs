@@ -74,7 +74,6 @@ namespace API.Controllers
         [Route("Create")]
         public async Task<int> Create(OrganizationModel model)
         {
-            await _logic.CheckOrganization();
             return await _logic.CreateOrganization(model);
         }
         [HttpPut]

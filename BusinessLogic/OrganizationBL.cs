@@ -6,10 +6,6 @@ namespace BusinessLogic
 {
     public partial class Logic
     {
-        public async Task CheckOrganization()
-        {
-            await _dataAccess.CheckOrganization();
-        }
         public async Task<int> CreateOrganization(OrganizationModel model)
         {
             return await _dataAccess.CreateOrganization(model);
