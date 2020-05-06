@@ -20,11 +20,14 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using API.SwaggerFilters;
+using Microsoft.Extensions.Logging;
+using API.Extensions;
 
 namespace API
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -120,7 +123,7 @@ namespace API
             });
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -133,6 +136,7 @@ namespace API
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.ConfigureExceptionHandler(logger);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions
