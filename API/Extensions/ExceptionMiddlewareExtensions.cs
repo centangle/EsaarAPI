@@ -59,7 +59,8 @@ namespace API.Extensions
         {
             switch (statusCode)
             {
-                case (int)HttpStatusCode.InternalServerError:
+                //case (int)HttpStatusCode.InternalServerError:
+                case 0:
                     return "An error occurred, please try again later or contact the administrator.";
                 default:
                     return e.Message;

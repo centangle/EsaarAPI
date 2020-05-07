@@ -22,6 +22,8 @@ using System.IO;
 using API.SwaggerFilters;
 using Microsoft.Extensions.Logging;
 using API.Extensions;
+//using AuditProvider.DbModels;
+//using AuditProvider;
 
 namespace API
 {
@@ -42,7 +44,11 @@ namespace API
 
             services.AddDbContext<CharityContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("CharityEntities"), x => x.UseNetTopologySuite()));
+                    Configuration.GetConnectionString("CharityConnection"), x => x.UseNetTopologySuite()));
+
+            //services.AddDbContext<CharityAuditContext>(options =>
+            //    options.UseSqlServer(
+            //        Configuration.GetConnectionString("AuditConnection")));
 
             services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
@@ -61,6 +67,7 @@ namespace API
             services.AddRazorPages();
             services.AddTransient<Logic, Logic>();
             services.AddTransient<DataAccess, DataAccess>();
+            //services.AddTransient<Audit, Audit>();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddAuthentication(options =>
             {

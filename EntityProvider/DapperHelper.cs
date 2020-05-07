@@ -7,7 +7,7 @@ namespace EntityProvider
     {
         private string DapperConnectionString()
         {
-            return _config.GetConnectionString("CharityEntities");
+            return _config.GetConnectionString("CharityConnection");
         }
     }
 }

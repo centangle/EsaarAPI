@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catalogs", "Catalogs\Catalo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{6F074D26-B7BF-4FFA-88C2-1E808517A286}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityProvider", "EntityProvider\EntityProvider.csproj", "{DF9E694E-8113-4DD3-90F3-648C3124A4A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityProvider", "EntityProvider\EntityProvider.csproj", "{DF9E694E-8113-4DD3-90F3-648C3124A4A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuditProvider", "Audit\AuditProvider.csproj", "{13179767-955F-43C5-B635-8285AA342073}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{DF9E694E-8113-4DD3-90F3-648C3124A4A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF9E694E-8113-4DD3-90F3-648C3124A4A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF9E694E-8113-4DD3-90F3-648C3124A4A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13179767-955F-43C5-B635-8285AA342073}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13179767-955F-43C5-B635-8285AA342073}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13179767-955F-43C5-B635-8285AA342073}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13179767-955F-43C5-B635-8285AA342073}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

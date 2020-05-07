@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -13,15 +14,22 @@ namespace EntityProvider
         {
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(DapperConnectionString()))
             {
-                string sql = "SELECT * FROM dbo.RefreshToken WHERE UserId = @UserId;";
-                var queryParameters = new DynamicParameters();
-                queryParameters.Add("@UserId", model.UserId);
-                var existingToken = await connection.QueryFirstOrDefaultAsync<RefreshTokenModel>(sql, queryParameters);
-                if (existingToken != null)
+                try
                 {
-                    await RemoveRefreshToken(existingToken);
+                    string sql = "SELECT * FROM dbo.RefreshToken WHERE UserId = @UserId;";
+                    var queryParameters = new DynamicParameters();
+                    queryParameters.Add("@UserId", model.UserId);
+                    var existingToken = await connection.QueryFirstOrDefaultAsync<RefreshTokenModel>(sql, queryParameters);
+                    if (existingToken != null)
+                    {
+                        await RemoveRefreshToken(existingToken);
+                    }
+                    return await AddRefreshToken(model, connection);
                 }
-                return await AddRefreshToken(model, connection);
+                catch(Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
         public async Task<bool> RemoveRefreshToken(RefreshTokenModel model)
