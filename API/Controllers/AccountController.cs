@@ -54,6 +54,10 @@ namespace API.Controllers
             memberModel.Address.MobileNo = model.MobileNo;
             memberModel.Address.Email = model.Email;
             memberModel.Address.Type = Catalogs.AddressTypeCatalog.Default;
+            if (user != null)
+            {
+                await _userManager.AddToRoleAsync(user, "Member");
+            }
             try
             {
                 await _logic.AddMember(memberModel);

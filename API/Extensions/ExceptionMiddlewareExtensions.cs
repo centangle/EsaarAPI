@@ -2,8 +2,10 @@
 using Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -17,7 +19,7 @@ namespace API.Extensions
 {
     public static class ExceptionMiddlewareExtensions
     {
-        public static void ConfigureExceptionHandler(this IApplicationBuilder app, ILogger logger)
+        public static void ConfigureExceptionHandler(this IApplicationBuilder app, ILogger logger, IWebHostEnvironment env)
         {
             app.UseExceptionHandler(
                 appError =>
@@ -33,7 +35,7 @@ namespace API.Extensions
                             await context.Response.WriteAsync(new ErrorDetails
                             {
                                 StatusCode = context.Response.StatusCode,
-                                ExceptionMessage = GetErrorMessage(contextFeature.Error, context.Response.StatusCode)
+                                ExceptionMessage = GetErrorMessage(contextFeature.Error, context.Response.StatusCode, env)
                             }.ToString());
                         }
                     });
@@ -55,15 +57,21 @@ namespace API.Extensions
                     return HttpStatusCode.InternalServerError;
             }
         }
-        private static string GetErrorMessage(Exception e, int statusCode)
+        private static string GetErrorMessage(Exception e, int statusCode, IWebHostEnvironment env)
         {
-            switch (statusCode)
+            if (env.IsDevelopment())
             {
-                //case (int)HttpStatusCode.InternalServerError:
-                case 0:
-                    return "An error occurred, please try again later or contact the administrator.";
-                default:
-                    return e.Message;
+                return e.Message;
+            }
+            else
+            {
+                switch (statusCode)
+                {
+                    case (int)HttpStatusCode.InternalServerError:
+                        return "An error occurred, please try again later or contact the administrator.";
+                    default:
+                        return e.Message;
+                }
             }
         }
     }
