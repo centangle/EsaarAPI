@@ -60,20 +60,20 @@ namespace API.Extensions
         }
         private static string GetErrorMessage(Exception e, int statusCode, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
+            //if (env.IsDevelopment())
+            //{
                 return e.Message;
-            }
-            else
-            {
-                switch (statusCode)
-                {
-                    case (int)HttpStatusCode.InternalServerError:
-                        return "An error occurred, please try again later or contact the administrator.";
-                    default:
-                        return e.Message;
-                }
-            }
+            //}
+            //else
+            //{
+            //    switch (statusCode)
+            //    {
+            //        case (int)HttpStatusCode.InternalServerError:
+            //            return "An error occurred, please try again later or contact the administrator.";
+            //        default:
+            //            return e.Message;
+            //    }
+            //}
         }
     }
 }

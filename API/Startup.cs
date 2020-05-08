@@ -22,9 +22,10 @@ using System.IO;
 using API.SwaggerFilters;
 using Microsoft.Extensions.Logging;
 using API.Extensions;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Newtonsoft.Json.Converters;
 using System.Text.Json.Serialization;
+using API.Convertors;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Converters;
 //using AuditProvider.DbModels;
 //using AuditProvider;
 
@@ -88,13 +89,22 @@ namespace API
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             });
-            services.AddControllers()
-            .AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
-            services.AddControllers().AddJsonOptions(opts =>
+       
+            //services.AddControllersWithViews().AddJsonOptions(o =>
+            //{
+            //    o.JsonSerializerOptions.PropertyNamingPolicy = null;
+            //    //o.JsonSerializerOptions.DictionaryKeyPolicy = null;
+            //    //o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            //    //o.JsonSerializerOptions.Converters.Add(new AutoStringToNumberConverter());
+            //});
+           
+
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
             {
-                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
             });
-            services.AddControllersWithViews();
+            //services.AddControllersWithViews();
             services.AddCors();
             services.AddRazorPages();
             services.AddTransient<Logic, Logic>();

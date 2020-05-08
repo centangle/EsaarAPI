@@ -46,7 +46,6 @@ namespace API.Controllers
         [Route("AddRequestThread")]
         public async Task<int> AddRequestThread(RequestThreadModel model)
         {
-            
             model.IsSystemGenerated = false;
             return await _logic.AddRequestThread(model);
         }
