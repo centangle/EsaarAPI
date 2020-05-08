@@ -10,6 +10,7 @@ namespace EntityProvider.DbModels
             Campaigns = new HashSet<Campaign>();
             DonationRequestOrganizations = new HashSet<DonationRequestOrganization>();
             InverseParent = new HashSet<Organization>();
+            Items = new HashSet<Item>();
             OrganizationAccounts = new HashSet<OrganizationAccount>();
             OrganizationItems = new HashSet<OrganizationItem>();
             OrganizationMembers = new HashSet<OrganizationMember>();
@@ -39,6 +40,7 @@ namespace EntityProvider.DbModels
         public virtual ICollection<Campaign> Campaigns { get; set; }
         public virtual ICollection<DonationRequestOrganization> DonationRequestOrganizations { get; set; }
         public virtual ICollection<Organization> InverseParent { get; set; }
+        public virtual ICollection<Item> Items { get; set; }
         public virtual ICollection<OrganizationAccount> OrganizationAccounts { get; set; }
         public virtual ICollection<OrganizationItem> OrganizationItems { get; set; }
         public virtual ICollection<OrganizationMember> OrganizationMembers { get; set; }

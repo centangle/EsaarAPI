@@ -32,6 +32,7 @@ namespace API.Extensions
                         if (contextFeature != null)
                         {
                             logger.LogError($"Something went wrong: {contextFeature.Error}");
+                            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                             await context.Response.WriteAsync(new ErrorDetails
                             {
                                 StatusCode = context.Response.StatusCode,

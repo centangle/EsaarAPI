@@ -22,6 +22,9 @@ using System.IO;
 using API.SwaggerFilters;
 using Microsoft.Extensions.Logging;
 using API.Extensions;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 //using AuditProvider.DbModels;
 //using AuditProvider;
 
@@ -48,7 +51,17 @@ namespace API
             //                      });
             //});
 
-            services.AddCors();
+
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("CorsApiPolicy",
+            //    builder =>
+            //    {
+            //        builder.WithOrigins("http://esaar.hostober.pk")
+            //            .WithHeaders(new[] { "authorization", "content-type", "accept" })
+            //            .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" });
+            //    });
+            //});
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("AuthConnection")));
@@ -61,8 +74,7 @@ namespace API
             //    options.UseSqlServer(
             //        Configuration.GetConnectionString("AuditConnection")));
 
-            services.AddControllers()
-            .AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
+
 
             services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
@@ -76,8 +88,14 @@ namespace API
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             });
-
+            services.AddControllers()
+            .AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
             services.AddControllersWithViews();
+            services.AddCors();
             services.AddRazorPages();
             services.AddTransient<Logic, Logic>();
             services.AddTransient<DataAccess, DataAccess>();
@@ -167,8 +185,11 @@ namespace API
                 RequestPath = "/Uploads"
             });
 
+
             app.UseRouting();
-            app.UseCors(a => a.SetIsOriginAllowed(x => _ = true).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+            app.UseCors(
+          options => options.SetIsOriginAllowed(x => _ = true).AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+      ); //This needs to set everything allowed
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -176,6 +197,7 @@ namespace API
             app.UseSwaggerUI(x =>
             {
                 x.SwaggerEndpoint("/swagger/v1/swagger.json", "Esaar API v1");
+                x.DocumentTitle = "Esaar";
                 x.DocExpansion(DocExpansion.None);
             });
 

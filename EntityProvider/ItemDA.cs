@@ -284,11 +284,18 @@ namespace EntityProvider
         }
         public async Task<IEnumerable<ItemModel>> GetAllItems(bool getHierarchicalData)
         {
-            _context.ChangeTracker.AutoDetectChangesEnabled = false;
-            var uoms = await _context.Uoms.Where(x => x.IsDeleted == false).ToListAsync();
-            var result = await GetAllItems<ItemModel, ItemModel>(_context, true, getHierarchicalData);
-            SetItemsUOM(uoms, result);
-            return result;
+            try
+            {
+                _context.ChangeTracker.AutoDetectChangesEnabled = false;
+                var uoms = await _context.Uoms.Where(x => x.IsDeleted == false).ToListAsync();
+                var result = await GetAllItems<ItemModel, ItemModel>(_context, true, getHierarchicalData);
+                SetItemsUOM(uoms, result);
+                return result;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
         private async Task<IEnumerable<T>> GetAllItems<T, M>(CharityContext _context, bool returnViewModel, bool getHierarchicalData)
             where T : class, IBase

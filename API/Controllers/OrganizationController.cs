@@ -24,13 +24,13 @@ namespace API.Controllers
             _logic = logic;
         }
         [HttpGet]
-        [Route("Get")]
+        [Route("Get/{id}")]
         public async Task<OrganizationModel> Get(int id)
         {
             return await _logic.GetOrganization(id);
         }
         [HttpGet]
-        [Route("GetCategories")]
+        [Route("GetCategories/{id}")]
         public async Task<List<ItemBriefModel>> GetCategories(int id)
         {
             return await _logic.GetOrganizationCategories(id);

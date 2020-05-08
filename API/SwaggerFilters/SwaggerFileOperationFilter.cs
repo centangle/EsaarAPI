@@ -33,7 +33,7 @@ namespace API.SwaggerFilters
                     Type = "object",
                     Properties =
                 {
-                    ["Attachment"] = new OpenApiSchema()
+                    ["File"] = new OpenApiSchema()
                     {
                         Description = "Upload File",
                         Type = "file",

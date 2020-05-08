@@ -33,6 +33,7 @@ namespace EntityProvider.DbModels
         public int UpdatedBy { get; set; }
         public DateTime UpdatedDate { get; set; }
 
+        public virtual Organization Organization { get; set; }
         public virtual Item Parent { get; set; }
         public virtual ICollection<DonationRequestItem> DonationRequestItems { get; set; }
         public virtual ICollection<Item> InverseParent { get; set; }

@@ -33,7 +33,9 @@ namespace API.Controllers
         }
         [HttpPost]
         [SwaggerFileOperationFilter.FileContentType]
-        public async Task<string> Upload([FromForm(Name = "Attachment")]IFormFile file)
+        [Route("Upload")]
+        [Produces("application/json")]
+        public async Task<string> Upload([FromForm(Name = "File")]IFormFile file)
         {
             try
             {
@@ -74,6 +76,7 @@ namespace API.Controllers
             return "";
         }
         [HttpDelete]
+        [Route("Delete")]
         public async Task<bool> Delete(string url)
         {
             try
