@@ -1,6 +1,8 @@
 ﻿using Catalogs;
 using Models.Base;
 using Models.BriefModel;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
 
 namespace Models
@@ -16,6 +18,7 @@ namespace Models
         public BaseBriefModel Entity { get; set; }
         public RequestThreadEntityTypeCatalog EntityType { get; set; } = RequestThreadEntityTypeCatalog.Donation;
         public StatusCatalog? Status { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public RequestThreadTypeCatalog Type { get; set; } = RequestThreadTypeCatalog.General;
         public List<AttachmentModel> Attachments { get; set; }
         public bool IsSystemGenerated { get; set; }

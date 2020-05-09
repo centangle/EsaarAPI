@@ -38,8 +38,6 @@ namespace EntityProvider.Helpers
                     }
                     List<T> resultList = await query.ToListAsync() as List<T>;
                     searchResult.Items = resultList ?? new List<T>();
-
-
                 }
                 catch (Exception ex)
                 {

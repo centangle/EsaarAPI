@@ -65,10 +65,15 @@ namespace Models
     }
     public class OrganizationSearchModel : BaseSearchModel
     {
-        public OrganizationSearchModel()
-        {
-            OrderByColumn = "Name";
-        }
         public string Name { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
+        public float? Radius { get; set; }
+        public int? RootCategoryId { get; set; }
+        public int? RegionId { get; set; }
+        public OrganizationSearchTypeCatalog? SearchType { get; set; }
+        public RegionLevelTypeCatalog? RegionLevel { get; set; }
+        public RegionRadiusTypeCatalog? RadiusType { get; set; }
+
     }
 }

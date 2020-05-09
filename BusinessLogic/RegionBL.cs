@@ -31,9 +31,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.GetUnionCouncils(filters);
         }
-        public async Task<RadiusRegionsModel> GetAllRegionsInRadius(double latitude, double longitude, float radius, RegionSearchTypeCatalog searchType, RegionRadiusTypeCatalog radiusType)
+        public async Task<FilteredRegionsModel> GetAllRegionsInRadius(double latitude, double longitude, float radius, RegionSearchTypeCatalog searchType, RegionRadiusTypeCatalog radiusType)
         {
-            return await _dataAccess.GetAllRegionsInRadius(latitude, longitude, radius, searchType, radiusType);
+            return await _dataAccess.FilterRegions(latitude, longitude, radius, searchType, radiusType);
         }
     }
 }

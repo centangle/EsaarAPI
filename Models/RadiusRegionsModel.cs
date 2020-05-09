@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class RadiusRegionsModel
+    public class FilteredRegionsModel
     {
-        public RadiusRegionsModel()
+        public FilteredRegionsModel()
         {
             Countries = new List<BaseBriefModel>();
             States = new List<BaseBriefModel>();

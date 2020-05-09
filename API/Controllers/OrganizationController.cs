@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using BusinessLogic;
@@ -37,10 +38,18 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPaginated")]
-        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, double longitude, double latitude, string name = null, int? rootCategoryId = null, OrganizationSearchTypeCatalog? searchType = null, RegionLevelTypeCatalog? regionLevel = null, int? regionId = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null, string orderByColumn = null, bool calculateTotal = true)
         {
             OrganizationSearchModel filters = new OrganizationSearchModel();
             filters.Name = name;
+            filters.Longitude = longitude;
+            filters.Latitude = latitude;
+            filters.RegionLevel = regionLevel;
+            filters.RegionId = regionId;
+            filters.Radius = radius;
+            filters.RootCategoryId = rootCategoryId;
+            filters.RadiusType = radiusType;
+            filters.SearchType = searchType;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetOrganizations(filters);
         }

@@ -26,13 +26,13 @@ namespace EntityProvider
             //poly = point.BufferWithTolerance(radiusInMeters, 0.01, true); 
         }
 
-        public async Task<RadiusRegionsModel> GetAllRegionsInRadius(double latitude, double longitude, float radius, RegionSearchTypeCatalog searchType, RegionRadiusTypeCatalog radiusType)
+        public async Task<FilteredRegionsModel> FilterRegions(double latitude, double longitude, float radius, RegionSearchTypeCatalog searchType, RegionRadiusTypeCatalog? radiusType = null)
         {
-            RadiusRegionsModel model = new RadiusRegionsModel();
+            FilteredRegionsModel model = new FilteredRegionsModel();
             var searchRegionPolygon = SqlGeography.Point(latitude, longitude, 4326);
             if (searchType == RegionSearchTypeCatalog.Intersects)
             {
-                searchRegionPolygon = await GetRegionRadius(latitude, longitude, radius, radiusType);
+                searchRegionPolygon = await GetRegionRadius(latitude, longitude, radius, radiusType ?? RegionRadiusTypeCatalog.Meters);
             }
 
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(DapperConnectionString()))

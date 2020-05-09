@@ -1,4 +1,8 @@
-﻿namespace Catalogs
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System.Runtime.Serialization;
+
+namespace Catalogs
 {
     public enum OrganizationMemberRolesCatalog : int
     {
@@ -26,5 +30,13 @@
     {
         General
     }
-   
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum OrganizationSearchTypeCatalog : int
+    {
+        [EnumMember(Value = "Organizations In My Region")]
+        OrganizationInMyRegion,
+        OrganizationInRadius,
+        OrganizationByRegion
+
+    }
 }

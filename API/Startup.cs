@@ -22,10 +22,11 @@ using System.IO;
 using API.SwaggerFilters;
 using Microsoft.Extensions.Logging;
 using API.Extensions;
-using System.Text.Json.Serialization;
-using API.Convertors;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using API.Convertors;
 //using AuditProvider.DbModels;
 //using AuditProvider;
 
@@ -89,22 +90,21 @@ namespace API
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             });
-       
-            //services.AddControllersWithViews().AddJsonOptions(o =>
-            //{
-            //    o.JsonSerializerOptions.PropertyNamingPolicy = null;
-            //    //o.JsonSerializerOptions.DictionaryKeyPolicy = null;
-            //    //o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            //    //o.JsonSerializerOptions.Converters.Add(new AutoStringToNumberConverter());
-            //});
-           
 
-            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            services.AddControllersWithViews().AddJsonOptions(o =>
             {
-                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                o.JsonSerializerOptions.PropertyNamingPolicy = null;
+                o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                o.JsonSerializerOptions.Converters.Add(new AutoStringToNumberConverter());
             });
-            //services.AddControllersWithViews();
+
+            //services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            //{
+            //    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+            //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            //    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+
+            //});
             services.AddCors();
             services.AddRazorPages();
             services.AddTransient<Logic, Logic>();

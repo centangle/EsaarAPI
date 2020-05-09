@@ -23,8 +23,6 @@ namespace EntityProvider
             {
                 try
                 {
-                    var orgq = _context.Organizations.Where(x => x.Id == 1).AsQueryable();
-                    var query = await orgq.ToListAsync();
                     var dbModel = SetOrganization(new Organization(), model);
                     if (model.ParentId != 0)
                         dbModel.ParentId = model.ParentId;
@@ -232,46 +230,7 @@ namespace EntityProvider
                               CreatedDate = o.CreatedDate,
                           }).FirstOrDefaultAsync();
         }
-        public async Task<PaginatedResultModel<OrganizationModel>> GetOrganizations(OrganizationSearchModel filters)
-        {
-            var organizationQueryable = (from o in _context.Organizations
-                                         join ob in _context.Members on o.OwnedBy equals ob.Id
-                                         join po in _context.Organizations on o.ParentId equals po.Id into tpo
-                                         from po in tpo.DefaultIfEmpty()
-                                         where
-                                         (
-                                           string.IsNullOrEmpty(filters.Name)
-                                           || o.Name.Contains(filters.Name)
-                                           || o.NativeName.Contains(filters.Name)
-                                         )
-                                         && o.IsDeleted == false
-                                         select new OrganizationModel
-                                         {
-                                             Id = o.Id,
-                                             Parent = new BaseBriefModel()
-                                             {
-                                                 Id = po == null ? 0 : po.Id,
-                                                 Name = po == null ? "" : po.Name,
-                                                 NativeName = po == null ? "" : po.NativeName
-                                             },
-                                             Name = o.Name,
-                                             NativeName = o.NativeName,
-                                             Description = o.Description,
-                                             ImageUrl = o.LogoUrl,
-                                             Type = (OrganizationTypeCatalog)(o.Type ?? 0),
-                                             OwnedBy = new MemberBriefModel()
-                                             {
-                                                 Id = ob == null ? 0 : ob.Id,
-                                                 Name = ob == null ? "" : ob.Name,
-                                                 NativeName = ob == null ? "" : ob.NativeName
-                                             },
-                                             IsVerified = o.IsVerified,
-                                             IsPeripheral = o.IsPeripheral,
-                                             IsActive = o.IsActive,
-                                             CreatedDate = o.CreatedDate,
-                                         }).AsQueryable();
-            return await organizationQueryable.Paginate(filters);
-        }
+        
         public async Task<List<OrganizationModel>> GetPeripheralOrganizations()
         {
             return await (from o in _context.Organizations

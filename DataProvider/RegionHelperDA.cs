@@ -26,9 +26,9 @@ namespace DataProvider
             return poly;
         }
 
-        public async Task<RadiusRegionsModel> GetAllRegionsInRadius(double latitude, double longitude, float radius, RegionSearchTypeCatalog searchType, RegionRadiusTypeCatalog radiusType)
+        public async Task<FilteredRegionsModel> GetAllRegionsInRadius(double latitude, double longitude, float radius, RegionSearchTypeCatalog searchType, RegionRadiusTypeCatalog radiusType)
         {
-            RadiusRegionsModel model = new RadiusRegionsModel();
+            FilteredRegionsModel model = new FilteredRegionsModel();
             var searchRegionPolygon = SqlGeography.Point(latitude, longitude, 4326);
             if (searchType == RegionSearchTypeCatalog.Intersects)
             {
