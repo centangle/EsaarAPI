@@ -38,12 +38,12 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPaginated")]
-        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, double longitude, double latitude, string name = null, int? rootCategoryId = null, OrganizationSearchTypeCatalog? searchType = null, RegionLevelTypeCatalog? regionLevel = null, int? regionId = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, double? longitude = null, double? latitude = null, int? rootCategoryId = null, OrganizationSearchTypeCatalog? searchType = null, RegionLevelTypeCatalog? regionLevel = null, int? regionId = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null, string orderByColumn = null, bool calculateTotal = true)
         {
             OrganizationSearchModel filters = new OrganizationSearchModel();
             filters.Name = name;
-            filters.Longitude = longitude;
-            filters.Latitude = latitude;
+            filters.Longitude = longitude ?? 0;
+            filters.Latitude = latitude ?? 0;
             filters.RegionLevel = regionLevel;
             filters.RegionId = regionId;
             filters.Radius = radius;
