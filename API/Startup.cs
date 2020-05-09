@@ -95,7 +95,10 @@ namespace API
             {
                 o.JsonSerializerOptions.PropertyNamingPolicy = null;
                 o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                o.JsonSerializerOptions.Converters.Add(new AutoStringToNumberConverter());
+                o.JsonSerializerOptions.Converters.Add(new IntToStringConverter());
+                o.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
+                o.JsonSerializerOptions.Converters.Add(new FloatToStringConverter());
+                o.JsonSerializerOptions.Converters.Add(new DoubleToStringConverter());
             });
 
             //services.AddControllersWithViews().AddNewtonsoftJson(options =>
