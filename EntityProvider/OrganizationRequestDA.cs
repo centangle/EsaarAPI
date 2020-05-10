@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EntityProvider.DbModels;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 namespace EntityProvider
 {
@@ -212,6 +213,8 @@ namespace EntityProvider
         }
         public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetOrganizationRequests(OrganizationRequestSearchModel filters)
         {
+            DateTime startDateFilter = TimePeriodHelper.GetStartDate(filters.TimePeriod, filters.StartDate);
+            DateTime endDateFilter = TimePeriodHelper.GetStartDate(filters.TimePeriod, filters.EndDate);
             var memberOrgRoles = await GetMemberRoleForOrganization(_context, null, _loggedInMemberId);
             List<int> memberModeratorOrgz = new List<int>();
             List<int> memberOwnedOrgz = new List<int>();
@@ -239,6 +242,9 @@ namespace EntityProvider
                                     where
                                     (filters.OrganizationId == null || ort.OrganizationId == filters.OrganizationId)
                                     && (filters.Type == null || ort.Type == (int)filters.Type.Value)
+                                    && (filters.Status == null || ort.Status == (int)filters.Status.Value)
+                                    && (string.IsNullOrEmpty(filters.MemberName) || m.Name.Contains(filters.MemberName) || m.NativeName.Contains(filters.MemberName))
+                                    && (ort.CreatedDate >= startDateFilter && ort.CreatedDate <= endDateFilter)
                                     && ort.IsDeleted == false
                                     &&
                                     (

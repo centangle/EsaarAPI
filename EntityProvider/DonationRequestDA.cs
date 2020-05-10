@@ -467,6 +467,8 @@ namespace EntityProvider
         {
             using (CharityContext _context = new CharityContext())
             {
+                DateTime startDateFilter = TimePeriodHelper.GetStartDate(filters.TimePeriod, filters.StartDate);
+                DateTime endDateFilter = TimePeriodHelper.GetStartDate(filters.TimePeriod, filters.EndDate);
                 var memberOrgRoles = await GetMemberRoleForOrganization(_context, null, _loggedInMemberId);
                 List<int> memberModeratorOrgz = new List<int>();
                 List<int> memberOwnedOrgz = new List<int>();
@@ -504,6 +506,9 @@ namespace EntityProvider
                                         where
                                         (filters.OrganizationId == null || dro.OrganizationId == filters.OrganizationId)
                                         && (filters.Type == null || dr.Type == (int)filters.Type.Value)
+                                        && (filters.Status == null || dro.Status == (int)filters.Status.Value)
+                                        && (string.IsNullOrEmpty(filters.MemberName) || m.Name.Contains(filters.MemberName) || m.NativeName.Contains(filters.MemberName))
+                                        && (dr.CreatedDate >= startDateFilter && dr.CreatedDate <= endDateFilter)
                                         && dr.IsDeleted == false
                                         &&
                                         (

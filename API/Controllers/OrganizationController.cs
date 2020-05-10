@@ -121,5 +121,13 @@ namespace API.Controllers
         {
             return await _logic.DeleteOrganization(id);
         }
+       
+
+        [HttpGet]
+        [Route("GetOrganizationSearchType")]
+        public Array GetOrganizationSearchType()
+        {
+            return Enum.GetValues(typeof(OrganizationSearchTypeCatalog)).Cast<OrganizationSearchTypeCatalog>().ToArray();
+        }
     }
 }

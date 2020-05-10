@@ -1,6 +1,7 @@
 ﻿using Catalogs;
 using Models.Base;
 using Models.BriefModel;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -132,7 +133,12 @@ namespace Models
             OrderByColumn = "CreatedDate";
         }
         public int? OrganizationId { get; set; }
+        public string MemberName { get; set; }
         public OrganizationRequestTypeCatalog? Type { get; set; }
+        public TimePeriodCatalog? TimePeriod { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public StatusCatalog? Status { get; set; }
 
     }
 }
