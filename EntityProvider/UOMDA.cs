@@ -398,11 +398,8 @@ namespace EntityProvider
         }
         public async Task<IEnumerable<UOMModel>> GetSingleTreeUOM(int id, bool getHierarchicalData)
         {
-            using (CharityContext _context = new CharityContext())
-            {
-                _context.ChangeTracker.AutoDetectChangesEnabled = false;
-                return await GetSingleUOMTree<UOMModel, UOMModel>(_context, id, true, getHierarchicalData);
-            }
+            _context.ChangeTracker.AutoDetectChangesEnabled = false;
+            return await GetSingleUOMTree<UOMModel, UOMModel>(_context, id, true, getHierarchicalData);
         }
         private async Task<IEnumerable<T>> GetSingleUOMTree<T, M>(CharityContext _context, int id, bool returnViewModel = true, bool getHierarchicalData = true)
             where T : class, IBase
