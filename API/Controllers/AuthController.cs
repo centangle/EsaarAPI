@@ -134,7 +134,7 @@ namespace API.Controllers
             {
                 access_token = new JwtSecurityTokenHandler().WriteToken(token),
                 token_type = "bearer",
-                expires_in = tokenExpiration.Ticks,
+                expires_in = tokenExpiration,
                 user_name = username,
                 refresh_token = refreshToken,
                 roles = string.Join(',', roles.Select(x => x.Name)),

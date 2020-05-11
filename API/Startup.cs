@@ -95,6 +95,7 @@ namespace API
             {
                 o.JsonSerializerOptions.PropertyNamingPolicy = null;
                 o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                //o.JsonSerializerOptions.Converters.Add(new JsonStringEnumMemberConverter());
                 o.JsonSerializerOptions.Converters.Add(new IntToStringConverter());
                 o.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
                 o.JsonSerializerOptions.Converters.Add(new FloatToStringConverter());
