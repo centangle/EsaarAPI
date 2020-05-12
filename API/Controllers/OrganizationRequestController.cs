@@ -32,15 +32,15 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPaginated")]
-        public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, OrganizationRequestTypeCatalog? type = null, StatusCatalog? status = null, TimePeriodCatalog? timePeriod = null,
+        public async Task<PaginatedResultModel<PaginatedOrganizationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, [FromQuery] List<OrganizationRequestTypeCatalog> types = null, [FromQuery] List<StatusCatalog> statuses = null, TimePeriodCatalog? timePeriod = null,
             DateTime? startDate = null, DateTime? endDate = null, string memberName = null
             , string orderByColumn = null, bool calculateTotal = true)
         {
             OrganizationRequestSearchModel filters = new OrganizationRequestSearchModel();
             filters.OrganizationId = organizationId;
             filters.MemberName = memberName;
-            filters.Type = type;
-            filters.Status = status;
+            filters.Types = types ?? new List<OrganizationRequestTypeCatalog>();
+            filters.Statuses = statuses??new List<StatusCatalog>();
             filters.TimePeriod = timePeriod;
             filters.StartDate = startDate;
             filters.EndDate = endDate;

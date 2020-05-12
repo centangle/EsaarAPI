@@ -25,7 +25,7 @@ namespace DataManager.Controllers
             var _logic = new Logic(LoggedInMemberId);
             OrganizationRequestSearchModel filters = new OrganizationRequestSearchModel();
             filters.OrganizationId = organizationId;
-            filters.Type = type;
+            filters.Types = type;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetOrganizationRequests(filters);
         }

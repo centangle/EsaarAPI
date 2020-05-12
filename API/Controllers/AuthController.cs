@@ -57,7 +57,7 @@ namespace API.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Invalid username or password");
             }
         }
 

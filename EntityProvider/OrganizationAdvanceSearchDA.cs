@@ -69,7 +69,7 @@ namespace EntityProvider
                     filteredRegion = await GetRegionsInRadius(filters);
                     break;
                 case OrganizationSearchTypeCatalog.OrganizationByRegion:
-                    filteredRegion = GetOrganizationsRegionsByRegionId(filters.RegionId ?? 0, filters.RegionLevel ?? RegionLevelTypeCatalog.UnionCouncil);
+                    filteredRegion = GetOrganizationsRegionsByRegionLevelAndId(filters.Regions);
                     break;
                 default:
                     filteredRegion = new FilteredRegionsModel();
@@ -92,12 +92,12 @@ namespace EntityProvider
                                   )
                                  select o
              ).Distinct().AsQueryable();
-            if (filters.RootCategoryId > 0)
+            if (filters.RootCategories.Count() > 0)
             {
                 (from o in filteredQueryable
                  join oi in _context.OrganizationItems on o.Id equals oi.OrganizationId
                  join i in _context.Items on oi.ItemId equals i.Id
-                 where i.RootId == filters.RootCategoryId
+                 where filters.RootCategories.Contains(i.RootId ?? 0)
                  select o
                  ).Distinct().AsQueryable();
 
@@ -112,31 +112,37 @@ namespace EntityProvider
         {
             return await FilterRegions(filters.Latitude, filters.Longitude, filters.Radius ?? 1, RegionSearchTypeCatalog.Intersects, filters.RadiusType);
         }
-        private FilteredRegionsModel GetOrganizationsRegionsByRegionId(int regionId, RegionLevelTypeCatalog regionLevel)
+        private FilteredRegionsModel GetOrganizationsRegionsByRegionLevelAndId(List<OrganizationRegionSearch> regions)
         {
             FilteredRegionsModel filteredRegions = new FilteredRegionsModel();
-            BaseBriefModel briefModel = new BaseBriefModel { Id = regionId };
-            if (regionLevel == RegionLevelTypeCatalog.UnionCouncil)
+            if (regions.Count > 0)
             {
-                filteredRegions.UnionCouncils.Add(briefModel);
+                foreach (var region in regions)
+                {
+                    var regionLevel = region.regionLevel;
+                    BaseBriefModel briefModel = new BaseBriefModel { Id = region.regionId };
+                    if (regionLevel == RegionLevelTypeCatalog.UnionCouncil)
+                    {
+                        filteredRegions.UnionCouncils.Add(briefModel);
+                    }
+                    else if (regionLevel == RegionLevelTypeCatalog.Tehsil)
+                    {
+                        filteredRegions.Tehsils.Add(briefModel);
+                    }
+                    else if (regionLevel == RegionLevelTypeCatalog.District)
+                    {
+                        filteredRegions.Districts.Add(briefModel);
+                    }
+                    else if (regionLevel == RegionLevelTypeCatalog.State)
+                    {
+                        filteredRegions.States.Add(briefModel);
+                    }
+                    else
+                    {
+                        filteredRegions.Countries.Add(briefModel);
+                    }
+                }
             }
-            else if (regionLevel == RegionLevelTypeCatalog.Tehsil)
-            {
-                filteredRegions.Tehsils.Add(briefModel);
-            }
-            else if (regionLevel == RegionLevelTypeCatalog.District)
-            {
-                filteredRegions.Districts.Add(briefModel);
-            }
-            else if (regionLevel == RegionLevelTypeCatalog.State)
-            {
-                filteredRegions.States.Add(briefModel);
-            }
-            else
-            {
-                filteredRegions.Countries.Add(briefModel);
-            }
-
             return filteredRegions;
         }
     }

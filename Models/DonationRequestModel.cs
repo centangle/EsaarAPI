@@ -132,11 +132,11 @@ namespace Models
         public int? OrganizationId { get; set; }
         public string MemberName { get; set; }
         public int? CampaignId { get; set; }
-        public DonationRequestTypeCatalog? Type { get; set; }
+        public List<DonationRequestTypeCatalog> Types { get; set; }
         public TimePeriodCatalog? TimePeriod { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public StatusCatalog? Status { get; set; }
+        public List<StatusCatalog> Statuses { get; set; }
 
     }
 }

@@ -134,11 +134,11 @@ namespace Models
         }
         public int? OrganizationId { get; set; }
         public string MemberName { get; set; }
-        public OrganizationRequestTypeCatalog? Type { get; set; }
+        public List<OrganizationRequestTypeCatalog> Types { get; set; }
         public TimePeriodCatalog? TimePeriod { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public StatusCatalog? Status { get; set; }
+        public List<StatusCatalog> Statuses { get; set; }
 
     }
 }

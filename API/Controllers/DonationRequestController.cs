@@ -25,7 +25,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPaginated")]
-        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, DonationRequestTypeCatalog? type = null, StatusCatalog? status = null, TimePeriodCatalog? timePeriod = null,
+        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, [FromQuery] List<DonationRequestTypeCatalog> types = null,[FromQuery] List<StatusCatalog> statuses = null, TimePeriodCatalog? timePeriod = null,
             DateTime? startDate = null, DateTime? endDate = null, string memberName = null
             , string orderByColumn = null, bool calculateTotal = true)
         {
@@ -33,8 +33,8 @@ namespace API.Controllers
             DonationRequestSearchModel filters = new DonationRequestSearchModel();
             filters.OrganizationId = organizationId;
             filters.MemberName = memberName;
-            filters.Type = type;
-            filters.Status = status;
+            filters.Types = types ?? new List<DonationRequestTypeCatalog>();
+            filters.Statuses = statuses ?? new List<StatusCatalog>();
             filters.TimePeriod = timePeriod;
             filters.StartDate = startDate;
             filters.EndDate = endDate;

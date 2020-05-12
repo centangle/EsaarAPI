@@ -63,16 +63,21 @@ namespace Models
         public ICollection<OrganizationModel> children { get; set; }
         public List<OrganizationMemberRolesCatalog> CurrentMemberRoles { get; set; }
     }
+    public class OrganizationRegionSearch
+    {
+        public RegionLevelTypeCatalog regionLevel { get; set; }
+        public int regionId { get; set; }
+    }
     public class OrganizationSearchModel : BaseSearchModel
     {
         public string Name { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
         public float? Radius { get; set; }
-        public int? RootCategoryId { get; set; }
+        public List<int> RootCategories { get; set; }
         public int? RegionId { get; set; }
         public OrganizationSearchTypeCatalog? SearchType { get; set; }
-        public RegionLevelTypeCatalog? RegionLevel { get; set; }
+        public List<OrganizationRegionSearch> Regions { get; set; }
         public RegionRadiusTypeCatalog? RadiusType { get; set; }
 
     }

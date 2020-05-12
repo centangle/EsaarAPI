@@ -38,16 +38,15 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPaginated")]
-        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, double? longitude = null, double? latitude = null, int? rootCategoryId = null, OrganizationSearchTypeCatalog? searchType = null, RegionLevelTypeCatalog? regionLevel = null, int? regionId = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, double? longitude = null, double? latitude = null, [FromQuery] List<int> rootCategories = null, OrganizationSearchTypeCatalog? searchType = null, [FromQuery] List<OrganizationRegionSearch> regions = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null, string orderByColumn = null, bool calculateTotal = true)
         {
             OrganizationSearchModel filters = new OrganizationSearchModel();
             filters.Name = name;
             filters.Longitude = longitude ?? 0;
             filters.Latitude = latitude ?? 0;
-            filters.RegionLevel = regionLevel;
-            filters.RegionId = regionId;
+            filters.Regions = regions ?? new List<OrganizationRegionSearch>();
             filters.Radius = radius;
-            filters.RootCategoryId = rootCategoryId;
+            filters.RootCategories = rootCategories ?? new List<int>();
             filters.RadiusType = radiusType;
             filters.SearchType = searchType;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
@@ -121,7 +120,7 @@ namespace API.Controllers
         {
             return await _logic.DeleteOrganization(id);
         }
-       
+
 
         [HttpGet]
         [Route("GetOrganizationSearchType")]

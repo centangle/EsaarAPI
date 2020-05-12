@@ -494,8 +494,8 @@ namespace EntityProvider
                                     let isLoggedInMemberOrgVolunteer = ov != null
                                     where
                                     (filters.OrganizationId == null || dro.OrganizationId == filters.OrganizationId)
-                                    && (filters.Type == null || dr.Type == (int)filters.Type.Value)
-                                    && (filters.Status == null || dro.Status == (int)filters.Status.Value)
+                                    && (filters.Types.Count == 0 || filters.Types.Contains((DonationRequestTypeCatalog)dr.Type))
+                                    && (filters.Statuses.Count == 0 || filters.Statuses.Contains((StatusCatalog)dro.Status))
                                     && (string.IsNullOrEmpty(filters.MemberName) || m.Name.Contains(filters.MemberName) || m.NativeName.Contains(filters.MemberName))
                                     && (dr.CreatedDate >= startDateFilter && dr.CreatedDate <= endDateFilter)
                                     && dr.IsDeleted == false
@@ -610,7 +610,8 @@ namespace EntityProvider
                                     from v in tam.DefaultIfEmpty()
                                     where
                                     (filters.OrganizationId == null || dro.OrganizationId == filters.OrganizationId)
-                                    && (filters.Type == null || dr.Type == (int)filters.Type.Value)
+                                    && (filters.Types.Count == 0 || filters.Types.Contains((DonationRequestTypeCatalog)dr.Type))
+                                    && (filters.Statuses.Count == 0 || filters.Statuses.Contains((StatusCatalog)dro.Status))
                                     && dr.IsDeleted == false
                                     && memberVolunteerOrgz.Any(x => x == o.Id)
                                     && (dro.Status >= (int)StatusCatalog.Approved)

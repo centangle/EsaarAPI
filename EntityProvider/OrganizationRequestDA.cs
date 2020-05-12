@@ -241,8 +241,8 @@ namespace EntityProvider
                                     let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == o.Id)
                                     where
                                     (filters.OrganizationId == null || ort.OrganizationId == filters.OrganizationId)
-                                    && (filters.Type == null || ort.Type == (int)filters.Type.Value)
-                                    && (filters.Status == null || ort.Status == (int)filters.Status.Value)
+                                    && (filters.Types.Count == 0 || filters.Types.Contains((OrganizationRequestTypeCatalog)ort.Type))
+                                    && (filters.Statuses.Count == 0 || filters.Statuses.Contains((StatusCatalog)ort.Status))
                                     && (string.IsNullOrEmpty(filters.MemberName) || m.Name.Contains(filters.MemberName) || m.NativeName.Contains(filters.MemberName))
                                     && (ort.CreatedDate >= startDateFilter && ort.CreatedDate <= endDateFilter)
                                     && ort.IsDeleted == false
