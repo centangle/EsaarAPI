@@ -43,7 +43,6 @@ namespace API
             // .AddJsonFile($"appsettings/{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
             // .AddEnvironmentVariables();
             //configuration = builder.Build();
-
             Configuration = configuration;
         }
         public IConfiguration Configuration { get; }
