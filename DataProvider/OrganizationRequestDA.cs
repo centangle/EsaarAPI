@@ -247,7 +247,7 @@ namespace DataProvider
                                         let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == o.Id)
                                         where
                                         (filters.OrganizationId == null || ort.OrganizationId == filters.OrganizationId)
-                                        && (filters.Types == null || ort.Type == (int)filters.Types.Value)
+                                        && (filters.Types == null || filters.Types.Contains((OrganizationRequestTypeCatalog)ort.Type))
                                         && ort.IsDeleted == false
                                         &&
                                         (

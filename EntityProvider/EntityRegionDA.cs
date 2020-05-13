@@ -199,9 +199,9 @@ namespace EntityProvider
         }
         private async Task AddEntityRegions(CharityContext _context, ICollection<EntityRegionModel> entityRegions)
         {
-            foreach (var item in entityRegions)
+            foreach (var region in entityRegions)
             {
-                var dbModel = await SetEntityRegion(_context, new EntityRegion(), item);
+                var dbModel = await SetEntityRegion(_context, new EntityRegion(), region);
                 _context.EntityRegions.Add(dbModel);
             }
         }

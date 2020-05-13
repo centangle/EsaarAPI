@@ -516,7 +516,7 @@ namespace DataProvider
                                         let isLoggedInMemberOrgVolunteer = ov != null
                                         where
                                         (filters.OrganizationId == null || dro.OrganizationId == filters.OrganizationId)
-                                        && (filters.Type == null || dr.Type == (int)filters.Type.Value)
+                                        && (filters.Types == null || filters.Types.Contains((DonationRequestTypeCatalog)dr.Type))
                                         && dr.IsDeleted == false
                                         &&
                                         (

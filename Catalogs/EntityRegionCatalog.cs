@@ -9,7 +9,8 @@ namespace Catalogs
     public enum EntityRegionTypeCatalog : int
     {
         Organization,
-        OrganizationMember
+        OrganizationMember,
+        Campaign
     }
     public enum EntityRegionRequestTypeCatalog : int
     {

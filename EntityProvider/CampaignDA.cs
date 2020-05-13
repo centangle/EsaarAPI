@@ -18,27 +18,17 @@ namespace EntityProvider
             var memberOrgRoles = (await GetMemberRoleForOrganization(_context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
             if (IsOrganizationMemberModerator(memberOrgRoles))
             {
-                using (var transaction = _context.Database.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        var dbModel = SetCampaign(new Campaign(), model);
-                        _context.Campaigns.Add(dbModel);
-                        bool result = await _context.SaveChangesAsync() > 0;
-                        if (result)
-                        {
-                            model.Id = dbModel.Id;
-                            AddCampaignItems(_context, model.Items, model.Id, model.Organization.Id);
-                            await _context.SaveChangesAsync();
-                        }
-                        transaction.Commit();
-                        return model.Id;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        throw ex;
-                    }
+                    var dbModel = SetCampaign(new Campaign(), model);
+                    _context.Campaigns.Add(dbModel);
+                    await _context.SaveChangesAsync();
+                    model.Id = dbModel.Id;
+                    return model.Id;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
                 }
             }
             else
@@ -49,31 +39,24 @@ namespace EntityProvider
             var memberOrgRoles = (await GetMemberRoleForOrganization(_context, model.Organization.Id, _loggedInMemberId)).FirstOrDefault();
             if (IsOrganizationMemberModerator(memberOrgRoles))
             {
-                using (var transaction = _context.Database.BeginTransaction())
+                try
                 {
-                    try
+                    Campaign dbModel = await _context.Campaigns.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
+                    if (dbModel != null)
                     {
-                        Campaign dbModel = await _context.Campaigns.Where(x => x.Id == model.Id && x.IsDeleted == false).FirstOrDefaultAsync();
-                        if (dbModel != null)
-                        {
-                            SetCampaign(dbModel, model);
-                            await ModifyCampaignItems(_context, model);
-                            bool result = await _context.SaveChangesAsync() > 0;
-                            transaction.Commit();
-                            return result;
-                        }
-                        return false;
+                        SetCampaign(dbModel, model);
+                        bool result = await _context.SaveChangesAsync() > 0;
+                        return result;
                     }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        throw ex;
-                    }
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
                 }
             }
             else
                 throw new KnownException("You are not authorized to perform this action");
-
         }
         public async Task<bool> DeleteCampaign(int id)
         {
@@ -184,46 +167,6 @@ namespace EntityProvider
             return dbModel;
 
         }
-        private void AddCampaignItems(CharityContext _context, ICollection<OrganizationItemModel> campaignItems, int campaignId, int organizationId)
-        {
-            foreach (var item in campaignItems)
-            {
-                item.Campaign = new BaseBriefModel
-                {
-                    Id = campaignId,
-                };
-                item.Organization = new BaseBriefModel
-                {
-                    Id = organizationId,
-                };
-                var dbModel = SetOrganizationItem(new OrganizationItem(), item);
-                _context.OrganizationItems.Add(dbModel);
-            }
-        }
-        private void UpdateCampaignItems(IEnumerable<OrganizationItem> modfiedItems, IEnumerable<OrganizationItemModel> campaignItems, int campaignId)
-        {
-            foreach (var dbModel in modfiedItems)
-            {
-                OrganizationItemModel model = campaignItems.Where(x => x.Id == dbModel.Id).FirstOrDefault();
-                SetOrganizationItem(dbModel, model);
-            }
-        }
-        private void DeleteCampaignItems(IEnumerable<OrganizationItem> deletedItems)
-        {
-            foreach (var item in deletedItems)
-            {
-                item.IsDeleted = true;
-            }
-        }
-        private async Task ModifyCampaignItems(CharityContext _context, CampaignModel model)
-        {
-            var masterList = await _context.OrganizationItems.Where(x => x.CampaignId == model.Id).ToListAsync();
-            var newItems = model.Items.Where(x => x.Id == 0).ToList();
-            var updatedItems = masterList.Where(m => model.Items.Any(s => m.Id == s.Id));
-            var deletedItems = masterList.Where(m => !model.Items.Any(s => m.Id == s.Id));
-            AddCampaignItems(_context, newItems, model.Id, model.Organization.Id);
-            UpdateCampaignItems(updatedItems, model.Items, model.Id);
-            DeleteCampaignItems(deletedItems);
-        }
+
     }
 }
