@@ -37,12 +37,12 @@ namespace API
         //readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-             .SetBasePath(env.ContentRootPath)
-             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-             .AddJsonFile($"appsettings/{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
-             .AddEnvironmentVariables();
-            configuration = builder.Build();
+            //var builder = new ConfigurationBuilder()
+            // .SetBasePath(env.ContentRootPath)
+            // .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            // .AddJsonFile($"appsettings/{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
+            // .AddEnvironmentVariables();
+            //configuration = builder.Build();
 
             Configuration = configuration;
         }
