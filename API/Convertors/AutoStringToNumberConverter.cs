@@ -124,7 +124,8 @@ namespace API.Convertors
                 if (int.TryParse(reader.GetString(), out number))
                     return number;
             }
-
+            else if (reader.TokenType == JsonTokenType.Null)
+                return 0;
             return reader.GetInt32();
         }
 
@@ -146,7 +147,8 @@ namespace API.Convertors
                 if (Int64.TryParse(reader.GetString(), out number))
                     return number;
             }
-
+            else if (reader.TokenType == JsonTokenType.Null)
+                return 0;
             return reader.GetInt64();
         }
 
@@ -168,7 +170,8 @@ namespace API.Convertors
                 if (double.TryParse(reader.GetString(), out number))
                     return number;
             }
-
+            else if (reader.TokenType == JsonTokenType.Null)
+                return 0;
             return reader.GetInt64();
         }
 
