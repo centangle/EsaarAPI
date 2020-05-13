@@ -15,7 +15,6 @@ namespace EntityProvider
         public async Task<PaginatedResultModel<OrganizationModel>> GetOrganizations(OrganizationSearchModel filters)
         {
             var organizationQueryable = (from o in _context.Organizations
-
                                          where
                                          (
                                            string.IsNullOrEmpty(filters.Name)
@@ -94,7 +93,7 @@ namespace EntityProvider
              ).Distinct().AsQueryable();
             if (filters.RootCategories.Count() > 0)
             {
-                (from o in filteredQueryable
+                filteredQueryable = (from o in filteredQueryable
                  join oi in _context.OrganizationItems on o.Id equals oi.OrganizationId
                  join i in _context.Items on oi.ItemId equals i.Id
                  where filters.RootCategories.Contains(i.RootId ?? 0)

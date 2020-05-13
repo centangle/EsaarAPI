@@ -35,35 +35,21 @@ namespace API
     public class Startup
     {
         //readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
+            var builder = new ConfigurationBuilder()
+             .SetBasePath(env.ContentRootPath)
+             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+             .AddJsonFile($"appsettings/{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
+             .AddEnvironmentVariables();
+            configuration = builder.Build();
+
             Configuration = configuration;
         }
         public IConfiguration Configuration { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy(name: MyAllowSpecificOrigins,
-            //                      builder =>
-            //                      {
-            //                          builder.WithOrigins("*");
-            //                      });
-            //});
-
-
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("CorsApiPolicy",
-            //    builder =>
-            //    {
-            //        builder.WithOrigins("http://esaar.hostober.pk")
-            //            .WithHeaders(new[] { "authorization", "content-type", "accept" })
-            //            .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" });
-            //    });
-            //});
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("AuthConnection")));
@@ -71,11 +57,6 @@ namespace API
             services.AddDbContext<CharityContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("CharityConnection"), x => x.UseNetTopologySuite()));
-
-            //services.AddDbContext<CharityAuditContext>(options =>
-            //    options.UseSqlServer(
-            //        Configuration.GetConnectionString("AuditConnection")));
-
 
 
             services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
