@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +21,17 @@ namespace Catalogs
         Meters,
         Kilometers
     }
-    public enum RegionSearchTypeCatalog : int
+    public enum RegionSearchMethodCatalog : int
     {
         Contains,
         Intersects
+    }
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum RegionSearchTypeCatalog : int
+    {
+        InMyRegion,
+        InRadius,
+        ByRegion
+
     }
 }

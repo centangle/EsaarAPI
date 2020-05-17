@@ -8,12 +8,14 @@ namespace EntityProvider
 {
     public partial class DataAccess
     {
-        public async Task<List<ItemBriefModel>> GetOrganizationCategories(int organizationId)
+        public async Task<List<ItemBriefModel>> GetRootCategoriesByOrgOrCampaign(int organizationId, int? campaignId = null)
         {
             var categoriesIds = (await (from i in _context.Items
                                         join oi in _context.OrganizationItems on i.Id equals oi.ItemId
                                         where
+
                                         oi.OrganizationId == organizationId
+                                        && (campaignId == null || oi.CampaignId == campaignId)
                                         && i.IsDeleted == false
                                         && oi.IsDeleted == false
                                         && i.IsPeripheral == true

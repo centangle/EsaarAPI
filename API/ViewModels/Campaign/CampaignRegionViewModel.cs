@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace API.ViewModels.Campaign
 {
+    [Serializable]
     public class CampaignRegionViewModel
     {
         public CampaignRegionViewModel()

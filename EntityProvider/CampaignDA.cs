@@ -106,41 +106,7 @@ namespace EntityProvider
                               }
                           }).FirstOrDefaultAsync();
         }
-        public async Task<PaginatedResultModel<CampaignModel>> GetCampaigns(CampaignSearchModel filters)
-        {
-            var campaignQueryable = (from c in _context.Campaigns
-                                     join o in _context.Organizations on c.OrganizationId equals o.Id
-                                     join e in _context.Events on c.EventId equals e.Id into le
-                                     from e in le.DefaultIfEmpty()
-                                     where (string.IsNullOrEmpty(filters.Name) || c.Name.Contains(filters.Name) || c.NativeName.Contains(filters.Name))
-                                     && (filters.OrganizationId == null || c.OrganizationId == filters.OrganizationId)
-                                     && (filters.EventId == null || c.EventId == filters.EventId)
-                                     && c.IsDeleted == false
-                                     select new CampaignModel
-                                     {
-                                         Id = c.Id,
-                                         Name = c.Name,
-                                         NativeName = c.NativeName,
-                                         Description = c.Description,
-                                         ImageUrl = c.ImageUrl,
-                                         IsActive = c.IsActive,
-                                         StartDate = c.StartDate,
-                                         EndDate = c.EndDate,
-                                         Organization = new BaseBriefModel()
-                                         {
-                                             Id = o.Id,
-                                             Name = o.Name,
-                                             NativeName = o.NativeName,
-                                         },
-                                         Event = new BaseBriefModel()
-                                         {
-                                             Id = e == null ? 0 : e.Id,
-                                             Name = e == null ? "" : e.Name,
-                                             NativeName = e == null ? "" : e.NativeName,
-                                         }
-                                     }).AsQueryable();
-            return await campaignQueryable.Paginate(filters);
-        }
+
         private Campaign SetCampaign(Campaign dbModel, CampaignModel model)
         {
             if (model.Organization == null || model.Organization.Id == 0)
@@ -166,6 +132,17 @@ namespace EntityProvider
             }
             return dbModel;
 
+        }
+
+        public async Task<List<ItemBriefModel>> GetRootCategoriesByCampaign(int campaignId)
+        {
+
+            Campaign dbModel = await _context.Campaigns.Where(x => x.Id == campaignId && x.IsDeleted == false).FirstOrDefaultAsync();
+            if (dbModel != null)
+            {
+                return await GetRootCategoriesByOrgOrCampaign(dbModel.OrganizationId, campaignId);
+            }
+            return new List<ItemBriefModel>();
         }
 
     }

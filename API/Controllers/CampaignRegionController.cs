@@ -50,7 +50,7 @@ namespace API.Controllers
                     EntityType = EntityRegionTypeCatalog.Campaign,
                     Region = new RegionBriefModel
                     {
-                        Id = region.RegionId
+                        Id = region.Region.Id
                     },
                     RegionLevel = region.RegionLevel
                 };

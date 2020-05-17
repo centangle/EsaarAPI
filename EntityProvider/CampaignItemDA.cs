@@ -63,6 +63,20 @@ namespace EntityProvider
                 item.IsDeleted = true;
             }
         }
+        public async Task<PaginatedResultModel<OrganizationItemPaginationModel>> GetCampaignItems(OrganizationItemSearchModel filters)
+        {
+            var campaign = await _context.Campaigns.Where(x => x.Id == filters.CampaignId).FirstOrDefaultAsync();
+            if (campaign != null)
+            {
+                filters.OrganizationId = campaign.OrganizationId;
+                return await GetOrganizationItems(filters);
+            }
+            else
+            {
+                return new PaginatedResultModel<OrganizationItemPaginationModel>();
+            }
+
+        }
 
     }
 }

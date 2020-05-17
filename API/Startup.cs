@@ -26,7 +26,8 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using System.Text.Json.Serialization;
-using API.Convertors;
+//using System.Text.Json.Serialization;
+//using API.Convertors;
 //using AuditProvider.DbModels;
 //using AuditProvider;
 
@@ -71,24 +72,24 @@ namespace API
                 options.Password.RequireUppercase = false;
             });
 
-            services.AddControllersWithViews().AddJsonOptions(o =>
+            //services.AddControllersWithViews().AddJsonOptions(o =>
+            //{
+            //    o.JsonSerializerOptions.PropertyNamingPolicy = null;
+            //    o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            //    //o.JsonSerializerOptions.Converters.Add(new JsonStringEnumMemberConverter());
+            //    o.JsonSerializerOptions.Converters.Add(new IntToStringConverter());
+            //    o.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
+            //    o.JsonSerializerOptions.Converters.Add(new FloatToStringConverter());
+            //    o.JsonSerializerOptions.Converters.Add(new DoubleToStringConverter());
+            //});
+
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
             {
-                o.JsonSerializerOptions.PropertyNamingPolicy = null;
-                o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                //o.JsonSerializerOptions.Converters.Add(new JsonStringEnumMemberConverter());
-                o.JsonSerializerOptions.Converters.Add(new IntToStringConverter());
-                o.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
-                o.JsonSerializerOptions.Converters.Add(new FloatToStringConverter());
-                o.JsonSerializerOptions.Converters.Add(new DoubleToStringConverter());
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
 
-            //services.AddControllersWithViews().AddNewtonsoftJson(options =>
-            //{
-            //    options.SerializerSettings.Converters.Add(new StringEnumConverter());
-            //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            //    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-
-            //});
             services.AddCors();
             services.AddRazorPages();
             services.AddTransient<Logic, Logic>();
@@ -154,6 +155,7 @@ namespace API
                 });
 
             });
+            services.AddSwaggerGenNewtonsoftSupport();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)

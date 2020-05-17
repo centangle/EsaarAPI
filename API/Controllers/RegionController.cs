@@ -111,5 +111,12 @@ namespace API.Controllers
             return Enum.GetValues(typeof(RegionRadiusTypeCatalog)).Cast<RegionRadiusTypeCatalog>().ToArray();
         }
 
+        [HttpGet]
+        [Route("GetRegionSearchType")]
+        public Array GetRegionSearchType()
+        {
+            return Enum.GetValues(typeof(RegionSearchTypeCatalog)).Cast<RegionSearchTypeCatalog>().ToArray();
+        }
+
     }
 }

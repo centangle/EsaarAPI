@@ -8,6 +8,7 @@ using Dapper;
 using Microsoft.SqlServer.Types;
 using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace EntityProvider
 {
@@ -26,11 +27,11 @@ namespace EntityProvider
             //poly = point.BufferWithTolerance(radiusInMeters, 0.01, true); 
         }
 
-        public async Task<FilteredRegionsModel> FilterRegions(double latitude, double longitude, float radius, RegionSearchTypeCatalog searchType, RegionRadiusTypeCatalog? radiusType = null)
+        public async Task<FilteredRegionsModel> FilterRegions(double latitude, double longitude, float radius, RegionSearchMethodCatalog searchType, RegionRadiusTypeCatalog? radiusType = null)
         {
             FilteredRegionsModel model = new FilteredRegionsModel();
             var searchRegionPolygon = SqlGeography.Point(latitude, longitude, 4326);
-            if (searchType == RegionSearchTypeCatalog.Intersects)
+            if (searchType == RegionSearchMethodCatalog.Intersects)
             {
                 searchRegionPolygon = await GetRegionRadius(latitude, longitude, radius, radiusType ?? RegionRadiusTypeCatalog.Meters);
             }
@@ -55,7 +56,7 @@ namespace EntityProvider
             return model;
 
         }
-        private string GetRegionsInsideRadiusQuery(string tableName, RegionSearchTypeCatalog searchType)
+        private string GetRegionsInsideRadiusQuery(string tableName, RegionSearchMethodCatalog searchType)
         {
             return $"Select * from {tableName} where Geometry.MakeValid().ST{searchType}( geometry::STGeomFromText(@searchRegionPolygon, 4326))=1";
         }
@@ -72,6 +73,48 @@ namespace EntityProvider
                 return (await connection.QueryAsync<string>("dbo.sp_GetCircularPolygon", new { @point = point, @radius = radius },
                     commandType: CommandType.StoredProcedure)).ToList().FirstOrDefault();
             }
+        }
+
+        private async Task<FilteredRegionsModel> GetRegionsByLatLong(IRadiusRegionSearch filters)
+        {
+            return await FilterRegions(filters.Latitude, filters.Longitude, 0, RegionSearchMethodCatalog.Contains, null);
+        }
+        private async Task<FilteredRegionsModel> GetRegionsInRadius(IRadiusRegionSearch filters)
+        {
+            return await FilterRegions(filters.Latitude, filters.Longitude, filters.Radius ?? 1, RegionSearchMethodCatalog.Intersects, filters.RadiusType);
+        }
+        private FilteredRegionsModel GetRegionsByRegionLevelAndId(List<RegionLevelSearchModel> regions)
+        {
+            FilteredRegionsModel filteredRegions = new FilteredRegionsModel();
+            if (regions.Count > 0)
+            {
+                foreach (var region in regions)
+                {
+                    var regionLevel = region.regionLevel;
+                    BaseBriefModel briefModel = new BaseBriefModel { Id = region.regionId };
+                    if (regionLevel == RegionLevelTypeCatalog.UnionCouncil)
+                    {
+                        filteredRegions.UnionCouncils.Add(briefModel);
+                    }
+                    else if (regionLevel == RegionLevelTypeCatalog.Tehsil)
+                    {
+                        filteredRegions.Tehsils.Add(briefModel);
+                    }
+                    else if (regionLevel == RegionLevelTypeCatalog.District)
+                    {
+                        filteredRegions.Districts.Add(briefModel);
+                    }
+                    else if (regionLevel == RegionLevelTypeCatalog.State)
+                    {
+                        filteredRegions.States.Add(briefModel);
+                    }
+                    else
+                    {
+                        filteredRegions.Countries.Add(briefModel);
+                    }
+                }
+            }
+            return filteredRegions;
         }
     }
 }

@@ -30,13 +30,4 @@ namespace Catalogs
     {
         General
     }
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum OrganizationSearchTypeCatalog : int
-    {
-        [EnumMember(Value = "Organizations In My Region")]
-        OrganizationInMyRegion,
-        OrganizationInRadius,
-        OrganizationByRegion
-
-    }
 }

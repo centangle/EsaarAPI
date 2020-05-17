@@ -1,4 +1,5 @@
-﻿using Catalogs;
+﻿using API.ViewModels.Abstract;
+using Catalogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace API.ViewModels
 {
     public class EntityRegionViewModel
     {
-        public int RegionId { get; set; }
+        public BaseViewModel Region { get; set; }
         public RegionLevelTypeCatalog RegionLevel { get; set; }
     }
 }

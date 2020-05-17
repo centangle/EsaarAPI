@@ -1,4 +1,5 @@
 ﻿using Models;
+using Models.BriefModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,10 @@ namespace BusinessLogic
         public async Task<PaginatedResultModel<CampaignModel>> GetCampaigns(CampaignSearchModel filters)
         {
             return await _dataAccess.GetCampaigns(filters);
+        }
+        public async Task<List<ItemBriefModel>> GetRootCategoriesByCampaign(int campaignId)
+        {
+            return await _dataAccess.GetRootCategoriesByCampaign(campaignId);
         }
     }
 }

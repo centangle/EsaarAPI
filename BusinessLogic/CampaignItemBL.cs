@@ -12,5 +12,9 @@ namespace BusinessLogic
         {
             return await _dataAccess.ModifyCampaignItems(campaignId, items);
         }
+        public async Task<PaginatedResultModel<OrganizationItemPaginationModel>> GetCampaignItems(OrganizationItemSearchModel filters)
+        {
+            return await _dataAccess.GetCampaignItems(filters);
+        }
     }
 }

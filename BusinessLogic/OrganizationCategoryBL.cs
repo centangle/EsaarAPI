@@ -9,9 +9,9 @@ namespace BusinessLogic
 {
     public partial class Logic
     {
-        public async Task<List<ItemBriefModel>> GetOrganizationCategories(int organizationId)
+        public async Task<List<ItemBriefModel>> GetRootCategoriesByOrganization(int organizationId)
         {
-            return await _dataAccess.GetOrganizationCategories(organizationId);
+            return await _dataAccess.GetRootCategoriesByOrgOrCampaign(organizationId);
         }
     }
 }

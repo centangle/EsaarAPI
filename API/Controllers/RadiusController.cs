@@ -22,7 +22,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<FilteredRegionsModel> Radius()
         {
-            return await _logic.GetAllRegionsInRadius(33.521527, 73.1741041, 10, Catalogs.RegionSearchTypeCatalog.Intersects, Catalogs.RegionRadiusTypeCatalog.Kilometers);
+            return await _logic.GetAllRegionsInRadius(33.521527, 73.1741041, 10, Catalogs.RegionSearchMethodCatalog.Intersects, Catalogs.RegionRadiusTypeCatalog.Kilometers);
         }
     }
 }

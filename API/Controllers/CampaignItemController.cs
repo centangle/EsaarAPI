@@ -24,16 +24,15 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPaginated")]
-        public async Task<PaginatedResultModel<OrganizationItemPaginationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int organizationId, int campaignId, SearchItemTypeCatalog itemType, string itemName = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<OrganizationItemPaginationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int campaignId, SearchItemTypeCatalog itemType, string itemName = null, string orderByColumn = null, bool calculateTotal = true)
         {
 
             OrganizationItemSearchModel filters = new OrganizationItemSearchModel();
             filters.ItemName = itemName;
             filters.CampaignId = campaignId;
-            filters.OrganizationId = organizationId;
             filters.Type = itemType;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
-            return await _logic.GetOrganizationItems(filters);
+            return await _logic.GetCampaignItems(filters);
         }
 
         [HttpPost]

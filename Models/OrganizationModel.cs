@@ -2,6 +2,8 @@
 using Models.Base;
 using Models.BriefModel;
 using Models.Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -63,12 +65,8 @@ namespace Models
         public ICollection<OrganizationModel> children { get; set; }
         public List<OrganizationMemberRolesCatalog> CurrentMemberRoles { get; set; }
     }
-    public class OrganizationRegionSearch
-    {
-        public RegionLevelTypeCatalog regionLevel { get; set; }
-        public int regionId { get; set; }
-    }
-    public class OrganizationSearchModel : BaseSearchModel
+    [Serializable]
+    public class OrganizationSearchModel : BaseSearchModel, IRadiusRegionSearch
     {
         public string Name { get; set; }
         public double Longitude { get; set; }
@@ -76,8 +74,9 @@ namespace Models
         public float? Radius { get; set; }
         public List<int> RootCategories { get; set; }
         public int? RegionId { get; set; }
-        public OrganizationSearchTypeCatalog? SearchType { get; set; }
-        public List<OrganizationRegionSearch> Regions { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public RegionSearchTypeCatalog? SearchType { get; set; }
+        public List<RegionLevelSearchModel> Regions { get; set; }
         public RegionRadiusTypeCatalog? RadiusType { get; set; }
 
     }

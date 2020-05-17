@@ -34,17 +34,17 @@ namespace API.Controllers
         [Route("GetCategories/{id}")]
         public async Task<List<ItemBriefModel>> GetCategories(int id)
         {
-            return await _logic.GetOrganizationCategories(id);
+            return await _logic.GetRootCategoriesByOrganization(id);
         }
         [HttpGet]
         [Route("GetPaginated")]
-        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, double? longitude = null, double? latitude = null, [FromQuery] List<int> rootCategories = null, OrganizationSearchTypeCatalog? searchType = null, [FromQuery] List<OrganizationRegionSearch> regions = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, double? longitude = null, double? latitude = null, [FromQuery] List<int> rootCategories = null, RegionSearchTypeCatalog? searchType = null, [FromQuery] List<RegionLevelSearchModel> regions = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null, string orderByColumn = null, bool calculateTotal = true)
         {
             OrganizationSearchModel filters = new OrganizationSearchModel();
             filters.Name = name;
             filters.Longitude = longitude ?? 0;
             filters.Latitude = latitude ?? 0;
-            filters.Regions = regions ?? new List<OrganizationRegionSearch>();
+            filters.Regions = regions ?? new List<RegionLevelSearchModel>();
             filters.Radius = radius;
             filters.RootCategories = rootCategories ?? new List<int>();
             filters.RadiusType = radiusType;
@@ -122,11 +122,6 @@ namespace API.Controllers
         }
 
 
-        [HttpGet]
-        [Route("GetOrganizationSearchType")]
-        public Array GetOrganizationSearchType()
-        {
-            return Enum.GetValues(typeof(OrganizationSearchTypeCatalog)).Cast<OrganizationSearchTypeCatalog>().ToArray();
-        }
+        
     }
 }

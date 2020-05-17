@@ -1,4 +1,5 @@
-﻿using Models.Base;
+﻿using Catalogs;
+using Models.Base;
 using Models.BriefModel;
 using Models.Interfaces;
 using System;
@@ -31,13 +32,21 @@ namespace Models
 
         public List<OrganizationItemModel> Items { get; set; }
     }
-    public class CampaignSearchModel : BaseSearchModel
+    public class CampaignSearchModel : BaseSearchModel, IRadiusRegionSearch
     {
         public CampaignSearchModel()
         {
             OrderByColumn = "Name";
         }
         public string Name { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
+        public float? Radius { get; set; }
+        public List<int> RootCategories { get; set; }
+        public int? RegionId { get; set; }
+        public RegionSearchTypeCatalog? SearchType { get; set; }
+        public List<RegionLevelSearchModel> Regions { get; set; }
+        public RegionRadiusTypeCatalog? RadiusType { get; set; }
         public int? OrganizationId { get; set; }
         public int? EventId { get; set; }
 
