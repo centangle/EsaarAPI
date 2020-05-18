@@ -23,7 +23,7 @@ namespace EntityProvider
                 var updatedItems = masterList.Where(m => items.Any(s => m.Id == s.Id));
                 var deletedItems = masterList.Where(m => !items.Any(s => m.Id == s.Id));
                 AddCampaignItems(_context, newItems, campaign.Id, campaign.OrganizationId);
-                UpdateCampaignItems(updatedItems, items, campaign.Id);
+                UpdateCampaignItems(updatedItems, items, campaign.Id, campaign.OrganizationId);
                 DeleteCampaignItems(deletedItems);
                 return (await _context.SaveChangesAsync() > 0);
             }
@@ -48,12 +48,20 @@ namespace EntityProvider
                 _context.OrganizationItems.Add(dbModel);
             }
         }
-        private void UpdateCampaignItems(IEnumerable<OrganizationItem> modfiedItems, IEnumerable<OrganizationItemModel> campaignItems, int campaignId)
+        private void UpdateCampaignItems(IEnumerable<OrganizationItem> modfiedItems, IEnumerable<OrganizationItemModel> campaignItems, int campaignId,int organizationId)
         {
             foreach (var dbModel in modfiedItems)
             {
-                OrganizationItemModel model = campaignItems.Where(x => x.Id == dbModel.Id).FirstOrDefault();
-                SetOrganizationItem(dbModel, model);
+                OrganizationItemModel item = campaignItems.Where(x => x.Id == dbModel.Id).FirstOrDefault();
+                item.Campaign = new BaseBriefModel
+                {
+                    Id = campaignId,
+                };
+                item.Organization = new BaseBriefModel
+                {
+                    Id = organizationId,
+                };
+                SetOrganizationItem(dbModel, item);
             }
         }
         private void DeleteCampaignItems(IEnumerable<OrganizationItem> deletedItems)

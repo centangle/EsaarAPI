@@ -259,6 +259,8 @@ namespace EntityProvider
                                     join o in _context.Organizations on oi.OrganizationId equals o.Id
                                     join i in _context.Items on oi.ItemId equals i.Id
                                     join iuom in _context.Uoms on i.DefaultUom equals iuom.Id
+                                    join ciuom in _context.Uoms on oi.CampaignItemUom equals ciuom.Id into lciuom
+                                    from ciuom in lciuom.DefaultIfEmpty()
                                     where o.Id == filters.OrganizationId
                                     && (filters.CampaignId == null || oi.CampaignId == filters.CampaignId)
                                     && (filters.Type == SearchItemTypeCatalog.All || i.Type == (int)filters.Type)
@@ -288,6 +290,14 @@ namespace EntityProvider
                                             Name = iuom.Name,
                                             NativeName = iuom.NativeName,
                                             ParentId = iuom.ParentId,
+                                        },
+                                        CampaignItemTarget = oi.CampaignItemTarget ?? 0,
+                                        CampaignItemUOM = new UOMBriefModel()
+                                        {
+                                            Id = ciuom == null ? 0 : ciuom.Id,
+                                            Name = ciuom == null ? "" : ciuom.Name,
+                                            NativeName = ciuom == null ? "" : ciuom.NativeName,
+                                            NoOfBaseUnit = ciuom == null ? 0 : ciuom.NoOfBaseUnit,
                                         },
                                         IsActive = oi.IsActive,
                                     }).AsQueryable();

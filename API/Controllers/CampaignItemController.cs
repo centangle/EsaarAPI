@@ -44,15 +44,16 @@ namespace API.Controllers
             {
                 OrganizationItemModel campaignItem = new OrganizationItemModel
                 {
+                    Id = item.Id,
                     Item = new ItemBriefModel
                     {
-                        Id = item.Id,
+                        Id = item.Item.Id,
                     },
                     CampaignItemUOM = new UOMBriefModel
                     {
-                        Id = item.UOMId,
+                        Id = item.CampaignItemUOM.Id,
                     },
-                    CampaignItemTarget = item.Target
+                    CampaignItemTarget = item.CampaignItemTarget
 
                 };
                 campaignItems.Add(campaignItem);
