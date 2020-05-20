@@ -50,7 +50,7 @@ namespace EntityProvider.Helpers
             var baseDate = DateTime.Now;
             if (timePeriod == null)
             {
-                endDate = migrationDate;
+                endDate = DateTime.Now;
             }
             else if (timePeriod.Value == TimePeriodCatalog.Today)
             {

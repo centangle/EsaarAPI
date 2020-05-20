@@ -457,7 +457,7 @@ namespace EntityProvider
         public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetDonationRequests(DonationRequestSearchModel filters)
         {
             DateTime startDateFilter = TimePeriodHelper.GetStartDate(filters.TimePeriod, filters.StartDate);
-            DateTime endDateFilter = TimePeriodHelper.GetStartDate(filters.TimePeriod, filters.EndDate);
+            DateTime endDateFilter = TimePeriodHelper.GetEndDate(filters.TimePeriod, filters.EndDate);
             var memberOrgRoles = await GetMemberRoleForOrganization(_context, null, _loggedInMemberId);
             List<int> memberModeratorOrgz = new List<int>();
             List<int> memberOwnedOrgz = new List<int>();
