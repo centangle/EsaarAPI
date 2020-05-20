@@ -13,7 +13,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class EventController : BaseController
     {
         private readonly Logic _logic;
@@ -24,6 +24,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("Get")]
+        [Authorize(Roles = "Admin")]
         public async Task<EventModel> Get(int id)
         {
             
@@ -43,6 +44,7 @@ namespace API.Controllers
         }
         [HttpPost]
         [Route("Create")]
+        [Authorize(Roles = "Admin")]
         public async Task<int> Create(EventModel model)
         {
             
@@ -50,6 +52,7 @@ namespace API.Controllers
         }
         [HttpPost]
         [Route("Update")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> Update(EventModel model)
         {
             
@@ -57,6 +60,7 @@ namespace API.Controllers
         }
         [HttpDelete]
         [Route("Delete")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> Delete(int id)
         {
             

@@ -13,7 +13,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class ItemController : BaseController
     {
         private readonly Logic _logic;
@@ -24,6 +24,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("Get")]
+        [Authorize(Roles = "Admin")]
         public async Task<ItemModel> Get(int id)
         {
 
@@ -31,6 +32,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetSingleItemTree")]
+        [Authorize(Roles = "Admin")]
         public async Task<IEnumerable<ItemModel>> GetSingleItemTree(int id, DataStructureCatalog dataStructure)
         {
 
@@ -65,6 +67,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetAllItems")]
+        [Authorize(Roles = "Admin")]
         public async Task<IEnumerable<ItemModel>> GetAllItems(DataStructureCatalog dataStructure)
         {
 
@@ -73,6 +76,7 @@ namespace API.Controllers
         }
         [HttpPost]
         [Route("Create")]
+        [Authorize(Roles = "Admin")]
         public async Task<int> Create(ItemModel model)
         {
 
@@ -80,6 +84,7 @@ namespace API.Controllers
         }
         [HttpPut]
         [Route("Update")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> Update(ItemModel model)
         {
 
@@ -87,6 +92,7 @@ namespace API.Controllers
         }
         [HttpPost]
         [Route("CreateSingleItemWithChildrens")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> CreateSingleItemWithChildrens(ItemModel model)
         {
 
@@ -94,6 +100,7 @@ namespace API.Controllers
         }
         [HttpPut]
         [Route("UpdateSingleItemWithChildren")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> UpdateSingleItemWithChildren(ItemModel model)
         {
 
@@ -101,6 +108,7 @@ namespace API.Controllers
         }
         [HttpPost]
         [Route("CreateMultipleItemsWithChildrens")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
         {
 
@@ -108,6 +116,7 @@ namespace API.Controllers
         }
         [HttpPut]
         [Route("UpdateMultipleItemsWithChildrens")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
         {
 
@@ -115,6 +124,7 @@ namespace API.Controllers
         }
         [HttpDelete]
         [Route("DeleteItemWithChildren")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> DeleteItemWithChildren(int id)
         {
 

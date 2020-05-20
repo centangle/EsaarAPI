@@ -13,7 +13,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class UOMController : BaseController
     {
         private readonly Logic _logic;
@@ -77,6 +77,7 @@ namespace API.Controllers
         }
         [HttpPost]
         [Route("Create")]
+        [Authorize(Roles = "Admin")]
         public async Task<int> Create(UOMModel model)
         {
             
@@ -84,6 +85,7 @@ namespace API.Controllers
         }
         [HttpPut]
         [Route("Update")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> Update(UOMModel model)
         {
             
@@ -91,6 +93,7 @@ namespace API.Controllers
         }
         [HttpPost]
         [Route("CreateSingleUOMWithChildrens")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> CreateSingleUOMWithChildrens(UOMModel model)
         {
             
@@ -98,6 +101,7 @@ namespace API.Controllers
         }
         [HttpPut]
         [Route("UpdateSingleUOMWithChildren")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> UpdateSingleUOMWithChildren(UOMModel model)
         {
             
@@ -105,6 +109,7 @@ namespace API.Controllers
         }
         [HttpPost]
         [Route("CreateMultipleUOMsWithChildrens")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> CreateMultipleUOMsWithChildrens(List<UOMModel> uOMs)
         {
             
@@ -112,6 +117,7 @@ namespace API.Controllers
         }
         [HttpPut]
         [Route("UpdateMultipleUOMsWithChildrens")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> UpdateMultipleUOMsWithChildrens(List<UOMModel> uOMs)
         {
             
@@ -119,6 +125,7 @@ namespace API.Controllers
         }
         [HttpDelete]
         [Route("DeleteUOMWithChildren")]
+        [Authorize(Roles = "Admin")]
         public async Task<bool> DeleteUOMWithChildren(int id)
         {
             
