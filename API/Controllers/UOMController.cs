@@ -13,7 +13,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class UOMController : BaseController
     {
         private readonly Logic _logic;
@@ -24,6 +24,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("Get")]
+        [Authorize(Roles = "Member,Admin")]
         public async Task<PaginatedResultModel<UOMModel>> Get(string name = null, bool forDropDown = false)
         {
             
@@ -34,6 +35,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("Get/{id:int}")]
+        [Authorize(Roles = "Member,Admin")]
         public async Task<UOMModel> Get(int id)
         {
             
@@ -41,6 +43,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetSingleUOMTree")]
+        [Authorize(Roles = "Member,Admin")]
         public async Task<IEnumerable<UOMModel>> GetSingleUOMTree(int id, DataStructureCatalog dataStructure)
         {
             
@@ -49,6 +52,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPeripheralUOMs")]
+        [Authorize(Roles = "Member,Admin")]
         public async Task<IEnumerable<UOMModel>> GetPeripheralUOMs()
         {
             
@@ -56,6 +60,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetRootUOMs")]
+        [Authorize(Roles = "Member,Admin")]
         public async Task<IEnumerable<UOMModel>> GetRootUOMs()
         {
             
@@ -63,6 +68,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetAllUOMs")]
+        [Authorize(Roles = "Member,Admin")]
         public async Task<IEnumerable<UOMModel>> GetAllUOMs(DataStructureCatalog dataStructure)
         {
             

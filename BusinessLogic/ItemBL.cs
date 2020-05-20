@@ -42,6 +42,10 @@ namespace BusinessLogic
         {
             return await _dataAccess.GetPeripheralItems(organizationId);
         }
+        public async Task<PaginatedResultModel<ItemModel>> GetPeripheralItemsPaginated(ItemSearchModel filters)
+        {
+            return await _dataAccess.GetPeripheralItemsPaginated(filters);
+        }
         public async Task<IEnumerable<ItemModel>> GetRootItems()
         {
             return await _dataAccess.GetRootItems();

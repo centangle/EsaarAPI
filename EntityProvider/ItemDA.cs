@@ -247,6 +247,43 @@ namespace EntityProvider
                               IsActive = i.IsActive,
                           }).ToListAsync();
         }
+        public async Task<PaginatedResultModel<ItemModel>> GetPeripheralItemsPaginated(ItemSearchModel filters)
+        {
+            var itemsQueryable = (from i in _context.Items
+                                  join pi in _context.Items on i.ParentId equals pi.Id into tpi
+                                  from pi in tpi.DefaultIfEmpty()
+                                  join uom in _context.Uoms on i.DefaultUom equals uom.Id into tuom
+                                  from uom in tuom.DefaultIfEmpty()
+                                  where i.IsPeripheral == true
+                                  && (string.IsNullOrEmpty(filters.Name) || i.Name.Contains(filters.Name) || i.NativeName.Contains(filters.Name))
+                                  && (filters.RootCategories.Count() == 0 || filters.RootCategories.Contains(i.RootId ?? 0))
+                                  && i.IsDeleted == false
+                                  select new ItemModel
+                                  {
+                                      Id = i.Id,
+                                      Parent = new BaseBriefModel()
+                                      {
+                                          Id = pi == null ? 0 : pi.Id,
+                                          Name = pi == null ? "" : pi.Name,
+                                          NativeName = pi == null ? "" : pi.NativeName
+                                      },
+                                      Name = i.Name,
+                                      NativeName = i.NativeName,
+                                      DefaultUOM = new UOMBriefModel()
+                                      {
+                                          Id = uom == null ? 0 : uom.Id,
+                                          Name = uom == null ? "" : uom.Name,
+                                          NativeName = uom == null ? "" : uom.NativeName,
+                                          NoOfBaseUnit = uom == null ? 0 : uom.NoOfBaseUnit,
+                                      },
+                                      Type = (ItemTypeCatalog)(i.Type ?? 0),
+                                      Description = i.Description,
+                                      ImageUrl = i.ImageUrl,
+                                      IsPeripheral = i.IsPeripheral,
+                                      IsActive = i.IsActive,
+                                  }).AsQueryable();
+            return await itemsQueryable.Paginate(filters);
+        }
         public async Task<List<ItemModel>> GetRootItems()
         {
             return await (from i in _context.Items
@@ -292,7 +329,7 @@ namespace EntityProvider
                 SetItemsUOM(uoms, result);
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

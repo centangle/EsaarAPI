@@ -88,4 +88,9 @@ namespace Models
         }
         public ICollection<ItemModel> children { get; set; }
     }
+    public class ItemSearchModel : BaseSearchModel
+    {
+        public string Name { get; set; }
+        public List<int> RootCategories { get; set; }
+    }
 }

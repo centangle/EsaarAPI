@@ -13,7 +13,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class ItemController : BaseController
     {
         private readonly Logic _logic;
@@ -26,35 +26,48 @@ namespace API.Controllers
         [Route("Get")]
         public async Task<ItemModel> Get(int id)
         {
-            
+
             return await _logic.GetItem(id);
         }
         [HttpGet]
         [Route("GetSingleItemTree")]
         public async Task<IEnumerable<ItemModel>> GetSingleItemTree(int id, DataStructureCatalog dataStructure)
         {
-            
+
             bool getHierarichalData = (dataStructure == DataStructureCatalog.List ? false : true);
             return await _logic.GetSingleItemHierarchy(id, getHierarichalData);
         }
         [HttpGet]
         [Route("GetPeripheralItems")]
+        [Authorize(Roles = "Member,Admin")]
         public async Task<IEnumerable<ItemModel>> GetPeripheralItems(int? organizationId = null)
         {
             return await _logic.GetPeripheralItems(organizationId);
         }
         [HttpGet]
+        [Route("GetPeripheralItemsPaginated")]
+        [Authorize(Roles = "Member,Admin")]
+        public async Task<PaginatedResultModel<ItemModel>> GetPeripheralItemsPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string itemName = null, List<int> rootCategories = null, string orderByColumn = null, bool calculateTotal = true)
+        {
+            ItemSearchModel filters = new ItemSearchModel();
+            filters.Name = itemName;
+            filters.RootCategories = rootCategories ?? new List<int>();
+            SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
+            return await _logic.GetPeripheralItemsPaginated(filters);
+        }
+        [HttpGet]
         [Route("GetRootItems")]
+        [Authorize(Roles = "Member,Admin")]
         public async Task<IEnumerable<ItemModel>> GetRootItems()
         {
-            
+
             return await _logic.GetRootItems();
         }
         [HttpGet]
         [Route("GetAllItems")]
         public async Task<IEnumerable<ItemModel>> GetAllItems(DataStructureCatalog dataStructure)
         {
-            
+
             bool getHierarichalData = (dataStructure == DataStructureCatalog.List ? false : true);
             return await _logic.GetAllItems(getHierarichalData);
         }
@@ -62,49 +75,49 @@ namespace API.Controllers
         [Route("Create")]
         public async Task<int> Create(ItemModel model)
         {
-            
+
             return await _logic.CreateItem(model);
         }
         [HttpPut]
         [Route("Update")]
         public async Task<bool> Update(ItemModel model)
         {
-            
+
             return await _logic.UpdateItem(model);
         }
         [HttpPost]
         [Route("CreateSingleItemWithChildrens")]
         public async Task<bool> CreateSingleItemWithChildrens(ItemModel model)
         {
-            
+
             return await _logic.CreateSingleItemWithChildrens(model);
         }
         [HttpPut]
         [Route("UpdateSingleItemWithChildren")]
         public async Task<bool> UpdateSingleItemWithChildren(ItemModel model)
         {
-            
+
             return await _logic.UpdateSingleItemWithChildren(model);
         }
         [HttpPost]
         [Route("CreateMultipleItemsWithChildrens")]
         public async Task<bool> CreateMultipleItemsWithChildrens(List<ItemModel> items)
         {
-            
+
             return await _logic.CreateMultipleItemsWithChildrens(items);
         }
         [HttpPut]
         [Route("UpdateMultipleItemsWithChildrens")]
         public async Task<bool> UpdateMultipleItemsWithChildrens(List<ItemModel> items)
         {
-            
+
             return await _logic.UpdateMultipleItemsWithChildrens(items);
         }
         [HttpDelete]
         [Route("DeleteItemWithChildren")]
         public async Task<bool> DeleteItemWithChildren(int id)
         {
-            
+
             return await _logic.DeleteItem(id);
         }
     }

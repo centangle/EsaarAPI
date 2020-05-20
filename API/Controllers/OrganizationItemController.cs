@@ -41,6 +41,7 @@ namespace API.Controllers
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetOrganizationItems(filters);
         }
+       
         [HttpPost]
         [Route("Create")]
         public async Task<int> Create(OrganizationItemModel model)

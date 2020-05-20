@@ -9,7 +9,7 @@ namespace Models.BriefModel
     public class ItemBriefModel : BaseBriefModel
     {
         public string ImageUrl { get; set; }
-        public double Worth { get; set; }
+        public double? Worth { get; set; }
         public string Description { get; set; }
     }
 }

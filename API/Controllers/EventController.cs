@@ -13,7 +13,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class EventController : BaseController
     {
         private readonly Logic _logic;
@@ -31,6 +31,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPaginated")]
+        [Authorize(Roles = "Member,Admin")]
         public async Task<PaginatedResultModel<EventModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, bool? isActive = null, string orderByColumn = null, bool calculateTotal = true)
         {
             

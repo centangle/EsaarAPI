@@ -110,7 +110,7 @@ namespace API.Controllers
                         select new { ur.UserId, ur.RoleId, r.Name };
             var member = await _logic.GetMemberByAuthId(user.Id);
             int memberId = member == null ? 0 : member.Id;
-            DateTime tokenExpiration = DateTime.Now.AddDays(1) ;
+            DateTime tokenExpiration = DateTime.Now.AddDays(10);
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name,username),
@@ -175,7 +175,7 @@ namespace API.Controllers
         }
         private async Task<bool> SaveRefreshToken(string userId, string refreshToken)
         {
-            var refreshTokenLifeTime = "262800";//6 months
+            var refreshTokenExpiry = DateTime.Now.AddMonths(6);
             //Creating the Refresh Token object
             var token = new RefreshTokenModel()
             {
@@ -183,7 +183,7 @@ namespace API.Controllers
                 Id = Encryption.GetHash(refreshToken),// Hased Refresh Token 
                 UserId = userId,
                 IssuedTime = DateTime.UtcNow,
-                ExpiredTime = DateTime.UtcNow.AddMinutes(Convert.ToDouble(refreshTokenLifeTime))
+                ExpiredTime = refreshTokenExpiry.ToUniversalTime()
             };
             return await _logic.UpdateRefreshToken(token);
         }

@@ -26,6 +26,7 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using System.Text.Json.Serialization;
+using Email;
 //using System.Text.Json.Serialization;
 //using API.Convertors;
 //using AuditProvider.DbModels;
@@ -35,15 +36,8 @@ namespace API
 {
     public class Startup
     {
-        //readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            //var builder = new ConfigurationBuilder()
-            // .SetBasePath(env.ContentRootPath)
-            // .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            // .AddJsonFile($"appsettings/{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
-            // .AddEnvironmentVariables();
-            //configuration = builder.Build();
             Configuration = configuration;
         }
         public IConfiguration Configuration { get; }
@@ -70,6 +64,7 @@ namespace API
                 options.Password.RequireLowercase = true;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
+                options.SignIn.RequireConfirmedEmail = true;
             });
 
             //services.AddControllersWithViews().AddJsonOptions(o =>
@@ -96,24 +91,25 @@ namespace API
             services.AddTransient<DataAccess, DataAccess>();
             //services.AddTransient<Audit, Audit>();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            services.AddSingleton<IEmailSender, EmailSender>();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = "JwtBearer";
                 options.DefaultChallengeScheme = "JwtBearer";
             }).AddJwtBearer("JwtBearer", jwtBearerOptions =>
-             {
-                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateIssuerSigningKey = true,
-                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("Secrets:SecurityKey"))),
-                     ValidateIssuer = false,
-                     ValidateAudience = false,
-                     ValidateLifetime = true,
-                     ClockSkew = TimeSpan.FromMinutes(5)
-                 };
-             });
+            {
+                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("Secrets:SecurityKey"))),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(5)
+                };
+            });
 
-            //services.AddScoped<IUserService, UserService>();
 
             services.AddSwaggerGen(setup =>
             {
@@ -184,8 +180,8 @@ namespace API
 
             app.UseRouting();
             app.UseCors(
-          options => options.SetIsOriginAllowed(x => _ = true).AllowAnyMethod().AllowAnyHeader().AllowCredentials()
-      ); //This needs to set everything allowed
+                options => options.SetIsOriginAllowed(x => _ = true).AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+            ); //This needs to set everything allowed
             app.UseAuthentication();
             app.UseAuthorization();
 

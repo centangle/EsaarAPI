@@ -79,18 +79,18 @@ namespace EntityProvider
             }
             if (filteredRegion != null)
             {
-                filteredQueryable = (from o in campaignQueryable
-                                     join er in _context.EntityRegions on o.Id equals er.EntityId
+                filteredQueryable = (from c in campaignQueryable
+                                     join er in _context.EntityRegions on c.Id equals er.EntityId
                                      where er.EntityType == (int)EntityRegionTypeCatalog.Campaign
                                      &&
                                      (
                                            (filteredRegion.Countries.Count == 0 || er.CountryId == null || filteredRegion.Countries.Select(x => x.Id).ToList().Contains(er.CountryId ?? 0))
-                                        && (filteredRegion.States.Count == 0 || er.CountryId == null || filteredRegion.States.Select(x => x.Id).ToList().Contains(er.StateId ?? 0))
-                                        && (filteredRegion.Districts.Count == 0 || er.CountryId == null || filteredRegion.Districts.Select(x => x.Id).ToList().Contains(er.DistrictId ?? 0))
-                                        && (filteredRegion.Tehsils.Count == 0 || er.CountryId == null || filteredRegion.Tehsils.Select(x => x.Id).ToList().Contains(er.TehsilId ?? 0))
-                                        && (filteredRegion.UnionCouncils.Count == 0 || er.CountryId == null || filteredRegion.UnionCouncils.Select(x => x.Id).ToList().Contains(er.UnionCouncilId ?? 0))
+                                        && (filteredRegion.States.Count == 0 || er.StateId == null || filteredRegion.States.Select(x => x.Id).ToList().Contains(er.StateId ?? 0))
+                                        && (filteredRegion.Districts.Count == 0 || er.DistrictId == null || filteredRegion.Districts.Select(x => x.Id).ToList().Contains(er.DistrictId ?? 0))
+                                        && (filteredRegion.Tehsils.Count == 0 || er.TehsilId == null || filteredRegion.Tehsils.Select(x => x.Id).ToList().Contains(er.TehsilId ?? 0))
+                                        && (filteredRegion.UnionCouncils.Count == 0 || er.UnionCouncilId == null || filteredRegion.UnionCouncils.Select(x => x.Id).ToList().Contains(er.UnionCouncilId ?? 0))
                                       )
-                                     select o
+                                     select c
              ).Distinct().AsQueryable();
             }
             if (filters.RootCategories.Count() > 0)

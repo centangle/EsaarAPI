@@ -6,12 +6,14 @@ using API.Entities;
 using API.Helpers;
 using API.Models;
 using API.Services;
+using API.ViewModels.Account;
 using AutoMapper;
 using BusinessLogic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Models;
 
@@ -23,18 +25,21 @@ namespace API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ILogger _logger;
         private readonly Logic _logic;
 
         public AccountController(UserManager<IdentityUser> userManager,
+            ILogger logger,
             Logic logic
             )
         {
             _userManager = userManager;
+            _logger = logger;
             _logic = logic;
         }
 
         [AllowAnonymous]
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody]RegisterBindingModel model)
         {
             if (!ModelState.IsValid)
@@ -62,12 +67,36 @@ namespace API.Controllers
             {
                 await _logic.AddMember(memberModel);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
 
-           
+
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null && (await _userManager.IsEmailConfirmedAsync(user)))
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var passwordResetLink = Url.Action("ResetPassword", "Account",
+                        new { email = model.Email, token = token },
+                        Request.Scheme);
+                    _logger.Log(LogLevel.Warning, passwordResetLink);
+                }
+            }
 
             return Ok();
         }
