@@ -10,6 +10,7 @@ namespace Catalogs
     {
         Request,
         Organization,
-        Campaign
+        Campaign,
+        Donation
     }
 }

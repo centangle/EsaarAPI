@@ -40,7 +40,6 @@ namespace API.Controllers
         [Route("GetOrganizationMembersForDD")]
         public async Task<PaginatedResultModel<OrganizationMemberModel>> GetOrganizationMembersForDD(int numberOfRecords, int organizationId, OrganizationMemberRolesCatalog type, string memberName = null)
         {
-            
             OrganizationMemberSearchModel filters = new OrganizationMemberSearchModel();
             filters.OrganizationId = organizationId;
             filters.MemberName = memberName;

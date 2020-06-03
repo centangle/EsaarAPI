@@ -26,12 +26,14 @@ namespace EntityProvider
                     _context.DonationRequests.Add(dbModel);
                     await _context.SaveChangesAsync();
                     model.Id = dbModel.Id;
+                    await AssignAttachments(_context, model.Attachments, model.Id, AttachmentEntityTypeCatalog.Donation, true);
                     AddDonationRequestItems(_context, model.Items, model.Id);
                     var donationRequestOrganizations = GetDonationRequestOrganization(model);
                     await AddDonationRequestOrganizations(_context, donationRequestOrganizations, model.Id);
                     foreach (var org in donationRequestOrganizations)
                     {
                         var requestThreadModel = GetDonationRequestThreadModel(org.Id);
+                        requestThreadModel.Attachments = model.Attachments;
                         await AddRequestThread(_context, requestThreadModel);
                     }
                     await _context.SaveChangesAsync();
@@ -73,107 +75,99 @@ namespace EntityProvider
                 }
             }
         }
-        public async Task<bool> AssignModeratorToDonationRequest(int organizationId, int donationRequestId, int? moderatorId)
-        {
-            var orgMemberRoles = (await GetMemberRoleForOrganization(_context, organizationId, _loggedInMemberId)).FirstOrDefault();
-            if (IsOrganizationMemberModerator(orgMemberRoles))
-            {
-                var donationRequest = await _context.DonationRequests.Where(x => x.Id == donationRequestId).FirstOrDefaultAsync();
-                {
-                    if (donationRequest != null)
-                    {
-                        if (donationRequest.IsDeleted)
-                        {
-                            throw new KnownException("This request has been deleted");
-                        }
-                        var donationRequestOrganization = await _context.DonationRequestOrganizations.Where(x => x.DonationRequestId == donationRequestId && x.OrganizationId == organizationId && x.IsDeleted == false).FirstOrDefaultAsync();
-                        if (donationRequestOrganization == null || donationRequestOrganization.ModeratorId != null && donationRequestOrganization.ModeratorId > 0)
-                        {
-                            throw new KnownException("This request has already been assigned");
-                        }
-                        using (var transaction = _context.Database.BeginTransaction())
-                        {
-                            try
-                            {
-                                var requestThreadModel = GetDonationRequestThreadModel(donationRequestOrganization.Id);
-                                requestThreadModel.Status = StatusCatalog.ModeratorAssigned;
-                                await AddRequestThread(_context, requestThreadModel);
-                                if (moderatorId == null || moderatorId < 1)
-                                {
-                                    moderatorId = _loggedInMemberId;
-                                }
-                                donationRequestOrganization.ModeratorId = moderatorId;
-                                await _context.SaveChangesAsync();
-                                transaction.Commit();
-                                return true;
 
-                            }
-                            catch (Exception ex)
+        private async Task AssignModeratorToDonationRequest(int donationRequestOrganizationId, int? moderatorId)
+        {
+            var donationRequestOrganization = await _context.DonationRequestOrganizations.Where(x => x.Id == donationRequestOrganizationId && x.IsDeleted == false).FirstOrDefaultAsync();
+            if (donationRequestOrganization != null)
+            {
+                var orgMemberRoles = (await GetMemberRoleForOrganization(_context, donationRequestOrganization.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(orgMemberRoles))
+                {
+                    var donationRequest = await _context.DonationRequests.Where(x => x.Id == donationRequestOrganization.DonationRequestId).FirstOrDefaultAsync();
+                    {
+                        if (donationRequest != null)
+                        {
+                            if (donationRequest.IsDeleted)
                             {
-                                transaction.Rollback();
-                                throw ex;
+                                throw new KnownException("This request has been deleted");
                             }
+                            if (donationRequestOrganization == null || donationRequestOrganization.ModeratorId != null && donationRequestOrganization.ModeratorId > 0)
+                            {
+                                throw new KnownException("This request has already been assigned");
+                            }
+                            if (moderatorId == null || moderatorId < 1)
+                            {
+                                moderatorId = _loggedInMemberId;
+                            }
+                            donationRequestOrganization.ModeratorId = moderatorId;
+                            await _context.SaveChangesAsync();
                         }
                     }
                 }
+                else
+                {
+                    throw new KnownException("You are not authorized to perform this action");
+                }
             }
-            throw new KnownException("You are not authorized to perform this action");
+            else
+            {
+                throw new KnownException("This request doesnt exist");
+            }
 
         }
-        public async Task<bool> AssignVolunteerToDonationRequest(int organizationId, int donationRequestId, int? volunteerId)
+        public async Task AssignVolunteerToDonationRequest(int donationRequestOrganizationId, int? volunteerId)
         {
-            var orgaMemberRole = (await GetMemberRoleForOrganization(_context, organizationId, _loggedInMemberId)).FirstOrDefault();
-            if (IsOrganizationMemberModerator(orgaMemberRole) || IsOrganizationMemberVolunteer(orgaMemberRole))
+            var donationRequestOrganization = await _context.DonationRequestOrganizations.Where(x => x.Id == donationRequestOrganizationId && x.IsDeleted == false).FirstOrDefaultAsync();
+            if (donationRequestOrganization != null)
             {
-                var donationRequest = await _context.DonationRequests.Where(x => x.Id == donationRequestId).FirstOrDefaultAsync();
+                var orgaMemberRole = (await GetMemberRoleForOrganization(_context, donationRequestOrganization.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(orgaMemberRole) || IsOrganizationMemberVolunteer(orgaMemberRole))
                 {
-                    if (donationRequest != null)
+                    var donationRequest = await _context.DonationRequests.Where(x => x.Id == donationRequestOrganization.DonationRequestId).FirstOrDefaultAsync();
                     {
+                        if (donationRequest != null)
+                        {
 
-                        if (donationRequest.IsDeleted)
-                        {
-                            throw new KnownException("This request has been deleted");
-                        }
-                        var donationRequestOrganization = await _context.DonationRequestOrganizations.Where(x => x.DonationRequestId == donationRequestId && x.OrganizationId == organizationId && x.IsDeleted == false).FirstOrDefaultAsync();
-                        if (donationRequestOrganization == null || donationRequestOrganization.VolunteerId != null && donationRequestOrganization.VolunteerId > 0)
-                        {
-                            throw new KnownException("This request has already been assigned");
-                        }
-                        using (var transaction = _context.Database.BeginTransaction())
-                        {
-                            try
+                            if (donationRequest.IsDeleted)
                             {
-                                var requestThreadModel = GetDonationRequestThreadModel(donationRequestOrganization.Id);
-                                requestThreadModel.Status = StatusCatalog.VolunteerAssigned;
-                                await AddRequestThread(_context, requestThreadModel);
-                                if (volunteerId == null || volunteerId < 1)
-                                {
-                                    volunteerId = _loggedInMemberId;
-                                }
-                                else
-                                {
-                                    if (IsOrganizationMemberModerator(orgaMemberRole) == false)
-                                    {
-                                        throw new KnownException("You are not authorized to perform this action");
-                                    }
-                                }
-
-                                donationRequestOrganization.VolunteerId = volunteerId;
-                                await _context.SaveChangesAsync();
-                                transaction.Commit();
-                                return true;
-
+                                throw new KnownException("This request has been deleted");
                             }
-                            catch (Exception ex)
+                            if (donationRequestOrganization == null || donationRequestOrganization.VolunteerId != null && donationRequestOrganization.VolunteerId > 0)
                             {
-                                transaction.Rollback();
-                                throw ex;
+                                throw new KnownException("This request has already been assigned");
                             }
+
+                            var requestThreadModel = GetDonationRequestThreadModel(donationRequestOrganization.Id);
+                            requestThreadModel.Status = StatusCatalog.VolunteerAssigned;
+                            await AddRequestThread(_context, requestThreadModel);
+                            if (volunteerId == null || volunteerId < 1)
+                            {
+                                volunteerId = _loggedInMemberId;
+                            }
+                            else
+                            {
+                                if (IsOrganizationMemberModerator(orgaMemberRole) == false)
+                                {
+                                    throw new KnownException("You are not authorized to perform this action");
+                                }
+                            }
+
+                            donationRequestOrganization.VolunteerId = volunteerId;
+                            await _context.SaveChangesAsync();
+
                         }
                     }
                 }
+                else
+                {
+                    throw new KnownException("You are not authorized to perform this action");
+                }
             }
-            throw new KnownException("You are not authorized to perform this action");
+            else
+            {
+                throw new KnownException("This request doesnt exist");
+            }
 
         }
         private DonationRequest SetRequest(DonationRequest dbModel, DonationRequestModel model)
@@ -197,24 +191,50 @@ namespace EntityProvider
             SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
         }
-        public async Task<bool> UpdateDonationRequestStatus(int donationRequestOrganizationId, string note, List<DonationRequestOrganizationItemModel> items, StatusCatalog status)
+        public async Task<bool> UpdateDonationRequestStatus(DonationRequestThreadModel model)
         {
             try
             {
-                var requestThreadModel = GetRequestThreadModel(donationRequestOrganizationId, StatusCatalog.Approved, note);
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        int id = await ProcessRequestThread(_context, requestThreadModel);
-                        if (status == StatusCatalog.Approved)
+
+                        if (model.Status != null)
                         {
-                            await AddDonationRequestOrganizationItems(_context, items, donationRequestOrganizationId);
+                            if (model.Status == StatusCatalog.Approved)
+                            {
+                                await AddDonationRequestOrganizationItems(_context, model.Items, model.DonationRequestOrganizationId);
+                            }
+                            else if (model.Status == StatusCatalog.Collected || model.Status == StatusCatalog.Delivered)
+                            {
+                                await UpdateDonationRequestOrganizationItems(_context, model.Items, model.DonationRequestOrganizationId, model.Status.Value);
+                            }
+                            else if (model.Status == StatusCatalog.ModeratorAssigned)
+                            {
+                                await AssignModeratorToDonationRequest(model.DonationRequestOrganizationId, model.Moderator?.Id);
+                            }
+                            else if (model.Status == StatusCatalog.VolunteerAssigned)
+                            {
+                                await AssignVolunteerToDonationRequest(model.DonationRequestOrganizationId, model.Volunteer?.Id);
+                            }
                         }
-                        else
+                        var status = model.Status;
+                        if (status == null)
                         {
-                            await UpdateDonationRequestOrganizationItems(_context, items, donationRequestOrganizationId, status);
+                            var donationRequestDb = await _context.DonationRequestOrganizations.Where(x => x.Id == model.DonationRequestOrganizationId && x.IsDeleted == false).FirstOrDefaultAsync();
+                            if (donationRequestDb != null)
+                            {
+                                status = (StatusCatalog)donationRequestDb.Status;
+                            }
+                            else
+                            {
+                                throw new KnownException("This request does not exist");
+                            }
+
                         }
+                        var requestThreadModel = GetDonationRequestThreadModel(model.DonationRequestOrganizationId, status, model.Note);
+                        await ProcessRequestThread(_context, requestThreadModel);
                         transaction.Commit();
                     }
                     catch (Exception ex)
@@ -231,15 +251,16 @@ namespace EntityProvider
                 throw ex;
             }
         }
-        private RequestThreadModel GetRequestThreadModel(int donationRequestOrganizationId, StatusCatalog status, string note)
+        private RequestThreadModel GetDonationRequestThreadModel(int donationRequestOrganizationId, StatusCatalog? status = null, string note = null, List<AttachmentModel> attachments = null)
         {
             RequestThreadModel requestThreadModel = new RequestThreadModel();
             requestThreadModel.Entity.Id = donationRequestOrganizationId;
             requestThreadModel.EntityType = RequestThreadEntityTypeCatalog.Donation;
-            requestThreadModel.Status = status;
+            requestThreadModel.Status = status ?? StatusCatalog.Initiated;
             requestThreadModel.Note = note;
             requestThreadModel.Type = RequestThreadTypeCatalog.General;
             requestThreadModel.IsSystemGenerated = true;
+            requestThreadModel.Attachments = attachments ?? new List<AttachmentModel>();
             return requestThreadModel;
         }
         public async Task<PaginatedDonationRequestModel> GetDonationRequestDetail(int organizationRequestId)
@@ -268,7 +289,7 @@ namespace EntityProvider
                                          join am in _context.Members on dro.ModeratorId equals am.Id into tam
                                          from am in tam.DefaultIfEmpty()
                                          join v in _context.Members on dro.VolunteerId equals v.Id into tv
-                                         from v in tam.DefaultIfEmpty()
+                                         from v in tv.DefaultIfEmpty()
                                          let isLoggedInMemberOrgOwner = memberOwnedOrgz.Any(x => x == o.Id)
                                          let isLoggedInMemberOrgModerator = memberModeratorOrgz.Any(x => x == o.Id)
                                          where
@@ -330,6 +351,27 @@ namespace EntityProvider
                                              CreatedDate = dr.CreatedDate,
                                              CreatedBy = dr.CreatedBy,
                                          }).FirstOrDefaultAsync();
+            if (donationRequest != null)
+            {
+                var requestThread = await _context.RequestThreads.Where(x => x.EntityId == donationRequest.DonationRequestOrganization.Id && x.EntityType == (int)RequestThreadEntityTypeCatalog.Donation).FirstOrDefaultAsync();
+                donationRequest.Attachments = await (from a in _context.Attachments
+                                                     where a.EntityId == requestThread.Id
+                                                     && a.EntityType == (int)requestThread.EntityType
+                                                     && a.IsDeleted == false
+                                                     select new AttachmentModel
+                                                     {
+                                                         Id = a.Id,
+                                                         Entity = new BaseBriefModel()
+                                                         {
+                                                             Id = a.EntityId,
+                                                         },
+                                                         Url = a.Url,
+                                                         Note = a.Note,
+                                                         OriginalFileName = a.OriginalFileName,
+                                                         SystemFileName = a.SystemFileName,
+                                                         FileExtension = a.FileExtension,
+                                                     }).ToListAsync();
+            }
             return donationRequest;
         }
         public async Task<List<DonationRequestOrganizationItemModel>> GetDonationRequestItems(int organizationRequestId)

@@ -51,16 +51,6 @@ namespace EntityProvider
                 }};
             }
         }
-        private RequestThreadModel GetDonationRequestThreadModel(int entityId)
-        {
-            RequestThreadModel requestThreadModel = new RequestThreadModel();
-            requestThreadModel.Entity.Id = entityId;
-            requestThreadModel.EntityType = RequestThreadEntityTypeCatalog.Donation;
-            requestThreadModel.Status = StatusCatalog.Initiated;
-            requestThreadModel.Type = RequestThreadTypeCatalog.General;
-            requestThreadModel.IsSystemGenerated = true;
-            return requestThreadModel;
-        }
         private async Task<bool> IsDonationRequestThreadAccessible(CharityContext _context, RequestThreadModel requestModel)
         {
             var orgRequest = await _context.DonationRequestOrganizations.Where(x => x.Id == requestModel.Entity.Id && x.IsDeleted == false).FirstOrDefaultAsync();

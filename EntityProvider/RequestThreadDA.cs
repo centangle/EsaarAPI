@@ -43,7 +43,6 @@ namespace EntityProvider
                     {
                         int? currentStatus = await GetRequestThreadCurrentStatus(_context, model);
                         model.Id = await AddRequestThread(_context, model);
-                        await AssignAttachments(_context, model.Attachments, model.Id, AttachmentEntityTypeCatalog.Request, true);
                         bool statusUpdated = await CheckStatusUpdation(_context, currentStatus, model);
                         await _context.SaveChangesAsync();
                         return model.Id;
@@ -80,6 +79,7 @@ namespace EntityProvider
             _context.RequestThreads.Add(dbModel);
             await _context.SaveChangesAsync();
             model.Id = dbModel.Id;
+            await AssignAttachments(_context, model.Attachments, model.Id, AttachmentEntityTypeCatalog.Request, true);
             return model.Id;
         }
         public async Task<bool> UpdateRequestThread(RequestThreadModel model)
@@ -185,8 +185,8 @@ namespace EntityProvider
                                            CreatedDate = rt.CreatedDate
                                        }).FirstOrDefaultAsync();
             requestThread.Attachments = await (from a in _context.Attachments
-                                               where a.EntityId == requestThread.Entity.Id
-                                               && a.EntityType == (int)requestThread.EntityType
+                                               where a.EntityId == requestThread.Id
+                                               && a.EntityType == (int)AttachmentEntityTypeCatalog.Request
                                                && a.IsDeleted == false
                                                select new AttachmentModel
                                                {

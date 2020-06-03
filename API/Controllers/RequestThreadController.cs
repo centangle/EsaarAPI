@@ -23,7 +23,7 @@ namespace API.Controllers
             _logic = logic;
         }
         [HttpGet]
-        [Route("Get")]
+        [Route("Get/{id}")]
         public async Task<RequestThreadModel> Get(int id)
         {
             

@@ -37,7 +37,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPaginated")]
-        public async Task<PaginatedResultModel<CampaignModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, int? eventId = null, string name = null, double? longitude = null, double? latitude = null, [FromQuery] List<int> rootCategories = null, RegionSearchTypeCatalog? searchType = null, [FromQuery] List<RegionLevelSearchModel> regions = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<CampaignModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, int? eventId = null, string name = null, double? longitude = null, double? latitude = null, [FromQuery] List<int> rootCategories = null, RegionSearchTypeCatalog? searchType = null, [FromQuery] List<RegionLevelSearchModel> regions = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null,bool? fetchOwnedByMeOnly=null, string orderByColumn = null, bool calculateTotal = true)
         {
 
             CampaignSearchModel filters = new CampaignSearchModel();
@@ -51,6 +51,7 @@ namespace API.Controllers
             filters.SearchType = searchType;
             filters.OrganizationId = organizationId;
             filters.EventId = eventId;
+            filters.OwnedByMe = fetchOwnedByMeOnly ?? false;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetCampaigns(filters);
         }

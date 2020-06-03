@@ -4,6 +4,7 @@ using Models.BriefModel;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Helpers;
 
 namespace Models
 {
@@ -122,6 +123,19 @@ namespace Models
                     return true;
                 else
                     return false;
+            }
+        }
+        public StatusCatalog NextStatus
+        {
+            get
+            {
+                var nextStatus = Status.Next();
+                if (nextStatus > StatusCatalog.Approved)
+                {
+                    return Status;
+                }
+                else
+                    return nextStatus;
             }
         }
     }

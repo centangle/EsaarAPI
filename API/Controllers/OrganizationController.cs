@@ -38,7 +38,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPaginated")]
-        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, double? longitude = null, double? latitude = null, [FromQuery] List<int> rootCategories = null, RegionSearchTypeCatalog? searchType = null, [FromQuery] List<RegionLevelSearchModel> regions = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<OrganizationModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string name = null, double? longitude = null, double? latitude = null, [FromQuery] List<int> rootCategories = null, RegionSearchTypeCatalog? searchType = null, [FromQuery] List<RegionLevelSearchModel> regions = null, RegionRadiusTypeCatalog? radiusType = null, float? radius = null, bool? fetchOwnedByMeOnly = null, string orderByColumn = null, bool calculateTotal = true)
         {
             OrganizationSearchModel filters = new OrganizationSearchModel();
             filters.Name = name;
@@ -49,6 +49,7 @@ namespace API.Controllers
             filters.RootCategories = rootCategories ?? new List<int>();
             filters.RadiusType = radiusType;
             filters.SearchType = searchType;
+            filters.OwnedByMe = fetchOwnedByMeOnly ?? false;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetOrganizations(filters);
         }
@@ -122,6 +123,6 @@ namespace API.Controllers
         }
 
 
-        
+
     }
 }

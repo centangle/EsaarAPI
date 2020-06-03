@@ -4,6 +4,7 @@ using Models.BriefModel;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Helpers;
 
 namespace Models
 {
@@ -25,6 +26,7 @@ namespace Models
         public string AddressLatLong { get; set; }
         public int OrganizationId { get; set; }
         public BaseBriefModel Campaign { get; set; }
+        public List<AttachmentModel> Attachments { get; set; }
     }
     public class PaginatedDonationRequestModel : DonationRequestModel
     {
@@ -118,6 +120,19 @@ namespace Models
                     return true;
                 else
                     return false;
+            }
+        }
+        public StatusCatalog NextStatus
+        {
+            get
+            {
+                var nextStatus = DonationRequestOrganization.Status.Value.Next();
+                if (nextStatus > StatusCatalog.Delivered)
+                {
+                    return DonationRequestOrganization.Status.Value;
+                }
+                else
+                    return nextStatus;
             }
         }
 

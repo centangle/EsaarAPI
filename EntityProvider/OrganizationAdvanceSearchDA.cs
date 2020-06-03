@@ -5,6 +5,7 @@ using Models;
 using Models.BriefModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 
@@ -89,6 +90,22 @@ namespace EntityProvider
                                       )
                                      select o
                  ).Distinct().AsQueryable();
+            }
+            if (filters.OwnedByMe)
+            {
+                var memberOrgRoles = await GetMemberRoleForOrganization(_context, null, _loggedInMemberId);
+                List<int> memberOwnedOrgz = new List<int>();
+                if (memberOrgRoles != null)
+                {
+                    foreach (var memberOrgRole in memberOrgRoles)
+                    {
+                        if (IsOrganizationMemberOwner(memberOrgRole))
+                        {
+                            memberOwnedOrgz.Add(memberOrgRole.Organization.Id);
+                        }
+                    }
+                }
+                filteredQueryable = filteredQueryable.Where(x => memberOwnedOrgz.Contains(x.Id)).Select(x => x).AsQueryable();
             }
             if (filters.RootCategories.Count() > 0)
             {

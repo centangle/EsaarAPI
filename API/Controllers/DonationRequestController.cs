@@ -25,7 +25,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetPaginated")]
-        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, [FromQuery] List<DonationRequestTypeCatalog> types = null,[FromQuery] List<StatusCatalog> statuses = null, TimePeriodCatalog? timePeriod = null,
+        public async Task<PaginatedResultModel<PaginatedDonationRequestModel>> GetPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, int? organizationId = null, [FromQuery] List<DonationRequestTypeCatalog> types = null, [FromQuery] List<StatusCatalog> statuses = null, TimePeriodCatalog? timePeriod = null,
             DateTime? startDate = null, DateTime? endDate = null, string memberName = null
             , string orderByColumn = null, bool calculateTotal = true)
         {
@@ -52,11 +52,12 @@ namespace API.Controllers
         //    return await _logic.GetDonationRequestsForVolunteer(filters);
         //}
         [HttpGet]
-        public async Task<PaginatedDonationRequestModel> Get(int organizationRequestId)
+        [Route("Get")]
+        public async Task<PaginatedDonationRequestModel> Get(int donationRequestId)
         {
 
-            var model = await _logic.GetDonationRequestDetail(organizationRequestId);
-            if (model.CanAccessRequestThread == false)
+            var model = await _logic.GetDonationRequestDetail(donationRequestId);
+            if (model == null || model.CanAccessRequestThread == false)
             {
                 throw new KnownException("You are not authorized");
             }
@@ -64,24 +65,10 @@ namespace API.Controllers
         }
         [HttpGet]
         [Route("GetItems")]
-        public async Task<List<DonationRequestOrganizationItemModel>> GetItems(int organizationRequestId)
+        public async Task<List<DonationRequestOrganizationItemModel>> GetItems(int donationRequestId)
         {
 
-            return await _logic.GetDonationRequestItems(organizationRequestId);
-        }
-        [HttpPut]
-        [Route("AssignModeratorToRequest")]
-        public async Task<bool> AssignModeratorToRequest(int organizationId, int donationRequestId, int? moderatorId = null)
-        {
-
-            return await _logic.AssignModeratorToDonationRequest(organizationId, donationRequestId, moderatorId);
-        }
-        [HttpPut]
-        [Route("AssignVolunteerToRequest")]
-        public async Task<bool> AssignVolunteerToRequest(int organizationId, int donationRequestId, int? volunteerId = null)
-        {
-
-            return await _logic.AssignVolunteerToDonationRequest(organizationId, donationRequestId, volunteerId);
+            return await _logic.GetDonationRequestItems(donationRequestId);
         }
         [HttpPost]
         [Route("Create")]
@@ -97,25 +84,12 @@ namespace API.Controllers
 
             return await _logic.UpdateDonationRequest(model);
         }
+
         [HttpPost]
         [Route("UpdateStatus")]
-        public async Task<bool> UpdateStatus(int donationRequestOrganizationId, List<DonationRequestOrganizationItemModel> items, DonationRequestUpdateStatusCatalog status, string note = null)
+        public async Task<bool> UpdateStatus(DonationRequestThreadModel model)
         {
-            StatusCatalog updatedStatus;
-            if (status == DonationRequestUpdateStatusCatalog.Approved)
-            {
-                updatedStatus = StatusCatalog.Approved;
-            }
-            else if (status == DonationRequestUpdateStatusCatalog.Collected)
-            {
-                updatedStatus = StatusCatalog.Collected;
-            }
-            else
-            {
-                updatedStatus = StatusCatalog.Delivered;
-            }
-
-            return await _logic.UpdateDonationRequestStatus(donationRequestOrganizationId, note, items, updatedStatus);
+            return await _logic.UpdateDonationRequestStatus(model);
         }
         [HttpGet]
         [Route("GetRequestStatus")]

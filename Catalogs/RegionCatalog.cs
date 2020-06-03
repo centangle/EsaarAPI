@@ -31,7 +31,8 @@ namespace Catalogs
     {
         InMyRegion,
         InRadius,
-        ByRegion
+        ByRegion,
+        All,
 
     }
 }

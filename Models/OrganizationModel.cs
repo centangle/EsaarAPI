@@ -74,7 +74,7 @@ namespace Models
         public float? Radius { get; set; }
         public List<int> RootCategories { get; set; }
         public int? RegionId { get; set; }
-        [JsonConverter(typeof(StringEnumConverter))]
+        public bool OwnedByMe { get; set; }
         public RegionSearchTypeCatalog? SearchType { get; set; }
         public List<RegionLevelSearchModel> Regions { get; set; }
         public RegionRadiusTypeCatalog? RadiusType { get; set; }

@@ -49,6 +49,6 @@ namespace Models
         public RegionRadiusTypeCatalog? RadiusType { get; set; }
         public int? OrganizationId { get; set; }
         public int? EventId { get; set; }
-
+        public bool OwnedByMe { get; set; }
     }
 }

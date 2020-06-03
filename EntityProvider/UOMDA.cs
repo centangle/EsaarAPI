@@ -313,7 +313,7 @@ namespace EntityProvider
             SetAndValidateBaseProperties(dbModel, model);
             return dbModel;
         }
-        private List<UOMBriefModel> GetUOMTreeFlatList(UOMModel uom)
+        private List<UOMBriefModel> GetUOMTreeFlatList(UOMModel uom,bool includeParent=false)
         {
             List<UOMBriefModel> uomtreeFlatList = new List<UOMBriefModel>();
             UOMBriefModel uomBM = new UOMBriefModel
@@ -323,7 +323,10 @@ namespace EntityProvider
                 NativeName = uom.NativeName,
                 NoOfBaseUnit = uom.NoOfBaseUnit,
             };
-            uomtreeFlatList.Add(uomBM);
+            if (includeParent)
+            {
+                uomtreeFlatList.Add(uomBM);
+            }
             uomtreeFlatList.AddRange((from u in uom.children
                                       select new UOMBriefModel
                                       {

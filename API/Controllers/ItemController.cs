@@ -49,7 +49,7 @@ namespace API.Controllers
         [HttpGet]
         [Route("GetPeripheralItemsPaginated")]
         [Authorize(Roles = "Member,Admin")]
-        public async Task<PaginatedResultModel<ItemModel>> GetPeripheralItemsPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string itemName = null, List<int> rootCategories = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<ItemModel>> GetPeripheralItemsPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string itemName = null, [FromQuery] List<int> rootCategories = null, string orderByColumn = null, bool calculateTotal = true)
         {
             ItemSearchModel filters = new ItemSearchModel();
             filters.Name = itemName;

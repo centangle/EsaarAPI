@@ -25,16 +25,13 @@ namespace API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly ILogger _logger;
         private readonly Logic _logic;
 
         public AccountController(UserManager<IdentityUser> userManager,
-            ILogger logger,
             Logic logic
             )
         {
             _userManager = userManager;
-            _logger = logger;
             _logic = logic;
         }
 
@@ -94,7 +91,7 @@ namespace API.Controllers
                     var passwordResetLink = Url.Action("ResetPassword", "Account",
                         new { email = model.Email, token = token },
                         Request.Scheme);
-                    _logger.Log(LogLevel.Warning, passwordResetLink);
+                    //_logger.Log(LogLevel.Warning, passwordResetLink);
                 }
             }
 

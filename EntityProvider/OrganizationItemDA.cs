@@ -303,7 +303,7 @@ namespace EntityProvider
                                     }).AsQueryable();
             var paginatedResult = await orgItemQueryable.Paginate(filters);
 
-            // Fill Uom From UI DropDown
+            // Fill Uom For UI DropDown
             List<UOMModel> availableUOM = new List<UOMModel>();
             foreach (var paginatedItem in paginatedResult.Items)
             {
