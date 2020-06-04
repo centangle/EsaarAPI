@@ -91,6 +91,7 @@ namespace Models
     public class ItemSearchModel : BaseSearchModel
     {
         public string Name { get; set; }
+        public int? OrganizationId { get; set; }
         public List<int> RootCategories { get; set; }
     }
 }

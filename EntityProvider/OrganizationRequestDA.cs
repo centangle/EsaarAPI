@@ -15,50 +15,50 @@ namespace EntityProvider
 {
     public partial class DataAccess
     {
-        public async Task<bool> AssignOrganizationRequest(int organizationId, int requestId, int? moderatorId)
+        public async Task<bool> AssignOrganizationRequest(int requestId, int? moderatorId)
         {
-            var memberOrgRoles = (await GetMemberRoleForOrganization(_context, organizationId, _loggedInMemberId)).FirstOrDefault();
-            if (IsOrganizationMemberModerator(memberOrgRoles))
+            var organizationRequest = await _context.OrganizationRequests.Where(x => x.Id == requestId).FirstOrDefaultAsync();
+            if (organizationRequest != null)
             {
-                var organizationRequest = await _context.OrganizationRequests.Where(x => x.Id == requestId).FirstOrDefaultAsync();
+                var memberOrgRoles = (await GetMemberRoleForOrganization(_context, organizationRequest.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
                 {
-                    if (organizationRequest != null)
-                    {
-                        if (organizationRequest.IsDeleted)
-                        {
-                            throw new KnownException("This request has been deleted");
-                        }
-                        else if (organizationRequest.ModeratorId != null && organizationRequest.ModeratorId > 0)
-                        {
-                            throw new KnownException("This request has already been assigned");
-                        }
-                        using (var transaction = _context.Database.BeginTransaction())
-                        {
-                            try
-                            {
-                                var requestThreadModel = GetRequestThreadModelForOrganization(organizationRequest.Id, "Moderator Assigned");
-                                requestThreadModel.Status = StatusCatalog.ModeratorAssigned;
-                                await AddRequestThread(_context, requestThreadModel);
-                                if (moderatorId == null || moderatorId < 1)
-                                {
-                                    moderatorId = _loggedInMemberId;
-                                }
-                                organizationRequest.ModeratorId = moderatorId;
-                                await _context.SaveChangesAsync();
-                                transaction.Commit();
-                                return true;
 
-                            }
-                            catch (Exception ex)
+                    if (organizationRequest.IsDeleted)
+                    {
+                        throw new KnownException("This request has been deleted");
+                    }
+                    else if (organizationRequest.ModeratorId != null && organizationRequest.ModeratorId > 0)
+                    {
+                        throw new KnownException("This request has already been assigned");
+                    }
+                    using (var transaction = _context.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            if (moderatorId == null || moderatorId < 1)
                             {
-                                transaction.Rollback();
-                                throw ex;
+                                moderatorId = _loggedInMemberId;
                             }
+                            organizationRequest.ModeratorId = moderatorId;
+                            await _context.SaveChangesAsync();
+                            transaction.Commit();
+                            return true;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
                         }
                     }
                 }
+                throw new KnownException("You are not authorized to perform this action");
             }
-            throw new KnownException("You are not authorized to perform this action");
+            else
+            {
+                throw new KnownException("This request doesnt exist");
+            }
 
         }
         private async Task<int> AddOrganizationRequest(CharityContext _context, OrganizationRequestModel model)
@@ -67,7 +67,7 @@ namespace EntityProvider
             _context.OrganizationRequests.Add(dbModel);
             await _context.SaveChangesAsync();
             model.Id = dbModel.Id;
-            var requestThreadModel = GetRequestThreadModelForOrganization(model.Id, model.Note);
+            var requestThreadModel = GetRequestThreadModelForOrganization(model.Id, StatusCatalog.Initiated, model.Note, new List<AttachmentModel>());
             await AddRequestThread(_context, requestThreadModel);
             return model.Id;
         }
@@ -126,16 +126,65 @@ namespace EntityProvider
             }
 
         }
-        private RequestThreadModel GetRequestThreadModelForOrganization(int id, string note)
+        private RequestThreadModel GetRequestThreadModelForOrganization(int id, StatusCatalog status, string note, List<AttachmentModel> attachments = null)
         {
             RequestThreadModel requestThreadModel = new RequestThreadModel();
             requestThreadModel.Entity.Id = id;
             requestThreadModel.EntityType = RequestThreadEntityTypeCatalog.Organization;
-            requestThreadModel.Status = StatusCatalog.Initiated;
+            requestThreadModel.Status = status;
             requestThreadModel.Note = note;
             requestThreadModel.Type = RequestThreadTypeCatalog.General;
             requestThreadModel.IsSystemGenerated = true;
+            requestThreadModel.Attachments = attachments ?? new List<AttachmentModel>();
             return requestThreadModel;
+        }
+        public async Task<bool> UpdateOrganizationRequestStatus(OrganizationRequestThreadModel model)
+        {
+            try
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        if (model.Status != null)
+                        {
+                            if (model.Status == StatusCatalog.ModeratorAssigned)
+                            {
+                                await AssignOrganizationRequest(model.OrganizationRequestId, model.Moderator?.Id);
+                            }
+                        }
+                        var status = model.Status;
+                        if (status == null)
+                        {
+                            var donationRequestDb = await _context.OrganizationRequests.Where(x => x.Id == model.OrganizationRequestId && x.IsDeleted == false).FirstOrDefaultAsync();
+                            if (donationRequestDb != null)
+                            {
+                                status = (StatusCatalog)donationRequestDb.Status;
+                            }
+                            else
+                            {
+                                throw new KnownException("This request does not exist");
+                            }
+
+                        }
+                        var requestThreadModel = GetRequestThreadModelForOrganization(model.OrganizationRequestId, status.Value, model.Note, model.Attachments);
+                        await ProcessRequestThread(_context, requestThreadModel);
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         public async Task<PaginatedOrganizationRequestModel> GetOrganizationRequest(int requestId)
         {

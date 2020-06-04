@@ -37,7 +37,6 @@ namespace API.Controllers
         [Route("Create")]
         public async Task<bool> Create(int campaignId, List<AttachmentModel> attachments)
         {
-
             return await _logic.AssignCampaignAttachments(campaignId, attachments);
         }
         [HttpDelete]

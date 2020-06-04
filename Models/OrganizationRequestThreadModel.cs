@@ -6,14 +6,12 @@ using System.Text;
 
 namespace Models
 {
-    public class DonationRequestThreadModel
+    public class OrganizationRequestThreadModel
     {
-        public int DonationRequestOrganizationId { get; set; }
-        public List<DonationRequestOrganizationItemModel> Items { get; set; }
+        public int OrganizationRequestId { get; set; }
         public StatusCatalog? Status { get; set; }
         public string Note { get; set; }
         public BaseBriefModel Moderator { get; set; }
-        public BaseBriefModel Volunteer { get; set; }
         public List<AttachmentModel> Attachments { get; set; }
     }
 }

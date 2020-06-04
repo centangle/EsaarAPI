@@ -23,12 +23,12 @@ namespace API.Controllers
         {
             _logic = logic;
         }
-        [HttpPut]
-        [Route("AssignRequest")]
-        public async Task<bool> AssignRequest(int organizationId, int requestId, int? moderatorId = null)
-        {
 
-            return await _logic.AssignOrganizationRequest(organizationId, requestId, moderatorId);
+        [HttpPost]
+        [Route("UpdateStatus")]
+        public async Task<bool> UpdateStatus(OrganizationRequestThreadModel model)
+        {
+            return await _logic.UpdateOrganizationRequestStatus(model);
         }
         [HttpGet]
         [Route("GetPaginated")]

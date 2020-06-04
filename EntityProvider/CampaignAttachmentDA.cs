@@ -20,16 +20,26 @@ namespace EntityProvider
             {
                 throw new KnownException("Attachments are required");
             }
-            var memberOrgRoles = (await GetMemberRoleForOrganization(_context, campaignId, _loggedInMemberId)).FirstOrDefault();
-            if (IsOrganizationMemberModerator(memberOrgRoles))
+            var campaign = await _context.Campaigns.Where(x => x.Id == campaignId && x.IsDeleted == false).FirstOrDefaultAsync();
+            if (campaign != null)
             {
-                await AssignAttachments(_context, attachments, campaignId, Catalogs.AttachmentEntityTypeCatalog.Campaign, true);
-                return await _context.SaveChangesAsync() > 0;
+
+                var memberOrgRoles = (await GetMemberRoleForOrganization(_context, campaign.OrganizationId, _loggedInMemberId)).FirstOrDefault();
+                if (IsOrganizationMemberModerator(memberOrgRoles))
+                {
+                    await AssignAttachments(_context, attachments, campaignId, Catalogs.AttachmentEntityTypeCatalog.Campaign, true);
+                    return await _context.SaveChangesAsync() > 0;
+                }
+                else
+                    throw new KnownException("You are not authorized to perform this action");
             }
             else
-                throw new KnownException("You are not authorized to perform this action");
-
+            {
+                throw new KnownException("No such campaign exist");
+            }
         }
+
+
         public async Task<bool> DeleteCampaignAttachment(int id)
         {
             var attachment = await _context.Attachments.Where(x => x.Id == id && x.IsDeleted == false).FirstOrDefaultAsync();

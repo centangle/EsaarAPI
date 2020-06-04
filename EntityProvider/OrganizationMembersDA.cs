@@ -73,11 +73,11 @@ namespace EntityProvider
                                                             && x.IsDeleted == false).FirstOrDefaultAsync();
             if (organizationRequest != null)
             {
-                if (model.Status == StatusCatalog.Approved)
+                if (organizationRequest.Status == (int)StatusCatalog.Approved)
                 {
                     throw new KnownException("This request is already approved by moderator. You cannot change this request anymore.");
                 }
-                else if (model.Status == StatusCatalog.Rejected)
+                else if (organizationRequest.Status == (int)StatusCatalog.Rejected)
                 {
                     throw new KnownException("This request is rejected by moderator. You cannot change this request anymore.");
                 }
@@ -106,7 +106,7 @@ namespace EntityProvider
                                 entityRegion.RequestType = EntityRegionRequestTypeCatalog.OrganizationMember;
                             }
                             await ModifyEntityRegions(_context, model.Regions, organizationRequest.OrganizationId, organizationRequest.Id, true);
-                            var requestThreadModel = GetRequestThreadModelForOrganization(organizationRequest.Id, "Regions has been updated");
+                            var requestThreadModel = GetRequestThreadModelForOrganization(organizationRequest.Id, (StatusCatalog)organizationRequest.Status, "Regions has been updated");
                             await AddRequestThread(_context, requestThreadModel);
                             transaction.Commit();
                             return true;

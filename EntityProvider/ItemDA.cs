@@ -257,6 +257,7 @@ namespace EntityProvider
                                   where i.IsPeripheral == true
                                   && (string.IsNullOrEmpty(filters.Name) || i.Name.Contains(filters.Name) || i.NativeName.Contains(filters.Name))
                                   && (filters.RootCategories.Count() == 0 || filters.RootCategories.Contains(i.RootId ?? 0))
+                                  && (i.OrganizationId == null || filters.OrganizationId == null || i.OrganizationId == filters.OrganizationId)
                                   && i.IsDeleted == false
                                   select new ItemModel
                                   {

@@ -233,7 +233,7 @@ namespace EntityProvider
                             }
 
                         }
-                        var requestThreadModel = GetDonationRequestThreadModel(model.DonationRequestOrganizationId, status, model.Note);
+                        var requestThreadModel = GetDonationRequestThreadModel(model.DonationRequestOrganizationId, status, model.Note, model.Attachments);
                         await ProcessRequestThread(_context, requestThreadModel);
                         transaction.Commit();
                     }

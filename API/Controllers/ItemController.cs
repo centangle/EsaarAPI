@@ -23,7 +23,7 @@ namespace API.Controllers
             _logic = logic;
         }
         [HttpGet]
-        [Route("Get")]
+        [Route("Get/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ItemModel> Get(int id)
         {
@@ -49,11 +49,12 @@ namespace API.Controllers
         [HttpGet]
         [Route("GetPeripheralItemsPaginated")]
         [Authorize(Roles = "Member,Admin")]
-        public async Task<PaginatedResultModel<ItemModel>> GetPeripheralItemsPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string itemName = null, [FromQuery] List<int> rootCategories = null, string orderByColumn = null, bool calculateTotal = true)
+        public async Task<PaginatedResultModel<ItemModel>> GetPeripheralItemsPaginated(int recordsPerPage, int currentPage, PaginationOrderCatalog orderDir, bool disablePagination, string itemName = null, [FromQuery] List<int> rootCategories = null,int? organizationId= null, string orderByColumn = null, bool calculateTotal = true)
         {
             ItemSearchModel filters = new ItemSearchModel();
             filters.Name = itemName;
             filters.RootCategories = rootCategories ?? new List<int>();
+            filters.OrganizationId = organizationId;
             SetPaginationProperties(filters, recordsPerPage, currentPage, orderDir, orderByColumn, disablePagination, calculateTotal);
             return await _logic.GetPeripheralItemsPaginated(filters);
         }
@@ -123,7 +124,7 @@ namespace API.Controllers
             return await _logic.UpdateMultipleItemsWithChildrens(items);
         }
         [HttpDelete]
-        [Route("DeleteItemWithChildren")]
+        [Route("DeleteItemWithChildren/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<bool> DeleteItemWithChildren(int id)
         {
